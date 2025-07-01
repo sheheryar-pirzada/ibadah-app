@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
 export default function SettingsScreen() {
   const [notifications, setNotifications] = React.useState(true);
   const [darkMode, setDarkMode] = React.useState(false);
-  const [calculation, setCalculation] = React.useState('Standard');
+  const [calculation] = React.useState('Standard');
 
   return (
     <View style={styles.container}>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { LocationProvider } from '@/hooks/useLocation';
 import { BlurView } from 'expo-blur';
 import { useImmersiveOverlay } from "@/components/immersive-overlay/store";
 import { IconSymbol } from "@/components/ui/IconSymbol.ios";
+import type { SymbolViewProps } from 'expo-symbols';
 
 export default function TabsLayout() {
   const { isOverlayOpen } = useImmersiveOverlay();
@@ -36,14 +36,17 @@ export default function TabsLayout() {
             display: isOverlayOpen ? 'none' : 'flex',
           },
           tabBarIcon: ({ focused, color, size }) => {
-            const nameMap: Record<string,string> = {
-              'index':      focused ? 'clock.fill'     : 'clock',
-              'ar-compass': focused ? 'safari.fill'   : 'safari',
-              'compass':    focused ? 'mecca'  : 'mecca',
-              'settings':   focused ? 'gearshape.fill' : 'gearshape',
+            const nameMap: Record<string, SymbolViewProps['name']> = {
+              index: focused ? 'clock.fill' : 'clock',
+              'ar-compass': focused ? 'safari.fill' : 'safari',
+              compass: 'mecca',
+              settings: focused ? 'gearshape.fill' : 'gearshape',
             };
-            return <IconSymbol name={nameMap[route.name]} size={size} color={color} />;
-            // return <Ionicons name={nameMap[route.name]} size={size} color={color} />;
+            return (<IconSymbol
+                name={nameMap[route.name]}
+                size={size}
+                color={color}
+              />);
           },
         })}
       >
