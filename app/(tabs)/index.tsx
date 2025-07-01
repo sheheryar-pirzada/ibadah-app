@@ -178,7 +178,7 @@ export default function PrayerTimesScreen() {
   const getPrayerDescription = (k: PrayerKey) => {
     const desc: Record<PrayerKey, string> = {
       fajr:
-        "Fajr is performed at dawn before sunrise. It includes 2 obligatory rakats and 2 Sunnah mu'akkadah rakats that set a spiritual tone for the day.",
+        "Fajr is performed at dawn before sunrise. It includes 2 obligatory rakats and 2 Sunnah mu’akkadah rakats that set a spiritual tone for the day.",
       sunrise: "Sunrise marks the end of Fajr; no prayer is performed at this time.",
       dhuhr:
         "Dhuhr is the midday prayer after the sun passes its zenith. It consists of 4 obligatory rakats, 4 Sunnah before, 2 Sunnah after, and additional voluntary nawafil prayers.",
@@ -187,7 +187,7 @@ export default function PrayerTimesScreen() {
       maghrib:
         "Maghrib is the sunset prayer performed just after sunset. It includes 3 obligatory rakats and voluntary nawafil prayers.",
       isha:
-        "Isha is the night prayer after twilight disappears. It consists of 4 obligatory rakats, 2 Sunnah mu'akkadah rakats, and voluntary nawafil prayers.",
+        "Isha is the night prayer after twilight disappears. It consists of 4 obligatory rakats, 2 Sunnah mu’akkadah rakats, and voluntary nawafil prayers.",
     };
     return desc[k];
   };
@@ -266,7 +266,7 @@ export default function PrayerTimesScreen() {
 
           <View style={styles.gridContainer}>
             <Animated.Text entering={FadeInUp.delay(400).duration(600)} style={styles.gridTitle}>
-              Today's Schedule
+              Today’s Schedule
             </Animated.Text>
 
             <View style={styles.prayerGrid}>
