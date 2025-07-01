@@ -1,45 +1,69 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { LocationProvider } from '@/hooks/useLocation';
+import { BlurView } from 'expo-blur';
+import { useImmersiveOverlay } from "@/components/immersive-overlay/store";
+import { IconSymbol } from "@/components/ui/IconSymbol.ios";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
+  const { isOverlayOpen } = useImmersiveOverlay();
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
+    <LocationProvider>
+      <Tabs
+        screenOptions={({ route }) => ({
+          tabBarActiveTintColor: '#d4af37',
+          tabBarInactiveTintColor: 'white',
+
+          // make header transparent so our BlurView shows through
+          headerTransparent: true,
+          headerTintColor: '#fff',
+          headerTitleStyle: { fontWeight: 'bold' },
+
+          // inject the BlurView behind header contents
+          headerBackground: () => (
+            <BlurView
+              intensity={30}
+              tint="systemChromeMaterialDark"
+              style={styles.headerBlur}
+            />
+          ),
+
+          tabBarStyle: {
+            backgroundColor: '#1a5f3f',
+            // borderTopColor: '#2d7a57',
+            display: isOverlayOpen ? 'none' : 'flex',
           },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+          tabBarIcon: ({ focused, color, size }) => {
+            const nameMap: Record<string,string> = {
+              'index':      focused ? 'clock.fill'     : 'clock',
+              'ar-compass': focused ? 'safari.fill'   : 'safari',
+              'compass':    focused ? 'mecca'  : 'mecca',
+              'settings':   focused ? 'gearshape.fill' : 'gearshape',
+            };
+            return <IconSymbol name={nameMap[route.name]} size={size} color={color} />;
+            // return <Ionicons name={nameMap[route.name]} size={size} color={color} />;
+          },
+        })}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Prayer Times',
+            headerTitle: '',
+          }}
+        />
+        <Tabs.Screen name="ar-compass" options={{ title: 'AR Compass'  }} />
+        <Tabs.Screen name="compass"    options={{ title: 'Compass'     }} />
+        <Tabs.Screen name="settings"   options={{ title: 'Settings'    }} />
+      </Tabs>
+    </LocationProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  headerBlur: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
