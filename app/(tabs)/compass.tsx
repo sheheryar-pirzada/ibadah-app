@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Animated, Dimensions, Easing } from 'react-native';
 import { Magnetometer } from 'expo-sensors';
 import Svg, { Circle, Line, Text as SvgText, Polygon } from 'react-native-svg';
 import { useLocation } from '@/hooks/useLocation';
@@ -11,20 +11,31 @@ const center = compassSize / 2;
 export default function TraditionalCompassScreen() {
   const { loc: location, qibla: qiblaDirection } = useLocation();
   const [heading, setHeading] = useState(0);
+  const [calibrationAccuracy, setCalibrationAccuracy] = useState(1);
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const magnetometerRef = useRef<any>(null);
 
   useEffect(() => {
     Magnetometer.setUpdateInterval(100);
-    magnetometerRef.current = Magnetometer.addListener(({ x, y }) => {
+    magnetometerRef.current = Magnetometer.addListener(({ x, y, z }) => {
       let angle = Math.atan2(y, x) * (180 / Math.PI);
       angle = (angle + 360) % 360;
-      setHeading(angle);
-      Animated.timing(rotateAnim, {
-        toValue: -angle,
-        duration: 100,
-        useNativeDriver: true,
-      }).start();
+      const smooth = (prev: number, next: number, alpha = 0.1) => {
+        const delta = ((next - prev + 540) % 360) - 180;
+        return prev + delta * alpha;
+      };
+      setHeading(prev => {
+        const newHeading = smooth(prev, angle);
+        Animated.timing(rotateAnim, {
+          toValue: -newHeading,
+          duration: 200,
+          easing: Easing.out(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+        return newHeading;
+      });
+      const strength = Math.hypot(x, y, z);
+      setCalibrationAccuracy(Math.min(strength / 50, 1));
     });
     return () => magnetometerRef.current?.remove();
   }, []);
@@ -122,6 +133,9 @@ export default function TraditionalCompassScreen() {
         <Text style={styles.qiblaText}>
           Qibla Direction: {Math.round(qiblaDirection)}°
         </Text>
+        <Text style={styles.calibrationText}>
+          Calibration: {Math.round(calibrationAccuracy * 100)}%
+        </Text>
         {location && (
           <>
             <Text style={styles.locationText}>
@@ -139,6 +153,13 @@ export default function TraditionalCompassScreen() {
           </>
         )}
       </View>
+      {calibrationAccuracy < 0.5 && (
+        <View style={styles.calibrationWarning}>
+          <Text style={styles.warningText}>
+            Move your device in a figure-8 to calibrate
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -166,4 +187,15 @@ const styles = StyleSheet.create({
   qiblaText:       { color: '#fff', fontSize: 18, marginBottom: 15 },
   locationText:    { color: '#ccc', fontSize: 14, marginBottom: 5 },
   distanceText:    { color: '#d4af37', fontSize: 14, fontWeight: 'bold' },
+  calibrationText: { color: '#fff', fontSize: 14, marginBottom: 5 },
+  calibrationWarning: {
+    position: 'absolute',
+    bottom: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: 'rgba(255,107,107,0.9)',
+    padding: 15,
+    borderRadius: 10,
+  },
+  warningText:     { color: '#fff', textAlign: 'center', fontSize: 14 },
 });
