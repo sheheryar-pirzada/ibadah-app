@@ -266,7 +266,7 @@ export default function PrayerTimesScreen() {
 
           <View style={styles.gridContainer}>
             <Animated.Text entering={FadeInUp.delay(400).duration(600)} style={styles.gridTitle}>
-              Today's Schedule
+              Today&apos;s Schedule
             </Animated.Text>
 
             <View style={styles.prayerGrid}>
