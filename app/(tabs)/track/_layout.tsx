@@ -1,0 +1,49 @@
+import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
+import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/contexts/ThemeContext';
+import { BlurView } from 'expo-blur';
+import { Stack } from 'expo-router';
+import { Platform } from 'react-native';
+
+export { ErrorBoundary } from 'expo-router';
+
+export default function TrackLayout() {
+  const { resolvedTheme } = useTheme();
+  const colorScheme = resolvedTheme || 'light';
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        headerTransparent: Platform.select({
+          ios: true,
+          default: false,
+        }),
+        headerBackground: Platform.select({
+          ios: () => (
+            <BlurView
+              style={{ flex: 1 }}
+              tint={Colors[colorScheme].blurTint}
+            />
+          ),
+          default: undefined,
+        }),
+        headerShadowVisible: false,
+        headerRight: () => <SettingsHeaderButton />,
+      }}
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          title: 'Track',
+        }}
+      />
+      <Stack.Screen
+        name="analytics"
+        options={{
+          animation: 'slide_from_right',
+        }}
+      />
+    </Stack>
+  );
+}

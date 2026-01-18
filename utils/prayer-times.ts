@@ -3,47 +3,169 @@ import {
   PrayerTimes,
   CalculationMethod,
   Madhab,
-  Coordinates
+  Coordinates,
+  Prayer,
+  HighLatitudeRule
 } from 'adhan';
+import { getPrayerSettings, type CalculationMethodKey, type MadhabKey } from './prayer-settings';
 
 /**
- * getPrayerTimesAdhan
+ * Helper to format Date → "HH:mm"
+ */
+const formatTime = (d: Date) =>
+  d.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+/**
+ * Create PrayerTimes object with calculation parameters
+ * If method/madhab are not provided, loads from saved settings
  *
  * @param lat      latitude in decimal degrees
  * @param lng      longitude in decimal degrees
- * @param method   e.g. 'MuslimWorldLeague' | 'NorthAmerica' | 'Karachi' | 'UmmAlQura' | 'Dubai' | 'Egypt' | 'Tehran' | 'Custom'
- * @param madhab   'Shafi' | 'Hanafi'
+ * @param method   optional: calculation method (defaults to saved setting)
+ * @param madhab   optional: madhab (defaults to saved setting)
  * @param date     JS Date (defaults to today)
  */
-export function getPrayerTimesAdhan(
+export async function createPrayerTimes(
   lat: number,
   lng: number,
-  method: keyof typeof CalculationMethod = 'MuslimWorldLeague',
-  madhab: keyof typeof Madhab = 'Shafi',
+  method?: CalculationMethodKey,
+  madhab?: MadhabKey,
   date: Date = new Date()
-) {
+): Promise<PrayerTimes> {
+  // Load settings if method/madhab not provided
+  let finalMethod: CalculationMethodKey;
+  let finalMadhab: MadhabKey;
+  
+  if (method && madhab) {
+    finalMethod = method;
+    finalMadhab = madhab;
+  } else {
+    const settings = await getPrayerSettings();
+    finalMethod = method || settings.calculationMethod;
+    finalMadhab = madhab || settings.madhab;
+  }
+
+  // 1. build calculation params
+  const params = CalculationMethod[finalMethod]();
+  params.madhab = Madhab[finalMadhab];
+
+  // 2. Apply high latitude rule if needed (latitude > 48.5 or < -48.5)
+  const coords = new Coordinates(lat, lng);
+  if (Math.abs(lat) > 48.5) {
+    params.highLatitudeRule = HighLatitudeRule.recommended(coords);
+  }
+
+  // 3. compute times
+  return new PrayerTimes(coords, date, params);
+}
+
+/**
+ * Synchronous version that requires method and madhab to be provided
+ * Use this when you have the values already (for backwards compatibility)
+ */
+export function createPrayerTimesSync(
+  lat: number,
+  lng: number,
+  method: CalculationMethodKey = 'MuslimWorldLeague',
+  madhab: MadhabKey = 'Shafi',
+  date: Date = new Date()
+): PrayerTimes {
   // 1. build calculation params
   const params = CalculationMethod[method]();
   params.madhab = Madhab[madhab];
 
-  // 2. compute times
+  // 2. Apply high latitude rule if needed (latitude > 48.5 or < -48.5)
   const coords = new Coordinates(lat, lng);
-  const times = new PrayerTimes(coords, date, params);
+  if (Math.abs(lat) > 48.5) {
+    params.highLatitudeRule = HighLatitudeRule.recommended(coords);
+  }
 
-  // 3. helper to format Date → "HH:mm"
-  const fmt = (d: Date) =>
-    d.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
+  // 3. compute times
+  return new PrayerTimes(coords, date, params);
+}
+
+/**
+ * getPrayerTimesAdhan (async version that loads settings)
+ *
+ * @param lat      latitude in decimal degrees
+ * @param lng      longitude in decimal degrees
+ * @param method   optional: calculation method (defaults to saved setting)
+ * @param madhab   optional: madhab (defaults to saved setting)
+ * @param date     JS Date (defaults to today)
+ */
+export async function getPrayerTimesAdhan(
+  lat: number,
+  lng: number,
+  method?: CalculationMethodKey,
+  madhab?: MadhabKey,
+  date: Date = new Date()
+) {
+  const times = await createPrayerTimes(lat, lng, method, madhab, date);
 
   return {
-    fajr:    fmt(times.fajr),
-    sunrise: fmt(times.sunrise),
-    dhuhr:   fmt(times.dhuhr),
-    asr:     fmt(times.asr),
-    maghrib: fmt(times.maghrib),
-    isha:    fmt(times.isha),
+    fajr:    formatTime(times.fajr),
+    sunrise: formatTime(times.sunrise),
+    dhuhr:   formatTime(times.dhuhr),
+    asr:     formatTime(times.asr),
+    maghrib: formatTime(times.maghrib),
+    isha:    formatTime(times.isha),
   };
+}
+
+/**
+ * Synchronous version for backwards compatibility
+ */
+export function getPrayerTimesAdhanSync(
+  lat: number,
+  lng: number,
+  method: CalculationMethodKey = 'MuslimWorldLeague',
+  madhab: MadhabKey = 'Shafi',
+  date: Date = new Date()
+) {
+  const times = createPrayerTimesSync(lat, lng, method, madhab, date);
+
+  return {
+    fajr:    formatTime(times.fajr),
+    sunrise: formatTime(times.sunrise),
+    dhuhr:   formatTime(times.dhuhr),
+    asr:     formatTime(times.asr),
+    maghrib: formatTime(times.maghrib),
+    isha:    formatTime(times.isha),
+  };
+}
+
+/**
+ * Get current prayer using PrayerTimes convenience method
+ */
+export function getCurrentPrayer(prayerTimes: PrayerTimes, date?: Date): typeof Prayer[keyof typeof Prayer] {
+  return prayerTimes.currentPrayer(date);
+}
+
+/**
+ * Get next prayer using PrayerTimes convenience method
+ */
+export function getNextPrayer(prayerTimes: PrayerTimes, date?: Date): typeof Prayer[keyof typeof Prayer] {
+  return prayerTimes.nextPrayer(date);
+}
+
+/**
+ * Get time for a specific prayer using PrayerTimes convenience method
+ */
+export function getTimeForPrayer(
+  prayerTimes: PrayerTimes,
+  prayer: typeof Prayer[keyof typeof Prayer]
+): Date | null {
+  return prayerTimes.timeForPrayer(prayer);
+}
+
+/**
+ * Convert prayer enum to PrayerKey type used in the app
+ */
+export function prayerToKey(prayer: typeof Prayer[keyof typeof Prayer]): 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha' | null {
+  if (prayer === Prayer.None) return null;
+  return prayer as 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
 }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
+import { Qibla, Coordinates } from 'adhan';
 
 type LocationContextType = {
   loc: Location.LocationObject | null;
@@ -27,11 +28,12 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       const position = await Location.getCurrentPositionAsync({});
       setLoc(position);
 
-      // compute bearing to Kaaba
-      const bearing = calculateQiblaDirection(
+      // compute bearing to Kaaba using adhan's Qibla function
+      const coordinates = new Coordinates(
         position.coords.latitude,
         position.coords.longitude
       );
+      const bearing = Qibla(coordinates);
       setQibla(bearing);
     })();
   }, []);
@@ -45,21 +47,4 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
 export function useLocation() {
   return useContext(LocationContext);
-}
-
-function calculateQiblaDirection(userLat: number, userLng: number): number {
-  const kaabaLat = 21.4225;
-  const kaabaLng = 39.8262;
-
-  const φ1 = (userLat * Math.PI) / 180;
-  const φ2 = (kaabaLat * Math.PI) / 180;
-  const Δλ = ((kaabaLng - userLng) * Math.PI) / 180;
-
-  const x = Math.sin(Δλ) * Math.cos(φ2);
-  const y =
-    Math.cos(φ1) * Math.sin(φ2) -
-    Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-
-  let θ = (Math.atan2(x, y) * 180) / Math.PI;
-  return (θ + 360) % 360;
 }

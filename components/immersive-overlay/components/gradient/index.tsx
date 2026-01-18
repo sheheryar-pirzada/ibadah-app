@@ -4,12 +4,13 @@ import { Dimensions, StyleSheet, useColorScheme } from "react-native";
 import Animated, {
   Easing,
   interpolate,
+  interpolateColor,
   useAnimatedProps,
+  useDerivedValue,
   withRepeat,
   withSequence,
-  interpolateColor,
-  useDerivedValue,
-  withTiming} from "react-native-reanimated";
+  withTiming
+} from "react-native-reanimated";
 
 import { useImmersiveOverlay, useImmersiveOverlayStore } from "../../store";
 import { generateColors } from "../../utils";

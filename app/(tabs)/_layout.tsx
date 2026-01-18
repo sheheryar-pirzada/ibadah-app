@@ -1,69 +1,44 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { LocationProvider } from '@/hooks/useLocation';
-import { BlurView } from 'expo-blur';
-import { useImmersiveOverlay } from "@/components/immersive-overlay/store";
-import { IconSymbol } from "@/components/ui/IconSymbol.ios";
+import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
+
+import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function TabsLayout() {
-  const { isOverlayOpen } = useImmersiveOverlay();
+  const { resolvedTheme } = useTheme();
+
+  const tabBarColors = Colors[resolvedTheme];
+
   return (
-    <LocationProvider>
-      <Tabs
-        screenOptions={({ route }) => ({
-          tabBarActiveTintColor: '#d4af37',
-          tabBarInactiveTintColor: 'white',
+    <NativeTabs
+      minimizeBehavior="onScrollDown"
+      iconColor={tabBarColors.tabIconDefault}
+      tintColor={tabBarColors.tabIconSelected}
+      
+    >
+      <NativeTabs.Trigger name="index">
+        <Icon sf="clock" />
+        <Label>Prayer Times</Label>
+      </NativeTabs.Trigger>
 
-          // make header transparent so our BlurView shows through
-          headerTransparent: true,
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
+      <NativeTabs.Trigger name="track">
+        <Icon sf="checkmark.circle" />
+        <Label>Track</Label>
+      </NativeTabs.Trigger>
 
-          // inject the BlurView behind header contents
-          headerBackground: () => (
-            <BlurView
-              intensity={30}
-              tint="systemChromeMaterialDark"
-              style={styles.headerBlur}
-            />
-          ),
+      <NativeTabs.Trigger name="duas">
+        <Icon sf="waveform.mid" />
+        <Label>Duas</Label>
+      </NativeTabs.Trigger>
 
-          tabBarStyle: {
-            backgroundColor: '#1a5f3f',
-            // borderTopColor: '#2d7a57',
-            display: isOverlayOpen ? 'none' : 'flex',
-          },
-          tabBarIcon: ({ focused, color, size }) => {
-            const nameMap: Record<string,string> = {
-              'index':      focused ? 'clock.fill'     : 'clock',
-              'ar-compass': focused ? 'safari.fill'   : 'safari',
-              'compass':    focused ? 'mecca'  : 'mecca',
-              'settings':   focused ? 'gearshape.fill' : 'gearshape',
-            };
-            return <IconSymbol name={nameMap[route.name]} size={size} color={color} />;
-            // return <Ionicons name={nameMap[route.name]} size={size} color={color} />;
-          },
-        })}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Prayer Times',
-            headerTitle: '',
-          }}
-        />
-        <Tabs.Screen name="ar-compass" options={{ title: 'AR Compass'  }} />
-        <Tabs.Screen name="compass"    options={{ title: 'Compass'     }} />
-        <Tabs.Screen name="settings"   options={{ title: 'Settings'    }} />
-      </Tabs>
-    </LocationProvider>
+      <NativeTabs.Trigger name="quran-search">
+        <Icon sf="book.fill" />
+        <Label>Quran</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="learn">
+        <Icon sf="character.book.closed.ar" />
+        <Label>Learn</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
-
-const styles = StyleSheet.create({
-  headerBlur: {
-    ...StyleSheet.absoluteFillObject,
-  },
-});
