@@ -14,7 +14,7 @@ interface ThemeContextValue {
   systemPrefersDark: boolean;
 }
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useRNColorScheme();
@@ -64,7 +64,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         systemPrefersDark,
       }}
     >
-      {children}
+        {children}
+
     </ThemeContext.Provider>
   );
 }

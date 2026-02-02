@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const QURAN_API_BASE = 'https://api.quran.com/api/v4';
 
+
 const STORAGE_KEYS = {
   RECITERS_CACHE: 'quran_reciters_cache',
   RECITERS_CACHE_TIME: 'quran_reciters_cache_time',
@@ -23,6 +24,7 @@ export interface Reciter {
 
 export interface VerseAudio {
   url: string;
+  verse_key?: string;
   segments?: number[][]; // [word_index, start_ms, end_ms]
 }
 
@@ -41,6 +43,10 @@ export interface Verse {
   text_imlaei?: string;
   words?: Word[];
   translations?: Translation[];
+  audio?: {
+    url: string;
+    segments?: number[][];
+  };
 }
 
 export interface Word {
@@ -60,6 +66,12 @@ export interface Word {
 
 export interface Translation {
   resource_id: number;
+  text: string;
+}
+
+export interface TafsirResult {
+  resourceId: number;
+  resourceName: string;
   text: string;
 }
 
@@ -155,10 +167,9 @@ class QuranAPIService {
       }
 
       return {
-        url: audioFile.url.startsWith('http')
-          ? audioFile.url
-          : `https://verses.quran.com/${audioFile.url}`,
+        url: this.formatAudioUrl(audioFile.url),
         segments: audioFile.segments,
+        verse_key: verseKey,
       };
     } catch (error) {
       console.error('Error fetching verse audio:', error);
@@ -176,17 +187,12 @@ class QuranAPIService {
     recitationId: number
   ): Promise<VerseAudio[] | null> {
     try {
-      const audioUrls: VerseAudio[] = [];
-
+      const promises = [];
       for (let verse = startVerse; verse <= endVerse; verse++) {
-        const verseKey = `${surah}:${verse}`;
-        const audio = await this.getVerseAudio(verseKey, recitationId);
-        if (audio) {
-          audioUrls.push(audio);
-        }
+        promises.push(this.getVerseAudio(`${surah}:${verse}`, recitationId));
       }
-
-      return audioUrls.length > 0 ? audioUrls : null;
+      const audioFiles = await Promise.all(promises);
+      return audioFiles.filter((a): a is VerseAudio => a !== null);
     } catch (error) {
       console.error('Error fetching verse range audio:', error);
       return null;
@@ -207,7 +213,8 @@ class QuranAPIService {
       }
 
       const data = await response.json();
-      return data.audio_file?.audio_url || null;
+      const url = data.audio_file?.audio_url || null;
+      return url ? this.formatAudioUrl(url) : null;
     } catch (error) {
       console.error('Error fetching chapter audio:', error);
       return null;
@@ -223,13 +230,17 @@ class QuranAPIService {
       translations?: number[];
       words?: boolean;
       textType?: 'uthmani' | 'imlaei';
+      audio?: number;
     }
   ): Promise<Verse | null> {
     try {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({ language: 'en' });
 
       if (options?.translations?.length) {
         params.append('translations', options.translations.join(','));
+      }
+      if (options?.audio) {
+        params.append('audio', String(options.audio));
       }
       if (options?.words) {
         params.append('words', 'true');
@@ -241,7 +252,9 @@ class QuranAPIService {
         params.append('fields', 'text_imlaei');
       }
 
-      const url = `${QURAN_API_BASE}/verses/by_key/${verseKey}${params.toString() ? '?' + params.toString() : ''}`;
+      // Revert to stable API for robustness
+      const url = `${QURAN_API_BASE}/verses/by_key/${verseKey}?${params.toString()}`;
+
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -249,7 +262,11 @@ class QuranAPIService {
       }
 
       const data = await response.json();
-      return data.verse || null;
+      const verse = data.verse || null;
+      if (verse && verse.audio) {
+        verse.audio.url = this.formatAudioUrl(verse.audio.url);
+      }
+      return verse;
     } catch (error) {
       console.error('Error fetching verse:', error);
       return null;
@@ -347,16 +364,27 @@ class QuranAPIService {
       perPage?: number;
       translations?: number[];
       textType?: 'uthmani' | 'imlaei';
+      audio?: number;
+      /** Include word-by-word translation and transliteration for each ayah */
+      words?: boolean;
     }
   ): Promise<{ verses: Verse[]; pagination: { total_pages: number; current_page: number } }> {
     try {
       const params = new URLSearchParams({
         page: String(options?.page || 1),
         per_page: String(options?.perPage || 10),
+        language: 'en'
       });
 
       if (options?.translations?.length) {
         params.append('translations', options.translations.join(','));
+      }
+      if (options?.audio) {
+        params.append('audio', String(options.audio));
+      }
+      if (options?.words) {
+        params.append('words', '1');
+        params.append('word_fields', 'text_uthmani,text_imlaei,translation,transliteration');
       }
       if (options?.textType === 'uthmani') {
         params.append('fields', 'text_uthmani');
@@ -371,14 +399,153 @@ class QuranAPIService {
       }
 
       const data = await response.json();
+      const verses = (data.verses || []).map((v: Verse) => {
+        if (v.audio) {
+          v.audio.url = this.formatAudioUrl(v.audio.url);
+        }
+        return v;
+      });
+
       return {
-        verses: data.verses || [],
+        verses,
         pagination: data.pagination || { total_pages: 1, current_page: 1 },
       };
     } catch (error) {
       console.error('Error fetching verses by chapter:', error);
       return { verses: [], pagination: { total_pages: 1, current_page: 1 } };
     }
+  }
+
+  /**
+   * Get verses by Madani Mushaf page number (1–604).
+   * Uses the same API contract as Quran Foundation "By Page" (api.quran.com exposes it).
+   */
+  async getVersesByPage(
+    pageNumber: number,
+    options?: {
+      translations?: number[];
+      audio?: number;
+      perPage?: number;
+      /** Include word-by-word translation and transliteration for each ayah */
+      words?: boolean;
+    }
+  ): Promise<{
+    verses: Verse[];
+    pagination: { current_page: number; next_page: number | null; total_pages: number; total_records: number };
+  }> {
+    if (pageNumber < 1 || pageNumber > 604) {
+      return {
+        verses: [],
+        pagination: { current_page: pageNumber, next_page: null, total_pages: 1, total_records: 0 },
+      };
+    }
+    try {
+      const params = new URLSearchParams({
+        per_page: String(options?.perPage ?? 50),
+        language: 'en',
+      });
+      params.append('fields', 'text_uthmani');
+      if (options?.translations?.length) {
+        params.append('translations', options.translations.join(','));
+      }
+      if (options?.audio) {
+        params.append('audio', String(options.audio));
+      }
+      if (options?.words) {
+        params.append('words', '1');
+        params.append('word_fields', 'text_uthmani,text_imlaei,translation,transliteration');
+      }
+
+      const response = await fetch(
+        `${QURAN_API_BASE}/verses/by_page/${pageNumber}?${params.toString()}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch verses by page: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const verses: Verse[] = (data.verses || []).map((v: Verse) => {
+        if (v.audio) {
+          v.audio.url = this.formatAudioUrl(v.audio.url);
+        }
+        return v;
+      });
+      const pagination = data.pagination || {
+        current_page: 1,
+        next_page: null,
+        total_pages: 1,
+        total_records: verses.length,
+      };
+
+      return { verses, pagination };
+    } catch (error) {
+      console.error('Error fetching verses by page:', error);
+      return {
+        verses: [],
+        pagination: {
+          current_page: pageNumber,
+          next_page: null,
+          total_pages: 1,
+          total_records: 0,
+        },
+      };
+    }
+  }
+
+  /**
+   * Get translation for a specific verse
+   */
+  async getVerseTranslation(resourceId: number, verseKey: string): Promise<string | null> {
+    try {
+      const response = await fetch(
+        `${QURAN_API_BASE}/quran/translations/${resourceId}?verse_key=${verseKey}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch translation: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // api.quran.com returns { translations: [ { text: "..." } ] }
+      return data.translations?.[0]?.text || null;
+    } catch (error) {
+      console.error('Error fetching verse translation:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get tafsir for a specific ayah
+   * URL: /tafsirs/:resource_id/by_ayah/:ayah_key
+   */
+  async getTafsirByAyah(resourceId: number, ayahKey: string): Promise<TafsirResult | null> {
+    try {
+      const response = await fetch(
+        `${QURAN_API_BASE}/tafsirs/${resourceId}/by_ayah/${encodeURIComponent(ayahKey)}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch tafsir: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const t = data.tafsir;
+      if (!t || t.text == null) return null;
+      return {
+        resourceId: t.resource_id,
+        resourceName: t.resource_name ?? t.translated_name?.name ?? '',
+        text: t.text,
+      };
+    } catch (error) {
+      console.error('Error fetching tafsir:', error);
+      return null;
+    }
+  }
+
+  private formatAudioUrl(url: string): string {
+    if (!url) return url;
+    return url.startsWith('http') ? url : `https://verses.quran.com/${url}`;
   }
 
   // Cache helpers

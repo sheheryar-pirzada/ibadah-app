@@ -1,16 +1,21 @@
-import React, { useState, useCallback } from 'react';
+import * as Haptics from 'expo-haptics';
+import { Link } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  GestureResponderEvent,
+  Pressable,
+  Text,
+  View,
 } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
+
+// @ts-expect-error - AppleZoom types not fully exported in SDK 55 preview
+const AppleZoom = Link.AppleZoom;
 
 import AudioPlayer from '@/components/AudioPlayer';
-import ShareModal from '@/components/ShareModal';
+import type { ChinAudioMetadata } from '@/components/chin';
+import { useChinStore } from '@/components/chin';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -21,14 +26,22 @@ import { getReciterSettings } from '@/utils/reciter-settings';
 interface DailyVerseCardProps {
   verse: QuranVerse | null;
   isLoading?: boolean;
-  onPress?: () => void;
+  onAudioToggle?: (isPlaying: boolean, audioUrl: string | null, metadata?: ChinAudioMetadata) => void;
 }
 
-export default function DailyVerseCard({ verse, isLoading, onPress }: DailyVerseCardProps) {
+export default function DailyVerseCard({ verse, isLoading, onAudioToggle }: DailyVerseCardProps) {
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
+
+  const chinIsVisible = useChinStore((state) => state.isVisible);
+
+  // Sync audio icon state with chin visibility
+  useEffect(() => {
+    if (!chinIsVisible && showAudioPlayer) {
+      setShowAudioPlayer(false);
+    }
+  }, [chinIsVisible, showAudioPlayer]);
 
   // Theme colors
   const textColor = useThemeColor({}, 'text');
@@ -38,17 +51,25 @@ export default function DailyVerseCard({ verse, isLoading, onPress }: DailyVerse
   const cardBorder = useThemeColor({}, 'cardBorder');
   const dividerColor = useThemeColor({}, 'divider');
 
-  const handlePlayAudio = useCallback(async () => {
+  const handlePlayAudio = useCallback(async (e: GestureResponderEvent) => {
+    // Stop propagation so it doesn't trigger the Link navigation
+    e.stopPropagation();
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     if (showAudioPlayer) {
       setShowAudioPlayer(false);
+      onAudioToggle?.(false, audioUrl);
       return;
     }
 
     if (!verse) return;
 
     const verseKey = `${verse.surahNumber}:${verse.ayahNumber}`;
+    const metadata: ChinAudioMetadata = {
+      title: 'Daily Verse',
+      subtitle: `${verse.surahNameEnglish} ${verse.surahNumber}:${verse.ayahNumber}`,
+    };
 
     setShowAudioPlayer(true);
 
@@ -59,202 +80,117 @@ export default function DailyVerseCard({ verse, isLoading, onPress }: DailyVerse
         const audio = await quranAPI.getVerseAudio(verseKey, settings.reciterId);
         if (audio?.url) {
           setAudioUrl(audio.url);
+          onAudioToggle?.(true, audio.url, metadata);
         }
       } catch (error) {
         console.error('Error fetching audio:', error);
       } finally {
         setIsLoadingAudio(false);
       }
+    } else {
+      onAudioToggle?.(true, audioUrl, metadata);
     }
-  }, [showAudioPlayer, verse, audioUrl]);
-
-  const handleShare = useCallback(() => {
-    if (!verse) return;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setShowShareModal(true);
-  }, [verse]);
+  }, [showAudioPlayer, verse, audioUrl, onAudioToggle]);
 
   if (isLoading || !verse) {
     return (
-      <Animated.View entering={FadeInUp.delay(300).duration(800)} style={[styles.card, { borderColor: cardBorder }]}>
-        <ThemedBlurView intensity={25} style={styles.blur}>
-          <View style={styles.loadingContainer}>
+      <Animated.View
+        entering={FadeInUp.delay(300).duration(800)}
+        className="mb-6 overflow-hidden rounded-[40px]"
+        style={{ borderColor: cardBorder, borderWidth: 0.5, borderCurve: 'continuous' }}
+      >
+        <ThemedBlurView intensity={25} className="p-5">
+          <View className="flex-row items-center justify-center gap-3 py-5">
             <ActivityIndicator size="small" color={accentColor} />
-            <Text style={[styles.loadingText, { color: textMuted }]}>Loading today's verse...</Text>
+            <Text className="text-sm font-sans" style={{ color: textMuted }}>
+              {"Loading today's verse..."}
+            </Text>
           </View>
         </ThemedBlurView>
       </Animated.View>
     );
   }
 
-  const cardContent = (
-    <View style={styles.contentWrapper}>
-      <View style={styles.header}>
-        <Text style={[styles.label, { color: textMuted }]}>Daily Verse</Text>
-        <View style={styles.headerActions}>
-          <Pressable
-            onPress={handleShare}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            style={styles.iconButton}
-          >
-            <IconSymbol
-              name="square.and.arrow.up"
-              size={20}
-              color={String(textMuted)}
-            />
-          </Pressable>
-          <Pressable
-            onPress={handlePlayAudio}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            style={[
-              styles.iconButton,
-              showAudioPlayer && { backgroundColor: `${accentColor}20` },
-            ]}
-          >
-            <IconSymbol
-              name={showAudioPlayer ? 'speaker.wave.2.fill' : 'speaker.wave.2'}
-              size={20}
-              color={showAudioPlayer ? accentColor : String(textMuted)}
-            />
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.verseContainer}>
-        <Text style={[styles.arabicText, { color: textColor }]}>{verse.arabic}</Text>
-
-        <View style={[styles.translationContainer, { borderTopColor: dividerColor }]}>
-          <Text style={[styles.translationText, { color: textSecondary }]}>
-            {verse.english}
-          </Text>
-        </View>
-
-        <Text style={[styles.reference, { color: accentColor }]}>
-          {verse.surahNameEnglish} {verse.surahNumber}:{verse.ayahNumber}
-        </Text>
-      </View>
-    </View>
-  );
-
   return (
-    <>
-      <Animated.View entering={FadeInUp.delay(300).duration(800)} style={[styles.card, { borderColor: cardBorder }]}>
-        <ThemedBlurView intensity={25} style={styles.blur}>
-          <Pressable onPress={onPress} style={styles.pressable}>
-            {cardContent}
-          </Pressable>
-        </ThemedBlurView>
+    <Link
+      href={{
+        pathname: '/share',
+        params: {
+          arabic: verse.arabic,
+          translation: verse.english,
+          reference: `${verse.surahNameEnglish} ${verse.surahNumber}:${verse.ayahNumber}`,
+        },
+      }}
+      asChild
+      onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+    >
+      <Pressable>
+        <AppleZoom>
+          <Animated.View
+            entering={FadeInUp.delay(300).duration(800)}
+            className="mb-6 overflow-hidden rounded-[40px]"
+            style={{ borderColor: cardBorder, borderWidth: 0.5, borderCurve: 'continuous' }}
+          >
+            <ThemedBlurView intensity={25} className="p-5">
+              <View className="w-full">
+                <View className="flex-row justify-between items-center mb-4">
+                  <Text className="text-xs font-tajawal-bold uppercase tracking-[1px]" style={{ color: textMuted }}>
+                    Daily Verse
+                  </Text>
+                  <View className="flex-row items-center">
+                    <View className="p-1.5 rounded-lg justify-center items-center">
+                      <IconSymbol
+                        name="square.and.arrow.up"
+                        size={20}
+                        color={String(textMuted)}
+                      />
+                    </View>
+                    <Pressable
+                      onPress={handlePlayAudio}
+                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      className="p-1.5 rounded-lg justify-center items-center"
+                      style={showAudioPlayer ? { backgroundColor: `${accentColor}20` } : undefined}
+                    >
+                      <IconSymbol
+                        name={showAudioPlayer ? 'speaker.wave.2.fill' : 'speaker.wave.2'}
+                        size={20}
+                        color={showAudioPlayer ? accentColor : String(textMuted)}
+                      />
+                    </Pressable>
+                  </View>
+                </View>
 
-        {showAudioPlayer && (
-          <ThemedBlurView intensity={25} style={[styles.audioPlayerContainer, { borderTopColor: dividerColor }]}>
-            <AudioPlayer
-              audioUrl={audioUrl}
-              isLoading={isLoadingAudio}
-              onLoadError={(error) => console.error('Audio error:', error)}
-            />
-          </ThemedBlurView>
-        )}
-      </Animated.View>
+                <View className="gap-3">
+                  <Text className="text-[26px] leading-[46px] font-amiri text-right" style={{ color: textColor }}>
+                    {verse.arabic}
+                  </Text>
 
-      {verse && (
-        <ShareModal
-          visible={showShareModal}
-          onClose={() => setShowShareModal(false)}
-          content={{
-            arabic: verse.arabic,
-            translation: verse.english,
-            reference: `${verse.surahNameEnglish} ${verse.surahNumber}:${verse.ayahNumber}`,
-          }}
-        />
-      )}
-    </>
+                  <View className="pt-2 border-t" style={{ borderTopColor: dividerColor }}>
+                    <Text className="text-[15px] leading-[22px] font-sans text-left" style={{ color: textSecondary }}>
+                      {verse.english}
+                    </Text>
+                  </View>
+
+                  <Text className="text-[13px] font-tajawal-medium mt-1 text-right" style={{ color: accentColor }}>
+                    {verse.surahNameEnglish} {verse.surahNumber}:{verse.ayahNumber}
+                  </Text>
+                </View>
+              </View>
+            </ThemedBlurView>
+
+            {/* Audio player hidden - using chin instead */}
+            {false && showAudioPlayer && (
+              <ThemedBlurView intensity={25} className="px-5 py-4 border-t" style={{ borderTopColor: dividerColor }}>
+                <AudioPlayer
+                  audioUrl={audioUrl}
+                  isLoading={isLoadingAudio}
+                  onLoadError={(error: string) => console.error('Audio error:', error)}
+                />
+              </ThemedBlurView>
+            )}
+          </Animated.View>
+        </AppleZoom>
+      </Pressable>
+    </Link>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 24,
-    borderRadius: 24,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  blur: {
-    padding: 20,
-  },
-  pressable: {
-    width: '100%',
-  },
-  contentWrapper: {
-    width: '100%',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Bold',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  iconButton: {
-    padding: 6,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  audioPlayerContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderTopWidth: 1,
-  },
-  verseContainer: {
-    gap: 12,
-  },
-  arabicText: {
-    fontSize: 26,
-    fontFamily: 'Amiri-Regular',
-    textAlign: 'right',
-    lineHeight: 46,
-  },
-  translationContainer: {
-    paddingTop: 8,
-    borderTopWidth: 1,
-  },
-  translationText: {
-    fontSize: 15,
-    fontFamily: 'Tajawal-Regular',
-    lineHeight: 22,
-    textAlign: 'left',
-  },
-  reference: {
-    fontSize: 13,
-    fontFamily: 'Tajawal-Medium',
-    marginTop: 4,
-    textAlign: 'right',
-  },
-  loadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingVertical: 20,
-  },
-  loadingText: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Regular',
-  },
-});

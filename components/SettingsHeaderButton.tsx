@@ -15,7 +15,6 @@ export function SettingsHeaderButton() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         router.push('/settings');
       }}
-      style={{ paddingLeft: 5 }}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
       <IconSymbol name="gearshape.fill" size={24} color={tintColor} />

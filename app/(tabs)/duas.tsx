@@ -1,3 +1,5 @@
+import type { ChinAudioMetadata } from '@/components/chin';
+import { ChinAudioPlayer, useChin } from '@/components/chin';
 import DuaCard from '@/components/DuaCard';
 import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
@@ -11,7 +13,7 @@ import { getPrayerTimesAdhan } from '@/utils/prayer-times';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -31,6 +33,7 @@ export default function DuasScreen() {
   const { category } = useLocalSearchParams<{ category?: string }>();
   const { resolvedTheme } = useTheme();
   const { loc: location } = useLocation();
+  const chin = useChin();
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
 
   // Handle deep link category param
@@ -39,6 +42,18 @@ export default function DuasScreen() {
       setSelectedCategory(category as CategoryFilter);
     }
   }, [category]);
+
+  // Auto-scroll to selected category
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const layout = categoryLayoutsRef.current[selectedCategory];
+      if (layout && categoryScrollRef.current) {
+        const scrollX = Math.max(0, layout.x - 16);
+        categoryScrollRef.current.scrollTo({ x: scrollX, animated: true });
+      }
+    }, 100); // Small delay to ensure layouts are measured
+    return () => clearTimeout(timer);
+  }, [selectedCategory]);
   const [duas, setDuas] = useState<Dua[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
@@ -55,7 +70,7 @@ export default function DuasScreen() {
   const accentColor = useThemeColor({}, 'accent');
   const borderColor = useThemeColor({}, 'border');
   const cardBorder = useThemeColor({}, 'cardBorder');
-  
+
   // Gradient overlay - adjust opacity based on theme
   const gradientColors = resolvedTheme === 'dark'
     ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
@@ -86,12 +101,12 @@ export default function DuasScreen() {
 
   const determineTimeCategory = async () => {
     if (!location) return;
-    
+
     try {
       const { latitude: lat, longitude: lng } = location.coords;
       const today = new Date();
       const timesStr = await getPrayerTimesAdhan(lat, lng, undefined, undefined, today);
-      
+
       const now = new Date();
       const [fajrH, fajrM] = timesStr.fajr.split(':').map(Number);
       const [dhuhrH, dhuhrM] = timesStr.dhuhr.split(':').map(Number);
@@ -142,12 +157,20 @@ export default function DuasScreen() {
       }
       return newFavorites;
     });
-    
+
     // Reload if we're viewing favorites
     if (selectedCategory === 'favorites') {
       loadDuas();
     }
   };
+
+  const handleAudioToggle = useCallback((isPlaying: boolean, audioUrl: string | null, metadata?: ChinAudioMetadata) => {
+    if (isPlaying && audioUrl) {
+      chin.show(<ChinAudioPlayer audioUrl={audioUrl} metadata={metadata} onClose={chin.hide} />);
+    } else {
+      chin.hide();
+    }
+  }, [chin]);
 
   const handleCategorySelect = (categoryValue: CategoryFilter) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -177,43 +200,65 @@ export default function DuasScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor }]}>
+      <View className="flex-1" style={{ backgroundColor }}>
         <ThemedStatusBar />
-        <ThemedBlurView intensity={20} style={[styles.loadingCard, { borderColor: cardBorder }]}>
-          <Text style={[styles.loadingText, { color: textColor }]}>Loading duas...</Text>
+        <ThemedBlurView
+          intensity={20}
+          className="flex-1 justify-center items-center m-5 p-10 rounded-3xl border"
+          style={{ borderColor: cardBorder, borderCurve: 'continuous' }}
+        >
+          <Text
+            className="text-lg font-tajawal-medium"
+            style={{ color: textColor }}
+          >
+            Loading duas...
+          </Text>
         </ThemedBlurView>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View className="flex-1" style={{ backgroundColor }}>
       <ThemedStatusBar />
       <LinearGradient
         colors={gradientColors}
         style={StyleSheet.absoluteFillObject}
       />
-      
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+
+      <ScrollView contentContainerStyle={{ paddingTop: 60, paddingBottom: 120, paddingHorizontal: 16 }}>
         {/* Header */}
-        <Animated.View entering={FadeInDown.duration(600)} style={styles.header}>
-          <View style={styles.headerRow}>
-            <View style={{ width: 24 }} />
-            <Text style={[styles.headerTitle, { color: textColor, marginBottom: 0 }]}>Duas & Remembrance</Text>
+        <Animated.View entering={FadeInDown.duration(600)} className="items-center mb-6">
+          <View className="flex-row items-center justify-between w-full">
+            <View className="w-6" />
+            <Text
+              className="text-[28px] font-tajawal-bold text-center"
+              style={{ color: textColor }}
+            >
+              Duas & Remembrance
+            </Text>
             <SettingsHeaderButton />
           </View>
           {timeCategory && (
-            <Text style={[styles.timeIndicator, { color: accentColor }]}>
+            <Text
+              className="text-sm font-tajawal-medium mt-1"
+              style={{ color: accentColor }}
+            >
               {timeCategory === 'morning' ? 'Morning' : 'Evening'} Time
             </Text>
           )}
         </Animated.View>
 
         {/* Search Bar */}
-        <Animated.View entering={FadeInUp.delay(100).duration(600)} style={[styles.searchContainer, { borderColor }]}>
-          <ThemedBlurView intensity={25} style={styles.searchBlur}>
+        <Animated.View
+          entering={FadeInUp.delay(100).duration(600)}
+          className="mb-5 rounded-[20px] overflow-hidden border"
+          style={{ borderColor, borderCurve: 'continuous' }}
+        >
+          <ThemedBlurView intensity={25} className="px-4 py-3">
             <TextInput
-              style={[styles.searchInput, { color: textColor }]}
+              className="text-xl p-0 pt-1"
+              style={{ color: textColor, fontFamily: 'Tajawal-Regular', textAlignVertical: 'center', includeFontPadding: false }}
               placeholder="Search duas..."
               placeholderTextColor={textMuted}
               value={searchQuery}
@@ -224,12 +269,12 @@ export default function DuasScreen() {
         </Animated.View>
 
         {/* Category Filter */}
-        <Animated.View entering={FadeInUp.delay(200).duration(600)} style={styles.categoriesContainer}>
+        <Animated.View entering={FadeInUp.delay(200).duration(600)} className="mb-6">
           <ScrollView
             ref={categoryScrollRef}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoriesScroll}
+            contentContainerStyle={{ gap: 12, paddingRight: 20 }}
           >
             {categories.map((cat) => {
               const isActive = selectedCategory === cat.value;
@@ -243,25 +288,24 @@ export default function DuasScreen() {
                       width: e.nativeEvent.layout.width,
                     };
                   }}
-                  style={[
-                    styles.categoryButton,
-                    {
-                      borderColor: isActive ? accentColor : borderColor,
-                      backgroundColor: isActive
-                        ? (resolvedTheme === 'dark' ? 'rgba(212,175,55,0.5)' : 'rgba(212,175,55,0.4)')
-                        : (resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)')
-                    },
-                  ]}
+                  className="px-3 py-3 rounded-[20px] border justify-center items-center"
+                  style={{
+                    borderColor: isActive ? accentColor : borderColor,
+                    backgroundColor: isActive
+                      ? (resolvedTheme === 'dark' ? 'rgba(212,175,55,0.5)' : 'rgba(212,175,55,0.4)')
+                      : (resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)'),
+                    borderCurve: 'continuous',
+                  }}
                   onPress={() => handleCategorySelect(cat.value)}
                 >
                   <Text
-                    style={[
-                      styles.categoryButtonText,
-                      {
-                        color: isActive ? (resolvedTheme === 'dark' ? '#fff' : textColor) : textMuted,
-                        fontFamily: isActive ? 'Tajawal-Bold' : 'Tajawal-Medium',
-                      },
-                    ]}
+                    className="text-base mt-1"
+                    style={{
+                      color: isActive ? (resolvedTheme === 'dark' ? '#fff' : textColor) : textMuted,
+                      fontFamily: isActive ? 'Tajawal-Bold' : 'Tajawal-Medium',
+                      textAlignVertical: 'center',
+                      includeFontPadding: false,
+                    }}
                   >
                     {cat.label}
                   </Text>
@@ -272,11 +316,18 @@ export default function DuasScreen() {
         </Animated.View>
 
         {/* Duas List */}
-        <View style={styles.duasList}>
+        <View className="gap-4">
           {duas.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <ThemedBlurView intensity={25} style={[styles.emptyCard, { borderColor: cardBorder }]}>
-                <Text style={[styles.emptyText, { color: textMuted }]}>
+            <View className="mt-10">
+              <ThemedBlurView
+                intensity={25}
+                className="p-8 rounded-[36px] border items-center overflow-hidden"
+                style={{ borderColor: cardBorder, borderCurve: 'continuous' }}
+              >
+                <Text
+                  className="text-base font-tajawal text-center"
+                  style={{ color: textMuted }}
+                >
                   {searchQuery ? 'No duas found matching your search.' : 'No duas in this category.'}
                 </Text>
               </ThemedBlurView>
@@ -288,6 +339,7 @@ export default function DuasScreen() {
                 dua={dua}
                 isFavorite={favoriteIds.has(dua.id)}
                 onToggleFavorite={handleToggleFavorite}
+                onAudioToggle={handleAudioToggle}
                 index={index}
               />
             ))
@@ -297,123 +349,3 @@ export default function DuasScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 60,
-    paddingBottom: 120,
-    paddingHorizontal: 16,
-  },
-  loadingCard: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 20,
-    padding: 40,
-    borderRadius: 24,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  loadingText: {
-    fontFamily: 'Tajawal-Regular',
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  searchQuranButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 16,
-  },
-  searchQuranText: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontFamily: 'Tajawal-Bold',
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  timeIndicator: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-    marginTop: 4,
-  },
-  searchContainer: {
-    marginBottom: 20,
-    borderRadius: 20,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  searchBlur: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  searchInput: {
-    fontSize: 20,
-    fontFamily: 'Tajawal-Regular',
-    padding: 0,
-    paddingTop: 4,
-    textAlignVertical: 'center',
-    includeFontPadding: false,
-  },
-  categoriesContainer: {
-    marginBottom: 24,
-  },
-  categoriesScroll: {
-    gap: 12,
-    paddingRight: 20,
-  },
-  categoryButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    borderRadius: 20,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryButtonText: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Medium',
-    textAlignVertical: 'center',
-    includeFontPadding: false,
-    marginTop: 4,
-  },
-  duasList: {
-    gap: 16,
-  },
-  emptyContainer: {
-    marginTop: 40,
-  },
-  emptyCard: {
-    padding: 32,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  emptyText: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Regular',
-    textAlign: 'center',
-  },
-});

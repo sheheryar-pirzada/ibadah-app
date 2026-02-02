@@ -11,10 +11,10 @@ import { Overlay } from "./components/overlay";
 import { useImmersiveOverlayStore } from "./store";
 
 export const ImmersiveOverlay = ({
-                                   children,
-                                   allowDismiss,
-                                   onDismiss,
-                                 }: { children: React.ReactNode, allowDismiss: boolean, onDismiss: () => void }) => {
+  children,
+  allowDismiss,
+  onDismiss,
+}: { children: React.ReactNode, allowDismiss: boolean, onDismiss: () => void }) => {
   const { displayImmersiveOverlay } = useImmersiveOverlayStore();
 
   // This give us our 'warp' effect.

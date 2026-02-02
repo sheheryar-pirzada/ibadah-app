@@ -5,7 +5,6 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -16,10 +15,10 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { MonthlyStats, prayerTracker, WeeklyStats } from '@/utils/prayer-tracking';
+import { Image } from 'expo-image';
 
 const PERIOD_OPTIONS = ['This Week', 'This Month'];
 
@@ -38,7 +37,7 @@ export default function AnalyticsScreen() {
   const textColor = useThemeColor({}, 'text');
   const textMuted = useThemeColor({}, 'textMuted');
   const accentColor = useThemeColor({}, 'accent');
-  const cardBackground = useThemeColor({}, 'cardBackground');
+  // const cardBackground = useThemeColor({}, 'cardBackground'); // Unused in original mapping? Using dynamic instead
   const cardBorder = useThemeColor({}, 'cardBorder');
   const borderColor = useThemeColor({}, 'border');
 
@@ -131,52 +130,50 @@ export default function AnalyticsScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor }]}>
-        <BlurView intensity={20} tint={blurTint} style={[styles.loadingCard, { borderColor: cardBorder }]}>
-          <Text style={[styles.loadingText, { color: textColor }]}>Loading analytics...</Text>
+      <View style={{ flex: 1, backgroundColor }}>
+        <BlurView
+          intensity={20}
+          tint={blurTint}
+          style={{ borderColor: cardBorder }}
+          className="flex-1 justify-center items-center m-5 p-10 rounded-[36px] border-[0.5px]"
+        >
+          <Text style={{ fontFamily: 'Tajawal-Regular', color: textColor }} className="text-lg font-medium">Loading analytics...</Text>
         </BlurView>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={{ flex: 1, backgroundColor }}>
       <LinearGradient
         colors={gradientColors}
-        style={StyleSheet.absoluteFillObject}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={[styles.backButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }]}
-          >
-            <IconSymbol name="chevron.left" size={24} color={textColor} />
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: textColor }]}>Analytics</Text>
-          <View style={styles.headerSpacer} />
-        </View>
-
+      <ScrollView
+        contentInsetAdjustmentBehavior='automatic'
+        contentContainerClassName="pt-6 pb-12 px-5"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Period Selector */}
-        <View style={[styles.periodSelector, { borderColor: cardBorder }]}>
-          <BlurView intensity={25} tint={blurTint} style={styles.periodBlur}>
-            <View style={styles.segmentedControl}>
+        <View
+          className="mb-6 rounded-[20px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <BlurView intensity={25} tint={blurTint} className="p-1">
+            <View className="flex-row gap-1">
               {PERIOD_OPTIONS.map((option, index) => {
                 const isSelected = selectedIndex === index;
                 return (
                   <TouchableOpacity
                     key={option}
-                    style={[
-                      styles.segmentButton,
-                      {
-                        backgroundColor: isSelected
-                          ? (isDark ? 'rgba(212,175,55,0.25)' : 'rgba(212,175,55,0.2)')
-                          : 'transparent',
-                        borderColor: isSelected ? accentColor : 'transparent',
-                      },
-                    ]}
+                    className="flex-1 py-3 px-4 rounded-2xl border-[0.5px] items-center justify-center"
+                    style={{
+                      backgroundColor: isSelected
+                        ? (isDark ? 'rgba(212,175,55,0.25)' : 'rgba(212,175,55,0.2)')
+                        : 'transparent',
+                      borderColor: isSelected ? accentColor : 'transparent',
+                    }}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       setSelectedIndex(index);
@@ -184,13 +181,11 @@ export default function AnalyticsScreen() {
                     activeOpacity={0.7}
                   >
                     <Text
-                      style={[
-                        styles.segmentText,
-                        {
-                          color: isSelected ? accentColor : textMuted,
-                          fontFamily: isSelected ? 'Tajawal-Bold' : 'Tajawal-Medium',
-                        },
-                      ]}
+                      className="text-[15px]"
+                      style={{
+                        color: isSelected ? accentColor : textMuted,
+                        fontFamily: isSelected ? 'Tajawal-Bold' : 'Tajawal-Medium',
+                      }}
                     >
                       {option}
                     </Text>
@@ -202,42 +197,45 @@ export default function AnalyticsScreen() {
         </View>
 
         {/* Overall Stats */}
-        <View style={[styles.overallCard, { borderColor: cardBorder }]}>
-          <BlurView intensity={25} tint={blurTint} style={styles.overallBlur}>
-            <Text style={[styles.overallTitle, { color: textColor }]}>
+        <View
+          className="mb-6 rounded-[36px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <BlurView intensity={25} tint={blurTint} className="p-6">
+            <Text className="text-xl font-tajawal-bold mb-5 text-center" style={{ color: textColor }}>
               {selectedPeriod === 'week' ? 'Weekly' : 'Monthly'} Overview
             </Text>
 
             {selectedPeriod === 'week' && weeklyStats && (
-              <View style={styles.overallStats}>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{weeklyStats.completedPrayers}</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Completed</Text>
+              <View className="flex-row justify-around">
+                <View className="items-center">
+                  <Text className="text-3xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{weeklyStats.completedPrayers}</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Completed</Text>
                 </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{weeklyStats.totalPrayers}</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Total</Text>
+                <View className="items-center">
+                  <Text className="text-3xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{weeklyStats.totalPrayers}</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Total</Text>
                 </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{Math.round(weeklyStats.completionRate)}%</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Rate</Text>
+                <View className="items-center">
+                  <Text className="text-3xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{Math.round(weeklyStats.completionRate)}%</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Rate</Text>
                 </View>
               </View>
             )}
 
             {selectedPeriod === 'month' && monthlyStats && (
-              <View style={styles.overallStats}>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{monthlyStats.completedPrayers}</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Completed</Text>
+              <View className="flex-row justify-around">
+                <View className="items-center">
+                  <Text className="text-3xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{monthlyStats.completedPrayers}</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Completed</Text>
                 </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{Math.round(monthlyStats.averageDailyCompletion)}</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Avg/Day</Text>
+                <View className="items-center">
+                  <Text className="text-3xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{Math.round(monthlyStats.averageDailyCompletion)}</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Avg/Day</Text>
                 </View>
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{Math.round(monthlyStats.completionRate)}%</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Rate</Text>
+                <View className="items-center">
+                  <Text className="text-3xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{Math.round(monthlyStats.completionRate)}%</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Rate</Text>
                 </View>
               </View>
             )}
@@ -245,15 +243,21 @@ export default function AnalyticsScreen() {
         </View>
 
         {/* Progress Chart */}
-        <View style={[styles.chartCard, { borderColor: cardBorder }]}>
-          <BlurView intensity={25} tint={blurTint} style={styles.chartBlur}>
-            <Text style={[styles.chartTitle, { color: textColor }]}>Completion Progress</Text>
+        <View
+          className="mb-6 rounded-[36px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <BlurView intensity={25} tint={blurTint} className="p-6">
+            <Text className="text-lg font-tajawal-bold mb-4" style={{ color: textColor }}>Completion Progress</Text>
 
-            <View style={styles.progressContainer}>
-              <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }]}>
-                <Animated.View style={[styles.progressFill, { backgroundColor: accentColor }, animatedChartStyle]} />
+            <View className="mb-4">
+              <View
+                className="h-3 rounded-md overflow-hidden mb-2"
+                style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }}
+              >
+                <Animated.View className="h-full rounded-md" style={[{ backgroundColor: accentColor }, animatedChartStyle]} />
               </View>
-              <Text style={[styles.progressText, { color: textMuted }]}>
+              <Text className="text-sm font-tajawal-medium text-center mt-2.5" style={{ color: textMuted }}>
                 {selectedPeriod === 'week'
                   ? `${weeklyStats?.completionRate.toFixed(1)}% completed this week`
                   : `${monthlyStats?.completionRate.toFixed(1)}% completed this month`
@@ -265,37 +269,41 @@ export default function AnalyticsScreen() {
 
         {/* Daily Breakdown (Weekly) */}
         {selectedPeriod === 'week' && weeklyStats && (
-          <View style={[styles.breakdownCard, { borderColor: cardBorder }]}>
-            <BlurView intensity={25} tint={blurTint} style={styles.breakdownBlur}>
-              <Text style={[styles.breakdownTitle, { color: textColor }]}>Daily Breakdown</Text>
+          <View
+            className="mb-6 rounded-[36px] overflow-hidden border-[0.5px]"
+            style={{ borderColor: cardBorder }}
+          >
+            <BlurView intensity={25} tint={blurTint} className="p-6">
+              <Text className="text-lg font-tajawal-bold mb-4" style={{ color: textColor }}>Daily Breakdown</Text>
 
-              <View style={styles.dailyList}>
+              <View className="gap-3">
                 {weeklyStats.dailyStats.map((day, index) => (
-                  <View key={day.date} style={[
-                    styles.dailyItem,
-                    {
+                  <View key={day.date}
+                    className="flex-row justify-between items-center py-3 px-4 rounded-xl border-[0.5px]"
+                    style={{
                       backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                       borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)'
-                    }
-                  ]}>
-                    <View style={styles.dailyInfo}>
-                      <Text style={[styles.dailyName, { color: textColor }]}>{getDayName(day.date)}</Text>
-                      <Text style={[styles.dailyDate, { color: textMuted }]}>{formatDisplayDate(day.date)}</Text>
+                    }}
+                  >
+                    <View className="flex-1">
+                      <Text className="text-base font-tajawal-bold" style={{ color: textColor }}>{getDayName(day.date)}</Text>
+                      <Text className="text-xs font-tajawal" style={{ color: textMuted }}>{formatDisplayDate(day.date)}</Text>
                     </View>
 
-                    <View style={styles.dailyProgress}>
-                      <View style={[styles.dailyProgressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }]}>
+                    <View className="items-end gap-1">
+                      <View
+                        className="w-20 h-1.5 rounded-full overflow-hidden"
+                        style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }}
+                      >
                         <View
-                          style={[
-                            styles.dailyProgressFill,
-                            {
-                              width: `${day.completionRate}%`,
-                              backgroundColor: accentColor
-                            }
-                          ]}
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${day.completionRate}%`,
+                            backgroundColor: accentColor
+                          }}
                         />
                       </View>
-                      <Text style={[styles.dailyProgressText, { color: textMuted }]}>
+                      <Text className="text-xs font-tajawal-medium" style={{ color: textMuted }}>
                         {day.completedCount}/5
                       </Text>
                     </View>
@@ -308,46 +316,82 @@ export default function AnalyticsScreen() {
 
         {/* Monthly Insights */}
         {selectedPeriod === 'month' && monthlyStats && (
-          <View style={[styles.insightsCard, { borderColor: cardBorder }]}>
-            <BlurView intensity={25} tint={blurTint} style={styles.insightsBlur}>
-              <Text style={[styles.insightsTitle, { color: textColor }]}>Monthly Insights</Text>
+          <View
+            className="rounded-[36px] overflow-hidden border-[0.5px]"
+            style={{ borderColor: cardBorder }}
+          >
+            <BlurView intensity={25} tint={blurTint} className="p-6">
+              <Text className="text-lg font-tajawal-bold mb-4" style={{ color: textColor }}>Monthly Insights</Text>
 
-              <View style={styles.insightsList}>
-                <View style={[
-                  styles.insightItem,
-                  {
+              <View className="gap-3">
+                <View
+                  className="flex-row items-center gap-3 py-3 px-4 rounded-xl border-[0.5px]"
+                  style={{
                     backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                     borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)'
-                  }
-                ]}>
-                  <IconSymbol name="arrow.up.right" size={20} color={accentColor} />
-                  <Text style={[styles.insightText, { color: textColor }]}>
+                  }}
+                >
+                  <Image
+                    source="sf:arrow.up.right"
+                    style={{ width: 20, aspectRatio: 1 }}
+                    sfEffect={{
+                      effect: 'wiggle',
+                      scope: 'by-layer',
+                    }}
+                    transition={{
+                      effect: 'sf:down-up',
+                    }}
+                    tintColor={accentColor}
+                  />
+                  <Text className="text-sm font-tajawal-medium flex-1" style={{ color: textColor }}>
                     Best day: {formatDisplayDate(monthlyStats.bestDay)}
                   </Text>
                 </View>
 
-                <View style={[
-                  styles.insightItem,
-                  {
+                <View
+                  className="flex-row items-center gap-3 py-3 px-4 rounded-xl border-[0.5px]"
+                  style={{
                     backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                     borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)'
-                  }
-                ]}>
-                  <IconSymbol name="arrow.down.right" size={20} color={isDark ? '#ff6b6b' : '#d32f2f'} />
-                  <Text style={[styles.insightText, { color: textColor }]}>
+                  }}
+                >
+                  <Image
+                    source="sf:arrow.down.right"
+                    style={{ width: 20, aspectRatio: 1 }}
+                    sfEffect={{
+                      effect: 'wiggle',
+                      scope: 'by-layer',
+                    }}
+                    transition={{
+                      effect: 'sf:down-up',
+                    }}
+                    tintColor={isDark ? '#ff6b6b' : '#d32f2f'}
+                  />
+                  <Text className="text-sm font-tajawal-medium flex-1" style={{ color: textColor }}>
                     Needs improvement: {formatDisplayDate(monthlyStats.worstDay)}
                   </Text>
                 </View>
 
-                <View style={[
-                  styles.insightItem,
-                  {
+                <View
+                  className="flex-row items-center gap-3 py-3 px-4 rounded-xl border-[0.5px]"
+                  style={{
                     backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                     borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)'
-                  }
-                ]}>
-                  <IconSymbol name="chart.bar.fill" size={20} color={isDark ? '#4fc3f7' : '#0277bd'} />
-                  <Text style={[styles.insightText, { color: textColor }]}>
+                  }}
+                >
+                  <Image
+                    source="sf:chart.bar.fill"
+                    style={{ width: 20, aspectRatio: 1 }}
+                    sfEffect={{
+                      effect: 'breathe',
+                      scope: 'by-layer',
+                    }}
+                    transition={{
+                      effect: 'sf:down-up',
+                    }}
+                    tintColor={isDark ? '#4fc3f7' : '#0277bd'}
+                  />
+                  <Text className="text-sm font-tajawal-medium flex-1" style={{ color: textColor }}>
                     Average: {Math.round(monthlyStats.averageDailyCompletion)} prayers per day
                   </Text>
                 </View>
@@ -359,237 +403,3 @@ export default function AnalyticsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 60,
-    paddingBottom: 120,
-    paddingHorizontal: 20,
-  },
-  loadingCard: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 20,
-    padding: 40,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  loadingText: {
-    fontFamily: 'Tajawal-Regular',
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  backButton: {
-    padding: 8,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 28,
-    fontFamily: 'Tajawal-Bold',
-    textAlign: 'center',
-    marginHorizontal: 16,
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  periodSelector: {
-    marginBottom: 24,
-    borderRadius: 20,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  periodBlur: {
-    padding: 4,
-  },
-  segmentedControl: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  segmentButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  segmentText: {
-    fontSize: 15,
-  },
-  overallCard: {
-    marginBottom: 24,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  overallBlur: {
-    padding: 24,
-  },
-  overallTitle: {
-    fontSize: 20,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  overallStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 28,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Medium',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  chartCard: {
-    marginBottom: 24,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  chartBlur: {
-    padding: 24,
-  },
-  chartTitle: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 16,
-  },
-  progressContainer: {
-    marginBottom: 16,
-  },
-  progressBar: {
-    height: 12,
-    borderRadius: 6,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 6,
-    borderCurve: 'continuous',
-  },
-  progressText: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-    textAlign: 'center',
-    marginTop: 10,
-  },
-  breakdownCard: {
-    marginBottom: 24,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  breakdownBlur: {
-    padding: 24,
-  },
-  breakdownTitle: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 16,
-  },
-  dailyList: {
-    gap: 12,
-  },
-  dailyItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  dailyInfo: {
-    flex: 1,
-  },
-  dailyName: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Bold',
-  },
-  dailyDate: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Regular',
-  },
-  dailyProgress: {
-    alignItems: 'flex-end',
-    gap: 4,
-  },
-  dailyProgressBar: {
-    width: 80,
-    height: 6,
-    borderRadius: 3,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-  },
-  dailyProgressFill: {
-    height: '100%',
-    borderRadius: 3,
-    borderCurve: 'continuous',
-  },
-  dailyProgressText: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Medium',
-  },
-  insightsCard: {
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  insightsBlur: {
-    padding: 24,
-  },
-  insightsTitle: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 16,
-  },
-  insightsList: {
-    gap: 12,
-  },
-  insightItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  insightText: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-    flex: 1,
-  },
-});

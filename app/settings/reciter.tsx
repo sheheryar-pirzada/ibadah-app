@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -71,10 +70,10 @@ export default function ReciterScreen() {
     return (
       <ScrollView
         style={{ flex: 1, backgroundColor }}
-        contentContainerStyle={styles.loadingContainer}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 60 }}
       >
         <ActivityIndicator size="large" color={accentColor} />
-        <Text style={[styles.loadingText, { color: textColor }]}>Loading reciters...</Text>
+        <Text className="text-base font-sans mt-4" style={{ color: textColor }}>Loading reciters...</Text>
       </ScrollView>
     );
   }
@@ -83,11 +82,11 @@ export default function ReciterScreen() {
     return (
       <ScrollView
         style={{ flex: 1, backgroundColor }}
-        contentContainerStyle={styles.errorContainer}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}
       >
-        <Text style={[styles.errorText, { color: textColor }]}>{error}</Text>
-        <Pressable onPress={loadData} style={[styles.retryButton, { backgroundColor: accentColor }]}>
-          <Text style={styles.retryText}>Retry</Text>
+        <Text className="text-base font-sans text-center mb-4" style={{ color: textColor }}>{error}</Text>
+        <Pressable onPress={loadData} className="px-6 py-3 rounded-lg" style={{ backgroundColor: accentColor }}>
+          <Text className="text-base font-tajawal-medium text-white">Retry</Text>
         </Pressable>
       </ScrollView>
     );
@@ -97,15 +96,15 @@ export default function ReciterScreen() {
     // <View style={{ flex: 1, backgroundColor }}>
       <ScrollView
         style={{ flex: 1, backgroundColor }}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ paddingBottom: 40, paddingTop: 24, paddingHorizontal: 24 }}
         showsVerticalScrollIndicator={false}
       >
-          <Text style={[styles.title, { color: textColor }]}>Quran Reciter</Text>
-          <Text style={[styles.subtitle, { color: textMuted }]}>
+          <Text className="text-xl text-center mb-2 font-tajawal-bold" style={{ color: textColor }}>Quran Reciter</Text>
+          <Text className="text-sm text-center mb-6 font-sans" style={{ color: textMuted }}>
             Choose your preferred reciter for Quran audio
           </Text>
 
-          <View style={styles.optionsList}>
+          <View className="mt-2">
             {reciters.map((reciter) => {
               const active = reciter.id === selectedReciterId;
 
@@ -113,9 +112,10 @@ export default function ReciterScreen() {
                 <Pressable
                   key={`${reciter.id}-${reciter.style || 'default'}`}
                   onPress={() => handleReciterChange(reciter)}
+                  className="flex-row justify-between items-center px-5 py-4 rounded-[20px] mb-2"
                   style={[
-                    styles.optionItem,
                     {
+                      borderCurve: 'continuous',
                       opacity: active ? 1 : 0.7,
                       backgroundColor: active
                         ? isDark
@@ -125,12 +125,12 @@ export default function ReciterScreen() {
                     },
                   ]}
                 >
-                  <View style={styles.optionContent}>
-                    <Text style={[styles.optionText, { color: textColor }]}>
+                  <View className="flex-1">
+                    <Text className="text-[17px] font-tajawal-medium" style={{ color: textColor }}>
                       {reciter.reciter_name}
                     </Text>
                     {reciter.style && (
-                      <Text style={[styles.optionStyle, { color: textMuted }]}>
+                      <Text className="text-[13px] font-sans mt-0.5" style={{ color: textMuted }}>
                         {reciter.style}
                       </Text>
                     )}
@@ -146,88 +146,3 @@ export default function ReciterScreen() {
       // </View>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    // padding: 24,
-    paddingBottom: 40,
-    paddingTop: 24,
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 8,
-    fontFamily: 'Tajawal-Bold',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 24,
-    fontFamily: 'Tajawal-Regular',
-  },
-  optionsList: {
-    marginTop: 8,
-  },
-  optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderRadius: 20,
-    marginBottom: 8,
-    borderCurve: 'continuous',
-  },
-  optionContent: {
-    flex: 1,
-  },
-  optionText: {
-    fontSize: 17,
-    fontFamily: 'Tajawal-Medium',
-  },
-  optionStyle: {
-    fontSize: 13,
-    fontFamily: 'Tajawal-Regular',
-    marginTop: 2,
-  },
-  checkmark: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginLeft: 12,
-  },
-  loadingContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  loadingText: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Regular',
-    marginTop: 16,
-  },
-  errorContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Regular',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Tajawal-Medium',
-  },
-});

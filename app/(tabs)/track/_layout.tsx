@@ -22,7 +22,7 @@ export default function TrackLayout() {
         headerBackground: Platform.select({
           ios: () => (
             <BlurView
-              style={{ flex: 1 }}
+              className="flex-1"
               tint={Colors[colorScheme].blurTint}
             />
           ),
@@ -41,6 +41,14 @@ export default function TrackLayout() {
       <Stack.Screen
         name="analytics"
         options={{
+          headerTitle: 'Analytics',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="tasbeeh"
+        options={{
+          headerTitle: 'Tasbeeh',
           animation: 'slide_from_right',
         }}
       />

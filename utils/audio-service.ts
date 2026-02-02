@@ -1,6 +1,20 @@
 // utils/audio-service.ts
-import { useAudioPlayer, useAudioPlayerStatus, AudioPlayer } from 'expo-audio';
-import { useState } from 'react';
+import { AudioPlayer, setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import { useEffect, useState } from 'react';
+
+/**
+ * Configure audio mode for background playback
+ * Call this once at app startup
+ */
+export async function configureAudioMode(): Promise<void> {
+  try {
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+    });
+  } catch (error) {
+    console.error('Error configuring audio mode:', error);
+  }
+}
 
 export interface AudioStatus {
   isLoaded: boolean;
@@ -37,32 +51,65 @@ export function formatDuration(ms: number): string {
  * Custom hook for audio playback using expo-audio
  */
 export function useQuranAudio(audioUrl: string | null) {
-  const player = useAudioPlayer(audioUrl || '');
+  const player = useAudioPlayer(audioUrl || '', { updateInterval: 100 });
   const status = useAudioPlayerStatus(player);
   const [currentRate, setCurrentRate] = useState<PlaybackRate>(1);
 
-  const play = () => {
+  // Handle dynamic URL changes using replace() for smoother transitions
+  useEffect(() => {
     if (audioUrl) {
-      player.play();
+      console.log('AudioService: URL changed, replacing source:', audioUrl);
+      const wasPlaying = player.playing;
+      player.replace(audioUrl);
+      if (wasPlaying) {
+        player.play();
+      }
+    }
+  }, [audioUrl]);
+
+  const play = () => {
+    try {
+      if (audioUrl || status.duration > 0) {
+        console.log('AudioService: Playing', audioUrl || 'current buffer');
+        player.play();
+      }
+    } catch (e) {
+      console.warn('AudioService: Failed to play', e);
     }
   };
 
   const pause = () => {
-    player.pause();
+    try {
+      player.pause();
+    } catch (e) {
+      // Ignore native disposal errors
+    }
   };
 
   const stop = () => {
-    player.pause();
-    player.seekTo(0);
+    try {
+      player.pause();
+      player.seekTo(0);
+    } catch (e) {
+      // Ignore native disposal errors
+    }
   };
 
   const seekTo = (positionMs: number) => {
-    player.seekTo(positionMs / 1000); // expo-audio uses seconds
+    try {
+      player.seekTo(positionMs / 1000); // expo-audio uses seconds
+    } catch (e) {
+      // Ignore native disposal errors
+    }
   };
 
   const setPlaybackRate = (rate: PlaybackRate) => {
-    setCurrentRate(rate);
-    player.setPlaybackRate(rate);
+    try {
+      setCurrentRate(rate);
+      player.setPlaybackRate(rate);
+    } catch (e) {
+      // Ignore
+    }
   };
 
   const togglePlayPause = () => {

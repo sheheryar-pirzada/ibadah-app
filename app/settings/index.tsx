@@ -2,11 +2,10 @@ import * as Haptics from 'expo-haptics';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  Pressable,
   ScrollView,
-  StyleSheet,
   Switch,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -18,6 +17,7 @@ import {
   getNotificationSettings,
   updateDuaToggle,
   updateNotificationEnabled,
+  updateRemindersEnabled,
 } from '@/utils/notification-settings';
 import {
   getCalculationMethodOptions,
@@ -30,17 +30,20 @@ import {
   getReciterDisplayName,
   getReciterSettings,
 } from '@/utils/reciter-settings';
+import { useHadithSettings } from '@/utils/hadith-settings';
 
 export default function SettingsScreen() {
   const { themeMode, setThemeMode, resolvedTheme } = useTheme();
   const { loc } = useLocation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [duasEnabled, setDuasEnabled] = useState(true);
+  const [remindersEnabled, setRemindersEnabled] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
   const [calculationMethod, setCalculationMethod] = useState<CalculationMethodKey>('MuslimWorldLeague');
   const [madhab, setMadhab] = useState<MadhabKey>('Shafi');
   const [reciterName, setReciterName] = useState<string>("Mishari Rashid al-`Afasy");
   const [reciterStyle, setReciterStyle] = useState<string | null>(null);
+  const { selectedBook: selectedHadithBook } = useHadithSettings();
 
   const backgroundColor = useThemeColor({}, 'background');
   const cardBackground = useThemeColor({}, 'cardBackground');
@@ -53,7 +56,6 @@ export default function SettingsScreen() {
   const trackColorTrue = resolvedTheme === 'dark' ? accentColor : accentColor;
 
   const isDarkMode = resolvedTheme === 'dark';
-  const isDarkModeOn = themeMode === 'dark';
   const isSystemMode = themeMode === 'system';
 
   useEffect(() => {
@@ -76,6 +78,7 @@ export default function SettingsScreen() {
       const notificationSettings = await getNotificationSettings();
       setNotificationsEnabled(notificationSettings.enabled);
       setDuasEnabled(notificationSettings.duas);
+      setRemindersEnabled(notificationSettings.reminders?.enabled ?? false);
 
       const permissionStatus = await notificationService.hasPermissions();
       setHasPermission(permissionStatus);
@@ -103,7 +106,7 @@ export default function SettingsScreen() {
   const handleNotificationToggle = async (value: boolean) => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      
+
       if (value) {
         // Request permissions first
         const granted = await notificationService.requestPermissions();
@@ -146,6 +149,22 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleRemindersToggle = async (value: boolean) => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      await updateRemindersEnabled(value);
+      setRemindersEnabled(value);
+
+      // Reschedule notifications if master toggle is on and location available
+      if (notificationsEnabled && loc) {
+        const { latitude, longitude } = loc.coords;
+        await notificationService.rescheduleAll(latitude, longitude);
+      }
+    } catch (error) {
+      console.error('Error toggling reminder notifications:', error);
+    }
+  };
+
   const handleDebugPrayerNotification = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -157,14 +176,25 @@ export default function SettingsScreen() {
 
   return (
     <>
-      {/* <ThemedStatusBar /> */}
-      <ScrollView contentInsetAdjustmentBehavior='automatic' style={[styles.container, { backgroundColor }]} contentContainerStyle={[styles.scrollContent]}>
-      <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Text style={[styles.settingLabel, { color: textColor }]}>Dark Mode</Text>
+      <ScrollView
+        contentInsetAdjustmentBehavior='automatic'
+        className="flex-1"
+        style={{ backgroundColor }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30, paddingTop: 24 }}
+      >
+        <View
+          className="rounded-3xl mb-4 overflow-hidden"
+          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
+        >
+          <View className="flex-row justify-between items-center px-5 py-4">
+            <View className="flex-1 justify-center">
+              <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                Dark Mode
+              </Text>
               {isSystemMode && (
-                <Text style={[styles.settingSubLabel, { color: textMuted }]}>Using system</Text>
+                <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                  Using system
+                </Text>
               )}
             </View>
             <Switch
@@ -175,13 +205,20 @@ export default function SettingsScreen() {
             />
           </View>
         </View>
-        
-        <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Text style={[styles.settingLabel, { color: textColor }]}>Prayer Notifications</Text>
+
+        <View
+          className="rounded-3xl mb-4 overflow-hidden"
+          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
+        >
+          <View className="flex-row justify-between items-center px-5 py-4">
+            <View className="flex-1 justify-center">
+              <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                Prayer Notifications
+              </Text>
               {!hasPermission && notificationsEnabled && (
-                <Text style={[styles.settingSubLabel, { color: textMuted }]}>Permission required</Text>
+                <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                  Permission required
+                </Text>
               )}
             </View>
             <Switch
@@ -194,30 +231,58 @@ export default function SettingsScreen() {
 
           {notificationsEnabled && (
             <>
-              <View style={[styles.separator, { backgroundColor: cardBorder }]} />
+              <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
               <Link href="/settings/prayer-notifications" asChild>
-                <TouchableOpacity 
-                  style={styles.settingRow}
+                <Pressable
+                  className="flex-row justify-between items-center px-5 py-4"
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   }}
                 >
-                  <View style={styles.settingLabelContainer}>
-                    <Text style={[styles.settingLabel, { color: textColor }]}>Select Prayers</Text>
-                    <Text style={[styles.settingSubLabel, { color: accentColor }]}>Choose which prayers to notify</Text>
+                  <View className="flex-1 justify-center">
+                    <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                      Select Prayers
+                    </Text>
+                    <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                      Choose which prayers to notify
+                    </Text>
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               </Link>
+              <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
+              <View className="flex-row justify-between items-center px-5 py-4">
+                <View className="flex-1 justify-center">
+                  <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                    Prayer Time Reminders
+                  </Text>
+                  <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                    Alert 15 min before prayer time ends
+                  </Text>
+                </View>
+                <Switch
+                  value={remindersEnabled}
+                  onValueChange={handleRemindersToggle}
+                  trackColor={{ false: trackColorFalse, true: trackColorTrue }}
+                  thumbColor={remindersEnabled ? '#ffffff' : resolvedTheme === 'dark' ? 'rgba(255,255,255,0.9)' : '#f4f3f4'}
+                />
+              </View>
             </>
           )}
         </View>
 
         {notificationsEnabled && (
-          <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
-            <View style={styles.settingRow}>
-              <View style={styles.settingLabelContainer}>
-                <Text style={[styles.settingLabel, { color: textColor }]}>Dua Notifications</Text>
-                <Text style={[styles.settingSubLabel, { color: textMuted }]}>Morning and evening reminders</Text>
+          <View
+            className="rounded-3xl mb-4 overflow-hidden"
+            style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
+          >
+            <View className="flex-row justify-between items-center px-5 py-4">
+              <View className="flex-1 justify-center">
+                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                  Dua Notifications
+                </Text>
+                <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                  Morning and evening reminders
+                </Text>
               </View>
               <Switch
                 value={duasEnabled}
@@ -229,140 +294,92 @@ export default function SettingsScreen() {
           </View>
         )}
 
-        <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
+        <View
+          className="rounded-3xl mb-4 overflow-hidden"
+          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
+        >
           <Link href="/settings/calculation-method" asChild>
-            <TouchableOpacity 
-              style={styles.settingRow}
+            <Pressable
+              className="flex-row justify-between items-center px-5 py-4"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <View style={styles.settingLabelContainer}>
-                <Text style={[styles.settingLabel, { color: textColor }]}>Calculation Method</Text>
-                <Text style={[styles.settingSubLabel, { color: accentColor }]}>
+              <View className="flex-1 justify-center">
+                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                  Calculation Method
+                </Text>
+                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
                   {getCalculationMethodOptions().find(opt => opt.key === calculationMethod)?.name || calculationMethod}
                 </Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </Link>
 
-          <View style={[styles.separator, { backgroundColor: cardBorder }]} />
+          <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
 
           <Link href="/settings/madhab" asChild>
-            <TouchableOpacity
-              style={styles.settingRow}
+            <Pressable
+              className="flex-row justify-between items-center px-5 py-4"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <View style={styles.settingLabelContainer}>
-                <Text style={[styles.settingLabel, { color: textColor }]}>Madhab</Text>
-                <Text style={[styles.settingSubLabel, { color: accentColor }]}>
+              <View className="flex-1 justify-center">
+                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                  Madhab
+                </Text>
+                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
                   {getMadhabOptions().find(opt => opt.key === madhab)?.name || madhab}
                 </Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </Link>
         </View>
 
-        <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
+        <View
+          className="rounded-3xl mb-4 overflow-hidden"
+          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
+        >
           <Link href="/settings/reciter" asChild>
-            <TouchableOpacity
-              style={styles.settingRow}
+            <Pressable
+              className="flex-row justify-between items-center px-5 py-4"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <View style={styles.settingLabelContainer}>
-                <Text style={[styles.settingLabel, { color: textColor }]}>Quran Reciter</Text>
-                <Text style={[styles.settingSubLabel, { color: accentColor }]}>
+              <View className="flex-1 justify-center">
+                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                  Quran Reciter
+                </Text>
+                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
                   {getReciterDisplayName(reciterName, reciterStyle)}
                 </Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
+          </Link>
+
+          <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
+
+          <Link href="/settings/hadith-book" asChild>
+            <Pressable
+              className="flex-row justify-between items-center px-5 py-4"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <View className="flex-1 justify-center">
+                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                  Default Hadith Book
+                </Text>
+                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                  {selectedHadithBook?.bookName ?? 'Not selected'}
+                </Text>
+              </View>
+            </Pressable>
           </Link>
         </View>
-
-        {/* Debug section */}
-        {/* <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabelContainer}>
-              <Text style={[styles.settingLabel, { color: textColor }]}>Debug</Text>
-              <Text style={[styles.settingSubLabel, { color: textMuted }]}>
-                Tools for testing notifications
-              </Text>
-            </View>
-          </View>
-          <View style={[styles.separator, { backgroundColor: cardBorder }]} />
-          <TouchableOpacity 
-            style={styles.settingRow}
-            onPress={handleDebugPrayerNotification}
-          >
-            <View style={styles.settingLabelContainer}>
-              <Text style={[styles.settingLabel, { color: textColor }]}>
-                Prayer notifications
-              </Text>
-              <Text style={[styles.settingSubLabel, { color: accentColor }]}>
-                Scheduled (10 s)
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View> */}
       </ScrollView>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 30,
-    paddingTop: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 30,
-  },
-  card: {
-    borderRadius: 24,
-    borderCurve: 'continuous',
-    marginBottom: 16,
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderCurve: 'continuous',
-  },
-  settingLabelContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  settingLabel: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Medium',
-  },
-  settingSubLabel: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Regular',
-    marginTop: 2,
-  },
-  settingValue: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Medium',
-  },
-  separator: {
-    height: 1,
-    marginHorizontal: 20,
-    opacity: 0.3,
-  },
-});

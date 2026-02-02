@@ -107,14 +107,15 @@ export default function ShareModal({ visible, onClose, content }: ShareModalProp
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <View style={styles.backdrop}>
+      <View className="flex-1 justify-center items-center">
         <ThemedBlurView intensity={80} style={StyleSheet.absoluteFill} />
 
         {/* Close button */}
         {!hideControls && (
           <Pressable
             onPress={handleClose}
-            style={[styles.closeButton, { top: insets.top, right: 16 }]}
+            className="absolute right-4 z-10"
+            style={{ top: insets.top }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <IconSymbol name="xmark.circle.fill" size={32} color={String(textMuted)} />
@@ -122,42 +123,81 @@ export default function ShareModal({ visible, onClose, content }: ShareModalProp
         )}
 
         {/* Content card */}
-        <View style={styles.contentContainer}>
-          <View style={[styles.card, { borderColor: cardBorder }]}>
-            <ThemedBlurView intensity={40} style={styles.cardBlur}>
+        <View style={{ width: SCREEN_WIDTH - 48, maxWidth: 400 }}>
+          <View
+            className="rounded-[32px] overflow-hidden"
+            style={{ borderColor: cardBorder, borderWidth: 0.5, borderCurve: "continuous" }}
+          >
+            <ThemedBlurView intensity={40} className="p-6">
               {content.title && (
-                <Text style={[styles.title, { color: textColor, fontSize: 20 * fontScale }]}>{content.title}</Text>
+                <Text
+                  className="font-tajawal-bold mb-4 text-center"
+                  style={{ color: textColor, fontSize: 20 * fontScale }}
+                >
+                  {content.title}
+                </Text>
               )}
 
-              <View style={[styles.arabicContainer, { paddingVertical: 12 * fontScale }]}>
-                <Text style={[styles.arabicText, { color: textColor, fontSize: 28 * fontScale, lineHeight: 48 * fontScale }]}>{content.arabic}</Text>
+              <View className="mb-4" style={{ paddingVertical: 12 * fontScale }}>
+                <Text
+                  className="font-amiri text-center"
+                  style={{ color: textColor, fontSize: 28 * fontScale, lineHeight: 48 * fontScale }}
+                >
+                  {content.arabic}
+                </Text>
               </View>
 
               {content.transliteration && (
-                <View style={[styles.transliterationContainer, { borderTopColor: dividerColor }]}>
-                  <Text style={[styles.transliterationText, { color: textSecondary, fontSize: 14 * fontScale, lineHeight: 22 * fontScale }]}>
+                <View
+                  className="mb-3 pt-3 border-t"
+                  style={{ borderTopColor: dividerColor }}
+                >
+                  <Text
+                    className="font-tajawal italic text-center"
+                    style={{ color: textSecondary, fontSize: 14 * fontScale, lineHeight: 22 * fontScale }}
+                  >
                     {content.transliteration}
                   </Text>
                 </View>
               )}
 
-              <View style={[styles.translationContainer, { borderTopColor: dividerColor }]}>
-                <Text style={[styles.translationText, { color: textSecondary, fontSize: 16 * fontScale, lineHeight: 24 * fontScale }]}>
+              <View
+                className="pt-3 border-t"
+                style={{ borderTopColor: dividerColor }}
+              >
+                <Text
+                  className="font-tajawal text-center"
+                  style={{ color: textSecondary, fontSize: 16 * fontScale, lineHeight: 24 * fontScale }}
+                >
                   {content.translation}
                 </Text>
               </View>
 
               {content.reference && (
-                <Text style={[styles.reference, { color: accentColor }]}>{content.reference}</Text>
+                <Text
+                  className="text-[13px] font-tajawal-medium mt-4 text-center"
+                  style={{ color: accentColor }}
+                >
+                  {content.reference}
+                </Text>
               )}
 
               {/* Branding */}
-              <View style={[styles.branding, { borderTopColor: dividerColor }]}>
+              <View
+                className="mt-5 pt-4 border-t flex-row items-center justify-center gap-2"
+                style={{ borderTopColor: dividerColor }}
+              >
                 <Image
                   source={require('@/assets/images/icon.png')}
-                  style={styles.brandingIcon}
+                  className="w-7 h-7 rounded-xl"
+                  style={{ borderCurve: "continuous" }}
                 />
-                <Text style={[styles.brandingText, { color: textMuted }]}>Ibadah</Text>
+                <Text
+                  className="text-sm font-tajawal-bold tracking-widest uppercase mt-1"
+                  style={{ color: textMuted }}
+                >
+                  Ibadah
+                </Text>
               </View>
             </ThemedBlurView>
           </View>
@@ -168,126 +208,16 @@ export default function ShareModal({ visible, onClose, content }: ShareModalProp
           <Pressable
             onPress={handleCapture}
             disabled={isCapturing}
+            className="absolute flex-row items-center gap-2 px-8 py-4 rounded-full"
             style={[
-              styles.shareButton,
-              { backgroundColor: 'transparent', bottom: insets.bottom + 32 },
-              isCapturing && styles.shareButtonDisabled,
+              { bottom: insets.bottom + 32 },
+              isCapturing && { opacity: 0.6 },
             ]}
           >
             <IconSymbol name="square.and.arrow.up" size={38} color={textColor} />
-            {/* <Text style={styles.shareButtonText}>{isCapturing ? "Capturing..." : "Share"}</Text> */}
           </Pressable>
         )}
       </View>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  closeButton: {
-    position: "absolute",
-    right: 16,
-    zIndex: 10,
-  },
-  contentContainer: {
-    width: SCREEN_WIDTH - 48,
-    maxWidth: 400,
-  },
-  card: {
-    borderRadius: 32,
-    borderCurve: "continuous",
-    overflow: "hidden",
-    borderWidth: 0.5,
-  },
-  cardBlur: {
-    padding: 24,
-  },
-  title: {
-    fontSize: 20,
-    fontFamily: "Tajawal-Bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  arabicContainer: {
-    marginBottom: 16,
-    paddingVertical: 12,
-  },
-  arabicText: {
-    fontSize: 28,
-    fontFamily: "Amiri-Regular",
-    textAlign: "center",
-    lineHeight: 48,
-  },
-  transliterationContainer: {
-    marginBottom: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-  },
-  transliterationText: {
-    fontSize: 14,
-    fontFamily: "Tajawal-Regular",
-    fontStyle: "italic",
-    lineHeight: 22,
-    textAlign: "center",
-  },
-  translationContainer: {
-    paddingTop: 12,
-    borderTopWidth: 1,
-  },
-  translationText: {
-    fontSize: 16,
-    fontFamily: "Tajawal-Regular",
-    lineHeight: 24,
-    textAlign: "center",
-  },
-  reference: {
-    fontSize: 13,
-    fontFamily: "Tajawal-Medium",
-    marginTop: 16,
-    textAlign: "center",
-  },
-  branding: {
-    marginTop: 20,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  brandingIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 12,
-    borderCurve: "continuous",
-  },
-  brandingText: {
-    fontSize: 14,
-    fontFamily: "Tajawal-Bold",
-    letterSpacing: 2,
-    textTransform: "uppercase",
-    marginTop: 4,
-  },
-  shareButton: {
-    position: "absolute",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 50,
-  },
-  shareButtonDisabled: {
-    opacity: 0.6,
-  },
-  shareButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontFamily: "Tajawal-Bold",
-  },
-});

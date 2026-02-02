@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
-  StyleSheet,
   Switch,
   Text,
   View
@@ -79,26 +78,27 @@ export default function PrayerNotificationsScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor }}
-      contentContainerStyle={styles.scrollContent}
+      className="px-6 pt-6 pb-10"
       showsVerticalScrollIndicator={false}
     >
-      <Text style={[styles.title, { color: textColor }]}>
+      <Text className="text-xl text-center mb-2 font-tajawal-bold" style={{ color: textColor }}>
         Select Prayers
       </Text>
 
-      <Text style={[styles.subtitle, { color: textMuted }]}>
+      <Text className="text-sm text-center mb-6 font-sans" style={{ color: textMuted }}>
         Choose which prayers you want to be notified about
       </Text>
 
-      <View style={styles.optionsList}>
+      <View className="mt-2">
         {PRAYER_OPTIONS.map((prayer) => {
           const isEnabled = prayerSettings[prayer.key];
           return (
             <View
               key={prayer.key}
+              className="flex-row justify-between items-center px-5 py-4 rounded-[20px] mb-2"
               style={[
-                styles.optionItem,
                 {
+                  borderCurve: 'continuous',
                   backgroundColor: isEnabled
                     ? isDark
                       ? 'rgba(212,175,55,0.15)'
@@ -107,11 +107,11 @@ export default function PrayerNotificationsScreen() {
                 },
               ]}
             >
-              <View style={styles.optionContent}>
-                <Text style={[styles.optionText, { color: textColor }]}>
+              <View className="flex-1">
+                <Text className="text-[17px] font-tajawal-medium" style={{ color: textColor }}>
                   {prayer.name}
                 </Text>
-                <Text style={[styles.optionStyle, { color: textMuted }]}>
+                <Text className="text-[13px] font-sans mt-0.5" style={{ color: textMuted }}>
                   {prayer.description}
                 </Text>
               </View>
@@ -131,49 +131,3 @@ export default function PrayerNotificationsScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    paddingBottom: 40,
-    paddingTop: 24,
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 8,
-    fontFamily: 'Tajawal-Bold',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 24,
-    fontFamily: 'Tajawal-Regular',
-  },
-  optionsList: {
-    marginTop: 8,
-  },
-  optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderRadius: 20,
-    marginBottom: 8,
-    borderCurve: 'continuous',
-  },
-  optionContent: {
-    flex: 1,
-  },
-  optionText: {
-    fontSize: 17,
-    fontFamily: 'Tajawal-Medium',
-  },
-  optionStyle: {
-    fontSize: 13,
-    fontFamily: 'Tajawal-Regular',
-    marginTop: 2,
-  },
-});

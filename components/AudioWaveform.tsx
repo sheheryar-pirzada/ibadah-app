@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Animated, {
   Easing,
   cancelAnimation,
@@ -143,8 +143,12 @@ export default function SmoothGeneratedWave({
   });
 
   return (
-    <View style={[styles.container, { width, height }]}>
-      <Svg width={width} height={height} style={StyleSheet.absoluteFill}>
+    <View className="overflow-hidden" style={{ width, height }}>
+      <Svg
+        width={width}
+        height={height}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+      >
         <AnimatedPath
           animatedProps={inactiveProps}
           stroke={inactiveColor}
@@ -166,7 +170,3 @@ export default function SmoothGeneratedWave({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { overflow: 'hidden' },
-});

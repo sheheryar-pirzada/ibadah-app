@@ -49,9 +49,9 @@ export function useImmersiveOverlay() {
   /*** The function that allows us to add custom components, colors, and display our overlay.*/
   const immerse = useCallback(
     ({
-       component,
-       colors,
-     }: {
+      component,
+      colors,
+    }: {
       component?: React.ReactNode;
       colors?: typeof DEFAULT_COLORS;
     } = {}) => {

@@ -9,10 +9,40 @@ export interface ImmersiveColors {
   };
 }
 
+/** Single rakat type for display (label + count). */
+export interface RakatItem {
+  label: string;
+  count: number;
+  /** 'fard' | 'sunnah' | 'nafl' | 'witr' for optional styling (red/green/blue) */
+  type: 'fard' | 'sunnah' | 'nafl' | 'witr';
+}
+
 export interface RakatInfo {
+  /** Sunnat Muakkadah before Fard */
+  sunnahBefore: number;
+  /** Farz (obligatory) */
   fard: number;
-  sunnah: number;
+  /** Sunnat after Fard (e.g. 2 after Dhuhr/Maghrib/Isha) */
+  sunnahAfter: number;
+  /** Nafl before Witr (or only Nafl for non-Isha) */
   nafl: number;
+  /** Witr (Waajib) – Isha only, 3 */
+  witr: number;
+  /** Nafl after Witr – Isha only, 2 */
+  naflAfter: number;
+}
+
+/** Ordered list of rakat items to show (count > 0). Matches table: Sunnat, Farz, Sunnat, Nafl, Witr, Nafl. */
+export function getRakatItems(key: PrayerKey): RakatItem[] {
+  const r = getRakats(key);
+  const items: RakatItem[] = [];
+  if (r.sunnahBefore > 0) items.push({ label: 'Sunnat', count: r.sunnahBefore, type: 'sunnah' });
+  if (r.fard > 0) items.push({ label: 'Farz', count: r.fard, type: 'fard' });
+  if (r.sunnahAfter > 0) items.push({ label: 'Sunnat', count: r.sunnahAfter, type: 'sunnah' });
+  if (r.nafl > 0) items.push({ label: 'Nafl', count: r.nafl, type: 'nafl' });
+  if (r.witr > 0) items.push({ label: 'Witr', count: r.witr, type: 'witr' });
+  if (r.naflAfter > 0) items.push({ label: 'Nafl', count: r.naflAfter, type: 'nafl' });
+  return items;
 }
 
 /**
@@ -102,24 +132,26 @@ export function getPrayerName(key: PrayerKey): string {
 }
 
 /**
- * Get rakat information for a prayer
+ * Get rakat information for a prayer (Table of Prayer Rakats).
+ * Fajr: 2 Sunnat + 2 Farz = 4. Dhuhr: 4+4+2+2 = 12. Asr: 4+4 = 8.
+ * Maghrib: 3+2+2 = 7. Isha: 4+4+2+2+3+2 = 17.
  */
 export function getRakats(key: PrayerKey): RakatInfo {
   switch (key) {
     case 'fajr':
-      return { fard: 2, sunnah: 2, nafl: 0 };
+      return { sunnahBefore: 2, fard: 2, sunnahAfter: 0, nafl: 0, witr: 0, naflAfter: 0 };
     case 'dhuhr':
-      return { fard: 4, sunnah: 4, nafl: 2 };
+      return { sunnahBefore: 4, fard: 4, sunnahAfter: 2, nafl: 2, witr: 0, naflAfter: 0 };
     case 'asr':
-      return { fard: 4, sunnah: 0, nafl: 2 };
+      return { sunnahBefore: 4, fard: 4, sunnahAfter: 0, nafl: 0, witr: 0, naflAfter: 0 };
     case 'maghrib':
-      return { fard: 3, sunnah: 0, nafl: 2 };
+      return { sunnahBefore: 0, fard: 3, sunnahAfter: 2, nafl: 2, witr: 0, naflAfter: 0 };
     case 'isha':
-      return { fard: 4, sunnah: 2, nafl: 2 };
+      return { sunnahBefore: 4, fard: 4, sunnahAfter: 2, nafl: 2, witr: 3, naflAfter: 2 };
     case 'sunrise':
-      return { fard: 0, sunnah: 0, nafl: 0 };
+      return { sunnahBefore: 0, fard: 0, sunnahAfter: 0, nafl: 0, witr: 0, naflAfter: 0 };
     default:
-      return { fard: 0, sunnah: 0, nafl: 0 };
+      return { sunnahBefore: 0, fard: 0, sunnahAfter: 0, nafl: 0, witr: 0, naflAfter: 0 };
   }
 }
 
@@ -133,7 +165,7 @@ export function getPrayerDescription(key: PrayerKey): string {
     dhuhr: "Dhuhr is the midday prayer after the sun passes its zenith. It consists of 4 obligatory rakats, 4 Sunnah before, 2 Sunnah after, and additional voluntary nawafil prayers.",
     asr: "Asr is the late afternoon prayer. It has 4 obligatory rakats and follows with voluntary nawafil prayers for extra blessings.",
     maghrib: "Maghrib is the sunset prayer performed just after sunset. It includes 3 obligatory rakats and voluntary nawafil prayers.",
-    isha: "Isha is the night prayer after twilight disappears. It consists of 4 obligatory rakats, 2 Sunnah mu'akkadah rakats, and voluntary nawafil prayers.",
+    isha: "Isha is the night prayer after twilight disappears. It consists of 4 Sunnat mu'akkadah, 4 Farz, 2 Sunnat, 2 Nafl, 3 Witr (Waajib), and 2 Nafl—17 rakats in total.",
   };
   return descriptions[key];
 }

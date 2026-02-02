@@ -5,6 +5,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useArabicAudio } from '@/utils/arabic-audio';
 import { getLessonById } from '@/utils/arabic-lessons-data';
 import { arabicProgress } from '@/utils/arabic-progress';
+import { useInterstitialAd } from '@/utils/interstitial-ad';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
@@ -13,7 +14,6 @@ import {
   ActivityIndicator,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -27,6 +27,7 @@ export default function LessonDetailScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showWordBreakdown, setShowWordBreakdown] = useState(false);
   const { playArabic, isPlaying, isBuffering } = useArabicAudio();
+  const { showAdIfReady } = useInterstitialAd();
 
   const lesson = getLessonById(id);
 
@@ -57,8 +58,8 @@ export default function LessonDetailScreen() {
 
   if (!lesson) {
     return (
-      <View style={[styles.container, { backgroundColor }]}>
-        <Text style={[styles.errorText, { color: textColor }]}>
+      <View className="flex-1" style={{ backgroundColor }}>
+        <Text className="text-lg font-tajawal-medium text-center mt-10" style={{ color: textColor }}>
           Lesson not found
         </Text>
       </View>
@@ -69,11 +70,12 @@ export default function LessonDetailScreen() {
   const isLastItem = currentIndex === lesson.content.length - 1;
   const isFirstItem = currentIndex === 0;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     Haptics.selectionAsync();
     if (isLastItem) {
       handleComplete();
     } else {
+      await showAdIfReady();
       setCurrentIndex((prev) => prev + 1);
       setShowWordBreakdown(false);
     }
@@ -111,44 +113,45 @@ export default function LessonDetailScreen() {
         }}
       />
 
-      <View style={[styles.container, { backgroundColor }]}>
+      <View className="flex-1" style={{ backgroundColor }}>
         <LinearGradient
           colors={gradientColors}
-          style={StyleSheet.absoluteFillObject}
+          className="absolute inset-0"
         />
 
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
-          contentContainerStyle={styles.scrollContent}
+          contentContainerClassName="pt-4 px-4 pb-[180px]"
           showsVerticalScrollIndicator={false}
         >
           {/* Progress Indicator */}
-          <Animated.View entering={FadeInDown.duration(500)} style={styles.progressSection}>
-            <View style={styles.progressHeader}>
-              <Text style={[styles.progressText, { color: textMuted }]}>
+          <Animated.View entering={FadeInDown.duration(500)} className="mb-6">
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-sm font-tajawal-medium" style={{ color: textMuted }}>
                 {currentIndex + 1} of {lesson.content.length}
               </Text>
-              <View style={[styles.levelBadge, {
+              <View className="px-2.5 pt-1.5 pb-1 rounded-xl" style={{
                 backgroundColor: lesson.level === 'beginner' ? 'rgba(34, 197, 94, 0.2)'
                   : lesson.level === 'intermediate' ? 'rgba(234, 179, 8, 0.2)'
                   : 'rgba(239, 68, 68, 0.2)',
-              }]}>
-                <Text style={[styles.levelText, {
+              }}>
+                <Text className="text-sm font-tajawal-medium capitalize" style={{
                   color: lesson.level === 'beginner' ? '#22c55e'
                     : lesson.level === 'intermediate' ? '#eab308'
                     : '#ef4444',
-                }]}>
+                }}>
                   {lesson.level}
                 </Text>
               </View>
             </View>
-            <View style={styles.progressBar}>
+            <View className="h-1 overflow-hidden rounded" style={{ backgroundColor: 'rgba(128, 128, 128, 0.2)' }}>
               <View
                 style={[
-                  styles.progressFill,
                   {
                     width: `${((currentIndex + 1) / lesson.content.length) * 100}%`,
                     backgroundColor: accentColor,
+                    height: '100%',
+                    borderRadius: 2,
                   },
                 ]}
               />
@@ -162,16 +165,18 @@ export default function LessonDetailScreen() {
           >
             <ThemedBlurView
               intensity={25}
-              style={[styles.contentCard, { borderColor: cardBorder }]}
+              className="overflow-hidden rounded-3xl"
+              style={{ borderCurve: 'continuous', borderWidth: 0.5, borderColor: cardBorder }}
             >
               {/* Arabic Text */}
-              <View style={styles.arabicSection}>
-                <Text style={[styles.arabicText, { color: textColor }]}>
+              <View className="p-8 items-center gap-4">
+                <Text className="text-4xl leading-[56px] font-[Amiri-Bold] text-center" style={{ color: textColor }}>
                   {currentContent.arabic}
                 </Text>
                 <Pressable
                   onPress={handlePlayAudio}
-                  style={[styles.playButton, { backgroundColor: accentColor }]}
+                  className="w-11 h-11 rounded-full justify-center items-center"
+                  style={{ backgroundColor: accentColor }}
                 >
                   {isBuffering ? (
                     <ActivityIndicator size="small" color="#fff" />
@@ -186,33 +191,33 @@ export default function LessonDetailScreen() {
               </View>
 
               {/* Transliteration */}
-              <View style={[styles.section, { borderTopColor: dividerColor }]}>
-                <Text style={[styles.sectionLabel, { color: textMuted }]}>
+              <View className="p-5 border-t" style={{ borderTopColor: dividerColor, borderTopWidth: 0.5 }}>
+                <Text className="text-[11px] font-tajawal-bold uppercase tracking-[1px] mb-2" style={{ color: textMuted }}>
                   Transliteration
                 </Text>
-                <Text style={[styles.transliteration, { color: textSecondary }]}>
+                <Text className="text-base leading-6 font-sans italic" style={{ color: textSecondary }}>
                   {currentContent.transliteration}
                 </Text>
               </View>
 
               {/* Translation */}
-              <View style={[styles.section, { borderTopColor: dividerColor }]}>
-                <Text style={[styles.sectionLabel, { color: textMuted }]}>
+              <View className="p-5 border-t" style={{ borderTopColor: dividerColor, borderTopWidth: 0.5 }}>
+                <Text className="text-[11px] font-tajawal-bold uppercase tracking-[1px] mb-2" style={{ color: textMuted }}>
                   Translation
                 </Text>
-                <Text style={[styles.translation, { color: textColor }]}>
+                <Text className="text-base leading-6 font-sans" style={{ color: textColor }}>
                   {currentContent.translation}
                 </Text>
               </View>
 
               {/* Word Breakdown (if available) */}
               {currentContent.wordBreakdown && currentContent.wordBreakdown.length > 0 && (
-                <View style={[styles.section, { borderTopColor: dividerColor }]}>
-                  <Pressable onPress={toggleWordBreakdown} style={styles.breakdownToggle}>
-                    <Text style={[styles.sectionLabel, { color: textMuted }]}>
+                <View className="p-5 border-t" style={{ borderTopColor: dividerColor, borderTopWidth: 0.5 }}>
+                  <Pressable onPress={toggleWordBreakdown} className="flex-row justify-between items-center">
+                    <Text className="text-[11px] font-tajawal-bold uppercase tracking-[1px]" style={{ color: textMuted }}>
                       Word Breakdown
                     </Text>
-                    <Text style={[styles.toggleIcon, { color: accentColor }]}>
+                    <Text className="text-sm font-tajawal-bold" style={{ color: accentColor }}>
                       {showWordBreakdown ? '▲' : '▼'}
                     </Text>
                   </Pressable>
@@ -222,19 +227,17 @@ export default function LessonDetailScreen() {
                       {currentContent.wordBreakdown.map((word, i) => (
                         <View
                           key={i}
-                          style={[
-                            styles.wordRow,
-                            i > 0 && { borderTopColor: dividerColor, borderTopWidth: 0.5 },
-                          ]}
+                          className="flex-row items-center py-3"
+                          style={i > 0 ? { borderTopColor: dividerColor, borderTopWidth: 0.5 } : undefined}
                         >
-                          <Text style={[styles.wordArabic, { color: textColor }]}>
+                          <Text className="text-xl font-amiri w-24 text-right" style={{ color: textColor }}>
                             {word.arabic}
                           </Text>
-                          <View style={styles.wordDetails}>
-                            <Text style={[styles.wordTranslit, { color: textSecondary }]}>
+                          <View className="flex-1 pl-4">
+                            <Text className="text-sm font-sans" style={{ color: textSecondary }}>
                               {word.transliteration}
                             </Text>
-                            <Text style={[styles.wordMeaning, { color: textMuted }]}>
+                            <Text className="text-xs font-sans mt-0.5" style={{ color: textMuted }}>
                               {word.meaning}
                             </Text>
                           </View>
@@ -248,7 +251,7 @@ export default function LessonDetailScreen() {
           </Animated.View>
 
           {/* Navigation Dots */}
-          <View style={styles.dotsContainer}>
+          <View className="flex-row justify-center items-center gap-2 mt-6">
             {lesson.content.map((_, i) => (
               <Pressable
                 key={i}
@@ -259,13 +262,11 @@ export default function LessonDetailScreen() {
                 }}
               >
                 <View
-                  style={[
-                    styles.dot,
-                    {
-                      backgroundColor: i === currentIndex ? accentColor : dividerColor,
-                      width: i === currentIndex ? 24 : 8,
-                    },
-                  ]}
+                  className="h-2 rounded-full"
+                  style={{
+                    backgroundColor: i === currentIndex ? accentColor : dividerColor,
+                    width: i === currentIndex ? 24 : 8,
+                  }}
                 />
               </Pressable>
             ))}
@@ -273,33 +274,34 @@ export default function LessonDetailScreen() {
         </ScrollView>
 
         {/* Navigation Buttons */}
-        <View style={[styles.navigationBar, { bottom: insets.bottom + 70 }]}>
+        <View
+          className="absolute left-0 right-0 flex-row justify-between px-4"
+          style={{ bottom: insets.bottom + 70 }}
+        >
           <Pressable
             onPress={handlePrevious}
             disabled={isFirstItem}
-            style={[
-              styles.navButton,
-              isFirstItem && styles.navButtonDisabled,
-            ]}
+            className={isFirstItem ? 'opacity-40' : undefined}
           >
             <ThemedBlurView
               intensity={20}
-              style={[styles.navButtonInner, { borderColor: cardBorder }]}
+              className="flex-row items-center gap-2 px-4 py-3 overflow-hidden rounded-2xl"
+              style={{ borderCurve: 'continuous', borderWidth: 0.5, borderColor: cardBorder }}
             >
               <IconSymbol
                 name="chevron.left"
                 size={16}
                 color={isFirstItem ? textMuted : textColor}
               />
-              <Text style={[styles.navButtonText, { color: isFirstItem ? textMuted : textColor }]}>
+              <Text className="text-sm font-tajawal-medium" style={{ color: isFirstItem ? textMuted : textColor }}>
                 Previous
               </Text>
             </ThemedBlurView>
           </Pressable>
 
-          <Pressable onPress={handleNext} style={styles.navButton}>
-            <View style={[styles.navButtonPrimary, { backgroundColor: accentColor }]}>
-              <Text style={styles.navButtonPrimaryText}>
+          <Pressable onPress={handleNext}>
+            <View className="flex-row items-center gap-2 px-5 py-3 rounded-2xl" style={{ backgroundColor: accentColor }}>
+              <Text className="text-sm font-tajawal-bold text-white">
                 {isLastItem ? 'Complete' : 'Next'}
               </Text>
               <IconSymbol
@@ -314,185 +316,3 @@ export default function LessonDetailScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 16,
-    paddingHorizontal: 16,
-    paddingBottom: 180,
-  },
-  errorText: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Medium',
-    textAlign: 'center',
-    marginTop: 40,
-  },
-  progressSection: {
-    marginBottom: 24,
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  progressText: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-  },
-  levelBadge: {
-    paddingHorizontal: 10,
-    paddingTop: 6,
-    paddingBottom: 3,
-    borderRadius: 12,
-  },
-  levelText: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-    textTransform: 'capitalize',
-  },
-  progressBar: {
-    height: 4,
-    backgroundColor: 'rgba(128, 128, 128, 0.2)',
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-  contentCard: {
-    borderRadius: 24,
-    borderWidth: 0.5,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-  },
-  arabicSection: {
-    padding: 32,
-    alignItems: 'center',
-    gap: 16,
-  },
-  arabicText: {
-    fontSize: 36,
-    fontFamily: 'Amiri-Bold',
-    textAlign: 'center',
-    lineHeight: 56,
-  },
-  playButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  section: {
-    padding: 20,
-    borderTopWidth: 0.5,
-  },
-  sectionLabel: {
-    fontSize: 11,
-    fontFamily: 'Tajawal-Medium',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-  },
-  transliteration: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Regular',
-    fontStyle: 'italic',
-  },
-  translation: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Regular',
-    lineHeight: 24,
-  },
-  breakdownToggle: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  toggleIcon: {
-    fontSize: 12,
-  },
-  wordRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    gap: 16,
-  },
-  wordArabic: {
-    fontSize: 22,
-    fontFamily: 'Amiri-Bold',
-    minWidth: 60,
-  },
-  wordDetails: {
-    flex: 1,
-  },
-  wordTranslit: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Medium',
-    fontStyle: 'italic',
-  },
-  wordMeaning: {
-    fontSize: 13,
-    fontFamily: 'Tajawal-Regular',
-    marginTop: 2,
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-    gap: 6,
-  },
-  dot: {
-    height: 8,
-    borderRadius: 4,
-  },
-  navigationBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    gap: 12,
-  },
-  navButton: {
-    flex: 1,
-  },
-  navButtonDisabled: {
-    opacity: 0.5,
-  },
-  navButtonInner: {
-    flexDirection: 'row',
-    paddingVertical: 14,
-    borderRadius: 16,
-    borderWidth: 0.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    overflow: 'hidden',
-  },
-  navButtonText: {
-    fontSize: 15,
-    fontFamily: 'Tajawal-Medium',
-    marginTop: 4,
-  },
-  navButtonPrimary: {
-    flexDirection: 'row',
-    paddingVertical: 14,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  navButtonPrimaryText: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Bold',
-    color: '#fff',
-    marginTop: 4,
-  },
-});

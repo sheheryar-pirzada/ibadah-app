@@ -58,8 +58,8 @@ const Container = ({ children }: { children: React.ReactNode }) => {
 
 /**This is our expansion circle, starts from the bottom and expands to the top  */
 const ExpandingCirlce = ({
-                           colors,
-                         }: { colors: ReturnType<typeof generateColors> }) => {
+  colors,
+}: { colors: ReturnType<typeof generateColors> }) => {
   const { displayImmersiveOverlay } = useImmersiveOverlay();
 
   const expandingCircleProgress = useDerivedValue(() => {
@@ -124,8 +124,8 @@ const ExpandingCirlce = ({
 
 /**Circles (top left and bottom right) that are used to create the background gradient */
 const BackgroundCircles = ({
-                             colors,
-                           }: { colors: ReturnType<typeof generateColors> }) => {
+  colors,
+}: { colors: ReturnType<typeof generateColors> }) => {
   const { displayImmersiveOverlay } = useImmersiveOverlay();
 
   const overlayVisibilityProgress = useDerivedValue(() => {

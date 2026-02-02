@@ -5,10 +5,14 @@ import { router, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import 'react-native-reanimated';
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 
+import { ChinProvider } from '@/components/chin';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { LocationProvider, useLocation } from '@/hooks/useLocation';
+import { useAppOpenAd } from '@/utils/app-open-ad';
+import { configureAudioMode } from '@/utils/audio-service';
 import { notificationService } from '@/utils/notification-service';
 import { getNotificationSettings } from '@/utils/notification-settings';
 import '../global.css';
@@ -99,14 +103,39 @@ function RootLayoutContent() {
   const { resolvedTheme } = useTheme();
   const navigationTheme = resolvedTheme === 'dark' ? DarkTheme : DefaultTheme;
 
+  // Keep Tailwind `dark:` styles in sync with in-app theme setting.
+  const { setColorScheme } = useNativeWindColorScheme();
+  useEffect(() => {
+    setColorScheme(resolvedTheme);
+  }, [resolvedTheme, setColorScheme]);
+
+  // Initialize App Open Ads
+  useAppOpenAd();
+
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <LocationProvider>
         <NotificationManager />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="settings" />
-        </Stack>
+        <ChinProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="settings" />
+            <Stack.Screen
+              name="share"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'fade',
+              }}
+            />
+            <Stack.Screen
+              name="letter-detail"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'fade',
+              }}
+            />
+          </Stack>
+        </ChinProvider>
       </LocationProvider>
       <ThemedStatusBar />
     </NavigationThemeProvider>
@@ -122,6 +151,11 @@ export default function RootLayout() {
     'Amiri-Regular': require('../assets/fonts/Amiri/Amiri-Regular.ttf'),
     'Amiri-Bold': require('../assets/fonts/Amiri/Amiri-Bold.ttf'),
   });
+
+  // Configure audio mode for background playback
+  useEffect(() => {
+    configureAudioMode();
+  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.

@@ -1,4 +1,3 @@
-
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -6,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -23,12 +21,20 @@ import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLocation } from '@/hooks/useLocation';
+import { usePrayerTimes } from '@/hooks/usePrayerTimes';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { DailyStats, PrayerKey, PrayerStats, prayerTracker } from '@/utils/prayer-tracking';
+import { Image } from 'expo-image';
 
 export default function TrackScreen() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+
+  // Location and Prayer Times for initialization
+  const { loc: location } = useLocation();
+  const { prayerTimes } = usePrayerTimes(location);
+
   const [todayStats, setTodayStats] = useState<DailyStats | null>(null);
   const [overallStats, setOverallStats] = useState<PrayerStats | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -56,7 +62,7 @@ export default function TrackScreen() {
 
   useEffect(() => {
     loadTodayStats();
-  }, [selectedDate]);
+  }, [selectedDate, prayerTimes]); // Reload when prayer times update existing records
 
   const initializeTracking = async () => {
     try {
@@ -155,86 +161,111 @@ export default function TrackScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor }]}>
+      <View style={{ flex: 1, backgroundColor }}>
         <ThemedStatusBar />
-        <ThemedBlurView intensity={20} style={[styles.loadingCard, { borderColor: cardBorder }]}>
-          <Text style={[styles.loadingText, { color: textColor }]}>Loading prayer tracking...</Text>
+        <ThemedBlurView
+          intensity={20}
+          style={{ borderColor: cardBorder }}
+          className="flex-1 justify-center items-center m-5 p-10 rounded-3xl border-[0.5px]"
+        >
+          <Text style={{ fontFamily: 'Tajawal-Regular', color: textColor }} className="text-lg font-medium">Loading prayer tracking...</Text>
         </ThemedBlurView>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View className="flex-1" style={{ backgroundColor }}>
       <ThemedStatusBar />
       <LinearGradient
         colors={gradientColors}
-        style={StyleSheet.absoluteFillObject}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
 
-      <ScrollView contentInsetAdjustmentBehavior='automatic' contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
-        {/* <Animated.View entering={FadeInDown.duration(600)} style={styles.header}>
-          <Text style={[styles.headerTitle, { color: textColor }]}>Prayer Tracking</Text>
-        </Animated.View> */}
-
+      <ScrollView
+        contentInsetAdjustmentBehavior='automatic'
+        contentContainerClassName="pb-12 px-4"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Overall Stats Card */}
-        <Animated.View entering={FadeInUp.delay(200).duration(800)} style={[styles.statsCard, { borderColor: cardBorder }]}>
-          <ThemedBlurView intensity={25} style={styles.statsBlur}>
-            <View style={styles.statsHeader}>
-              <Text style={[styles.statsTitle, { color: textColor }]}>Your Progress</Text>
+        <Animated.View
+          entering={FadeInUp.delay(200).duration(800)}
+          className="mb-6 mt-6 rounded-[36px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <ThemedBlurView intensity={25} className="p-6">
+            <View className="flex-row justify-between items-center mb-5">
+              <Text className="text-xl font-tajawal-bold" style={{ color: textColor }}>Your Progress</Text>
               <TouchableOpacity
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   router.push('/track/analytics');
                 }}
-                style={[styles.analyticsButton, { backgroundColor: resolvedTheme === 'dark' ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.15)' }]}
+                className="p-2 rounded-2xl"
+                style={{ backgroundColor: resolvedTheme === 'dark' ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.15)' }}
               >
-                <IconSymbol name="chart.bar.fill" size={20} color="#d4af37" />
+                <Image
+                  source="sf:chart.bar.fill"
+                  style={{ width: 20, aspectRatio: 1 }}
+                  tintColor="#d4af37"
+                  sfEffect={{
+                    effect: "variable-color/cumulative",
+                    repeat: 1
+                  }}
+                />
               </TouchableOpacity>
             </View>
 
             {overallStats && (
-              <View style={styles.statsGrid}>
-                <View style={styles.statItem}>
-                  <Animated.Text style={[styles.statNumber, { color: accentColor }, animatedStreakStyle]}>
+              <View className="flex-row justify-around">
+                <View className="items-center">
+                  <Animated.Text className="text-4xl font-tajawal-bold mb-1" style={[{ color: accentColor }, animatedStreakStyle]}>
                     {overallStats.currentStreak}
                   </Animated.Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Day Streak</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Day Streak</Text>
                 </View>
 
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{overallStats.longestStreak}</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Best Streak</Text>
+                <View className="items-center">
+                  <Text className="text-4xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{overallStats.longestStreak}</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Best Streak</Text>
                 </View>
 
-                <View style={styles.statItem}>
-                  <Text style={[styles.statNumber, { color: accentColor }]}>{Math.round(overallStats.completionRate)}%</Text>
-                  <Text style={[styles.statLabel, { color: textMuted }]}>Completion</Text>
+                <View className="items-center">
+                  <Text className="text-4xl font-tajawal-bold mb-1" style={{ color: accentColor }}>{Math.round(overallStats.completionRate)}%</Text>
+                  <Text className="text-xs font-tajawal-medium uppercase tracking-widest" style={{ color: textMuted }}>Completion</Text>
                 </View>
               </View>
             )}
           </ThemedBlurView>
         </Animated.View>
 
-        {/* Today's Prayers */}
-        <Animated.View entering={FadeInUp.delay(400).duration(800)} style={[styles.todayCard, { borderColor: cardBorder }]}>
-          <ThemedBlurView intensity={25} style={styles.todayBlur}>
-            <Text style={[styles.todayTitle, { color: textColor }]}>Today's Prayers</Text>
-            <Text style={[styles.todayDate, { color: textMuted }]}>{formatDisplayDate(selectedDate)}</Text>
+	        {/* {"Today's Prayers"} */}
+        <Animated.View
+          entering={FadeInUp.delay(400).duration(800)}
+          className="mb-6 rounded-[36px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <ThemedBlurView intensity={25} className="p-6">
+	            <Text className="text-xl font-tajawal-bold mb-2" style={{ color: textColor }}>
+	              {"Today's Prayers"}
+	            </Text>
+            <Text className="text-sm font-tajawal mb-5" style={{ color: textMuted }}>{formatDisplayDate(selectedDate)}</Text>
 
             {/* Progress Bar */}
-            <View style={styles.progressContainer}>
-              <View style={[styles.progressBar, { backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }]}>
-                <Animated.View style={[styles.progressFill, { backgroundColor: accentColor }, animatedProgressStyle]} />
+            <View className="mb-6">
+              <View
+                className="h-2 rounded-full overflow-hidden mb-2"
+                style={{ backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)' }}
+              >
+                <Animated.View className="h-full rounded-full" style={[{ backgroundColor: accentColor }, animatedProgressStyle]} />
               </View>
-              <Text style={[styles.progressText, { color: textMuted }]}>
+              <Text className="text-sm font-tajawal-medium text-center mt-2.5" style={{ color: textMuted }}>
                 {todayStats?.completedCount || 0} of 5 prayers completed
               </Text>
             </View>
 
             {/* Prayer Checkboxes */}
-            <View style={styles.prayerList}>
+            <View className="gap-3">
               {(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerKey[]).map((prayer, index) => {
                 const isCompleted = todayStats?.prayers[prayer];
                 return (
@@ -243,33 +274,35 @@ export default function TrackScreen() {
                     entering={FadeInUp.delay(600 + index * 100).duration(600)}
                   >
                     <TouchableOpacity
-                      style={[styles.prayerItem, {
+                      className="flex-row justify-between items-center py-3 px-4 rounded-[18px] border-[0.5px]"
+                      style={{
                         backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                         borderColor
-                      }]}
+                      }}
                       onPress={() => togglePrayer(prayer)}
                       activeOpacity={0.7}
                     >
-                      <View style={styles.prayerInfo}>
+                      <View className="flex-row items-center gap-3">
                         <IconSymbol
                           name={getPrayerIcon(prayer) as any}
                           size={20}
                           color={isCompleted ? accentColor : textMuted}
                         />
-                        <Text style={[
-                          styles.prayerName,
-                          { color: textColor },
-                          isCompleted && { color: accentColor, fontFamily: 'Tajawal-Bold' }
-                        ]}>
+                        <Text
+                          className={`text-base font-tajawal-medium ${isCompleted ? 'font-tajawal-bold' : ''}`}
+                          style={{ color: isCompleted ? accentColor : textColor }}
+                        >
                           {getPrayerName(prayer)}
                         </Text>
                       </View>
 
-                      <View style={[
-                        styles.checkbox,
-                        { borderColor },
-                        isCompleted && { backgroundColor: accentColor, borderColor: accentColor }
-                      ]}>
+                      <View
+                        className="w-6 h-6 rounded-xl border-2 justify-center items-center"
+                        style={{
+                          borderColor: isCompleted ? accentColor : borderColor,
+                          backgroundColor: isCompleted ? accentColor : 'transparent'
+                        }}
+                      >
                         {isCompleted && (
                           <IconSymbol name="checkmark" size={16} color="#fff" />
                         )}
@@ -282,17 +315,55 @@ export default function TrackScreen() {
           </ThemedBlurView>
         </Animated.View>
 
-        {/* Quick Actions */}
-        <Animated.View entering={FadeInUp.delay(800).duration(800)} style={[styles.actionsCard, { borderColor: cardBorder }]}>
-          <ThemedBlurView intensity={25} style={styles.actionsBlur}>
-            <Text style={[styles.actionsTitle, { color: textColor }]}>Quick Actions</Text>
+        {/* Tasbeeh Counter */}
+        <Animated.View
+          entering={FadeInUp.delay(600).duration(800)}
+          className="mb-6 rounded-[36px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              router.push('/track/tasbeeh');
+            }}
+          >
+            <ThemedBlurView intensity={25} className="p-6">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-4">
+                  <View
+                    className="w-14 h-14 rounded-2xl items-center justify-center"
+                    style={{ backgroundColor: resolvedTheme === 'dark' ? 'rgba(212,175,55,0.15)' : 'rgba(212,175,55,0.2)' }}
+                  >
+                    <IconSymbol name="circle.grid.3x3" size={28} color="#d4af37" />
+                  </View>
+                  <View>
+                    <Text className="text-xl font-tajawal-bold" style={{ color: textColor }}>Tasbeeh Counter</Text>
+                    <Text className="text-sm font-tajawal" style={{ color: textMuted }}>Dhikr beads counter</Text>
+                  </View>
+                </View>
+                <IconSymbol name="chevron.right" size={20} color={textMuted} />
+              </View>
+            </ThemedBlurView>
+          </TouchableOpacity>
+        </Animated.View>
 
-            <View style={styles.actionButtons}>
+        {/* Quick Actions */}
+        <Animated.View
+          entering={FadeInUp.delay(800).duration(800)}
+          className="rounded-[40px] overflow-hidden border-[0.5px]"
+          style={{ borderColor: cardBorder }}
+        >
+          <ThemedBlurView intensity={25} className="p-6">
+            <Text className="text-lg font-tajawal-bold mb-4" style={{ color: textColor }}>Quick Actions</Text>
+
+            <View className="gap-3">
               <TouchableOpacity
-                style={[styles.actionButton, {
+                className="flex-row items-center gap-3 py-4 px-5 rounded-[18px] border-[0.5px]"
+                style={{
                   backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                   borderColor
-                }]}
+                }}
                 onPress={() => {
                   // Mark all prayers as completed
                   (['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as PrayerKey[]).forEach(prayer => {
@@ -303,14 +374,15 @@ export default function TrackScreen() {
                 }}
               >
                 <IconSymbol name="checkmark.circle.fill" size={24} color="#d4af37" />
-                <Text style={[styles.actionButtonText, { color: textColor }]}>Mark All Complete</Text>
+                <Text className="text-base font-tajawal-medium" style={{ color: textColor }}>Mark All Complete</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.actionButton, {
+                className="flex-row items-center gap-3 py-4 px-5 rounded-[18px] border-[0.5px]"
+                style={{
                   backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(4,99,7,0.05)',
                   borderColor
-                }]}
+                }}
                 onPress={() => {
                   Alert.alert(
                     'Reset Today',
@@ -333,8 +405,9 @@ export default function TrackScreen() {
                 }}
               >
                 <IconSymbol name="arrow.clockwise" size={24} color="#ff6b6b" />
-                <Text style={[styles.actionButtonText, { color: textColor }]}>Reset Today</Text>
+                <Text className="text-base font-tajawal-medium" style={{ color: textColor }}>Reset Today</Text>
               </TouchableOpacity>
+
             </View>
           </ThemedBlurView>
         </Animated.View>
@@ -342,184 +415,3 @@ export default function TrackScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    // paddingTop: 60,
-    paddingBottom: 120,
-    paddingHorizontal: 16,
-  },
-  loadingCard: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 20,
-    padding: 40,
-    borderRadius: 24,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  loadingText: {
-    fontFamily: 'Tajawal-Regular',
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontFamily: 'Tajawal-Bold',
-    textAlign: 'center',
-  },
-  statsCard: {
-    marginBottom: 24,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  statsBlur: {
-    padding: 24,
-  },
-  statsHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  statsTitle: {
-    fontSize: 20,
-    fontFamily: 'Tajawal-Bold',
-  },
-  analyticsButton: {
-    padding: 8,
-    borderRadius: 16,
-    borderCurve: 'continuous',
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 32,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Medium',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  todayCard: {
-    marginBottom: 24,
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  todayBlur: {
-    padding: 24,
-  },
-  todayTitle: {
-    fontSize: 20,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 8,
-  },
-  todayDate: {
-    fontSize: 14,
-    fontFamily: 'Tajawal-Regular',
-    marginBottom: 20,
-  },
-  progressContainer: {
-    marginBottom: 24,
-  },
-  progressBar: {
-    height: 8,
-    borderRadius: 4,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 4,
-    borderCurve: 'continuous',
-  },
-  progressText: {
-    fontSize: 14,
-    marginTop: 10,
-    fontFamily: 'Tajawal-Medium',
-    textAlign: 'center',
-  },
-  prayerList: {
-    gap: 12,
-  },
-  prayerItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 18,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  prayerInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  prayerName: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Medium',
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderCurve: 'continuous',
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  actionsCard: {
-    borderRadius: 36,
-    borderCurve: 'continuous',
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-  actionsBlur: {
-    padding: 24,
-  },
-  actionsTitle: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginBottom: 16,
-  },
-  actionButtons: {
-    gap: 12,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    borderCurve: 'continuous',
-    borderWidth: 1,
-  },
-  actionButtonText: {
-    fontSize: 16,
-    fontFamily: 'Tajawal-Medium',
-  },
-});

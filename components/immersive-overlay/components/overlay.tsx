@@ -147,7 +147,7 @@ const Content = () => {
   );
 };
 
-export const Overlay = ({ allowDismiss, onDismiss } : { allowDismiss: boolean, onDismiss: () => void }) => {
+export const Overlay = ({ allowDismiss, onDismiss }: { allowDismiss: boolean, onDismiss: () => void }) => {
   const { displayImmersiveOverlay } = useImmersiveOverlayStore();
 
   const animatedRootContainerProps = useAnimatedProps(() => {

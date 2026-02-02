@@ -1,5 +1,4 @@
 import AudioWaveform from '@/components/AudioWaveform';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import {
   audioManager,
@@ -9,12 +8,12 @@ import {
   useQuranAudio,
 } from '@/utils/audio-service';
 import * as Haptics from 'expo-haptics';
+import { Image } from 'expo-image';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   LayoutChangeEvent,
   Pressable,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -99,7 +98,7 @@ export default function AudioPlayer({
   // Show loading state
   if (isLoading) {
     return (
-      <View style={[styles.container, compact && styles.containerCompact]}>
+      <View className={compact ? 'flex-row items-center gap-2' : 'py-2'}>
         <ActivityIndicator size="large" color={accentColor} />
       </View>
     );
@@ -112,24 +111,24 @@ export default function AudioPlayer({
 
   if (compact) {
     return (
-      <View style={styles.compactContainer}>
+      <View className="flex-row items-center gap-2">
         <Pressable
           onPress={handlePlayPause}
-          style={[styles.playButtonCompact, { backgroundColor: accentColor }]}
+          className="w-[22px] h-[32px] rounded-2xl justify-center items-center"
+          style={{ backgroundColor: accentColor }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          {status.isBuffering ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <IconSymbol
-              name={status.isPlaying ? 'pause.fill' : 'play.fill'}
-              size={12}
-              color="#fff"
-            />
-          )}
+          <Image
+            source={status.isPlaying ? 'sf:pause.fill' : 'sf:play.fill'}
+            style={{ width: 12, aspectRatio: 1 }}
+            tintColor="#fff"
+            transition={{
+              effect: 'sf:replace'
+            }}
+          />
         </Pressable>
         {status.isPlaying && (
-          <Text style={[styles.compactTime, { color: textMuted }]}>
+          <Text className="text-[11px] font-sans" style={{ color: textMuted }}>
             {formatDuration(status.position)}
           </Text>
         )}
@@ -138,34 +137,34 @@ export default function AudioPlayer({
   }
 
   return (
-    <View style={styles.container}>
+    <View className="py-2">
       {/* Main Controls */}
-      <View style={styles.controls}>
+      <View className="flex-row items-center gap-3">
         {/* Play/Pause Button */}
         <Pressable
           onPress={handlePlayPause}
-          style={[styles.playButton, { backgroundColor: accentColor }]}
+          className="w-[30px] h-[40px] rounded-[28px] justify-center items-center"
+          style={{ backgroundColor: accentColor, borderCurve: 'continuous' as const }}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          {status.isBuffering ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <IconSymbol
-              name={status.isPlaying ? 'pause.fill' : 'play.fill'}
-              size={16}
-              color="#fff"
-            />
-          )}
+          <Image
+            source={status.isPlaying ? 'sf:pause.fill' : 'sf:play.fill'}
+            style={{ width: 14, aspectRatio: 1 }}
+            tintColor="#fff"
+            transition={{
+              effect: 'sf:replace'
+            }}
+          />
         </Pressable>
 
         {/* Waveform Section */}
-        <View style={styles.waveformSection}>
+        <View className="flex-1 gap-1">
           {/* Time Display */}
-          <View style={styles.timeRow}>
-            <Text style={[styles.timeText, { color: textMuted }]}>
+          <View className="flex-row justify-between">
+            <Text className="text-[11px] font-sans" style={{ color: textMuted }}>
               {formatDuration(status.position)}
             </Text>
-            <Text style={[styles.timeText, { color: textMuted }]}>
+            <Text className="text-[11px] font-sans" style={{ color: textMuted }}>
               {formatDuration(status.duration)}
             </Text>
           </View>
@@ -174,7 +173,7 @@ export default function AudioPlayer({
           <Pressable
             onPress={handleSeek}
             onLayout={handleWaveformLayout}
-            style={styles.waveformContainer}
+            className="h-8"
           >
             {waveformWidth > 0 && (
               <AudioWaveform
@@ -192,10 +191,10 @@ export default function AudioPlayer({
         {/* Speed Button */}
         <Pressable
           onPress={toggleSpeedOptions}
-          style={styles.speedButton}
+          className="px-2 py-1"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={[styles.speedText, { color: textMuted }]}>
+          <Text className="text-xs font-tajawal-medium" style={{ color: textMuted }}>
             {status.playbackRate}x
           </Text>
         </Pressable>
@@ -203,23 +202,17 @@ export default function AudioPlayer({
 
       {/* Speed Options */}
       {showSpeedOptions && (
-        <View style={[styles.speedOptions, { borderTopColor: dividerColor }]}>
+        <View className="flex-row justify-center gap-2 mt-3 pt-3 border-t" style={{ borderTopColor: dividerColor }}>
           {PLAYBACK_RATES.map((rate) => (
             <Pressable
               key={rate}
               onPress={() => handleSpeedChange(rate)}
-              style={[
-                styles.speedOption,
-                status.playbackRate === rate && {
-                  backgroundColor: `${accentColor}20`,
-                },
-              ]}
+              className="px-3 py-1.5 rounded-xl"
+              style={status.playbackRate === rate ? { backgroundColor: `${accentColor}20` } : undefined}
             >
               <Text
-                style={[
-                  styles.speedOptionText,
-                  { color: status.playbackRate === rate ? accentColor : textColor },
-                ]}
+                className="text-[13px] font-tajawal-medium"
+                style={{ color: status.playbackRate === rate ? accentColor : textColor }}
               >
                 {rate}x
               </Text>
@@ -230,88 +223,3 @@ export default function AudioPlayer({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 8,
-  },
-  containerCompact: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  loadingText: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Regular',
-    marginLeft: 8,
-  },
-  controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  playButton: {
-    width: 30,
-    height: 40,
-    borderRadius: 28,
-    justifyContent: 'center',
-    borderCurve: 'continuous',
-    alignItems: 'center',
-  },
-  playButtonCompact: {
-    width: 22,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  waveformSection: {
-    flex: 1,
-    gap: 4,
-  },
-  waveformContainer: {
-    height: WAVEFORM_HEIGHT,
-  },
-  timeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  timeText: {
-    fontSize: 11,
-    fontFamily: 'Tajawal-Regular',
-  },
-  speedButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  speedText: {
-    fontSize: 12,
-    fontFamily: 'Tajawal-Medium',
-  },
-  speedOptions: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-  },
-  speedOption: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  speedOptionText: {
-    fontSize: 13,
-    fontFamily: 'Tajawal-Medium',
-  },
-  compactContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  compactTime: {
-    fontSize: 11,
-    fontFamily: 'Tajawal-Regular',
-  },
-});

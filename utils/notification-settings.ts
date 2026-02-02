@@ -14,6 +14,15 @@ export interface NotificationSettings {
     maghrib: boolean;
     isha: boolean;
   };
+  reminders: {
+    enabled: boolean;
+    fajr: boolean;
+    dhuhr: boolean;
+    asr: boolean;
+    maghrib: boolean;
+    isha: boolean;
+  };
+  reminderMinutesBefore: number; // Minutes before prayer time ends to send reminder
   duas: boolean;
   duaOffsetMinutes: number; // Minutes after Fajr/Maghrib for dua notifications
 }
@@ -27,6 +36,15 @@ const DEFAULT_SETTINGS: NotificationSettings = {
     maghrib: true,
     isha: true,
   },
+  reminders: {
+    enabled: false,
+    fajr: true,
+    dhuhr: true,
+    asr: true,
+    maghrib: true,
+    isha: true,
+  },
+  reminderMinutesBefore: 15,
   duas: true,
   duaOffsetMinutes: 30,
 };
@@ -46,6 +64,10 @@ export async function getNotificationSettings(): Promise<NotificationSettings> {
         prayers: {
           ...DEFAULT_SETTINGS.prayers,
           ...(settings.prayers || {}),
+        },
+        reminders: {
+          ...DEFAULT_SETTINGS.reminders,
+          ...(settings.reminders || {}),
         },
       };
     }
@@ -100,6 +122,24 @@ export async function updateDuaToggle(enabled: boolean): Promise<void> {
 export async function updateDuaOffsetMinutes(minutes: number): Promise<void> {
   const settings = await getNotificationSettings();
   settings.duaOffsetMinutes = minutes;
+  await saveNotificationSettings(settings);
+}
+
+/**
+ * Update reminders master toggle
+ */
+export async function updateRemindersEnabled(enabled: boolean): Promise<void> {
+  const settings = await getNotificationSettings();
+  settings.reminders.enabled = enabled;
+  await saveNotificationSettings(settings);
+}
+
+/**
+ * Update individual reminder prayer toggle
+ */
+export async function updateReminderPrayerToggle(prayer: PrayerKey, enabled: boolean): Promise<void> {
+  const settings = await getNotificationSettings();
+  settings.reminders[prayer] = enabled;
   await saveNotificationSettings(settings);
 }
 

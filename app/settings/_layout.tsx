@@ -31,7 +31,7 @@ export default function SettingsLayout() {
         headerShadowVisible: false,
         // header back button
         headerLeft: () => (
-          <TouchableOpacity style={{ paddingLeft: 4 }} onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.back()}>
             <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme].text} />
           </TouchableOpacity>
         ),
@@ -93,6 +93,14 @@ export default function SettingsLayout() {
           contentStyle: {
             backgroundColor: 'transparent',
           },
+        }}
+      />
+      <Stack.Screen
+        name="hadith-book"
+        options={{
+          headerShown: false,
+          animation: 'slide_from_bottom',
+          presentation: 'formSheet',
         }}
       />
     </Stack>

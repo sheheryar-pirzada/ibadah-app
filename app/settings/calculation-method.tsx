@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   View
 } from 'react-native';
@@ -71,25 +70,26 @@ export default function CalculationMethodScreen() {
         <ScrollView
           style={{ flex: 1, backgroundColor }}
           contentContainerStyle={[
-            styles.scrollContent,
             { paddingTop: top / 2 + 24 }
           ]}
+          className="px-6 pb-10"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={[styles.title, { color: textColor }]}>
+          <Text className="text-xl text-center mb-4 font-tajawal-bold" style={{ color: textColor }}>
             Calculation Method
           </Text>
 
-          <View style={styles.optionsList}>
+          <View className="mt-2">
             {getCalculationMethodOptions().map((item) => {
               const active = item.key === calculationMethod;
               return (
                 <Pressable
                   key={item.key}
                   onPress={() => handleMethodChange(item.key)}
+                  className="flex-row justify-between items-center px-5 py-4 rounded-[20px] mb-2"
                   style={[
-                    styles.optionItem,
                     {
+                      borderCurve: 'continuous',
                       opacity: active ? 1 : 0.65,
                       backgroundColor: active
                         ? isDark
@@ -99,7 +99,7 @@ export default function CalculationMethodScreen() {
                     },
                   ]}
                 >
-                  <Text style={[styles.optionText, { color: textColor }]}>
+                  <Text className="text-[17px] font-tajawal-medium flex-1" style={{ color: textColor }}>
                     {item.name}
                   </Text>
                   {active && (
@@ -112,41 +112,3 @@ export default function CalculationMethodScreen() {
         </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    padding: 24,
-    paddingBottom: 40,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontFamily: 'Tajawal-Bold',
-  },
-  optionsList: {
-    marginTop: 8,
-  },
-  optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderRadius: 20,
-    marginBottom: 8,
-    borderCurve: 'continuous',
-  },
-  optionText: {
-    fontSize: 17,
-    fontFamily: 'Tajawal-Medium',
-    flex: 1,
-  },
-  checkmark: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginLeft: 12,
-  },
-});
-

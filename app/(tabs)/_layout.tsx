@@ -1,10 +1,12 @@
-import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { useContext } from 'react';
 
 import { Colors } from '@/constants/Colors';
-import { useTheme } from '@/contexts/ThemeContext';
+import { ResolvedTheme, ThemeContext } from '@/contexts/ThemeContext';
 
 export default function TabsLayout() {
-  const { resolvedTheme } = useTheme();
+  const context = useContext(ThemeContext);
+  const resolvedTheme: ResolvedTheme = context?.resolvedTheme ?? 'light';
 
   const tabBarColors = Colors[resolvedTheme];
 
@@ -13,31 +15,30 @@ export default function TabsLayout() {
       minimizeBehavior="onScrollDown"
       iconColor={tabBarColors.tabIconDefault}
       tintColor={tabBarColors.tabIconSelected}
-      
     >
       <NativeTabs.Trigger name="index">
-        <Icon sf="clock" />
-        <Label>Prayer Times</Label>
+        <NativeTabs.Trigger.Icon sf="clock" />
+        <NativeTabs.Trigger.Label>Prayer Times</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="track">
-        <Icon sf="checkmark.circle" />
-        <Label>Track</Label>
+        <NativeTabs.Trigger.Icon sf="checkmark.circle" />
+        <NativeTabs.Trigger.Label>Track</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="duas">
-        <Icon sf="waveform.mid" />
-        <Label>Duas</Label>
+        <NativeTabs.Trigger.Icon sf="waveform.mid" />
+        <NativeTabs.Trigger.Label>Duas</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="quran-search">
-        <Icon sf="book.fill" />
-        <Label>Quran</Label>
+        <NativeTabs.Trigger.Icon sf="book.fill" />
+        <NativeTabs.Trigger.Label>Quran</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="learn">
-        <Icon sf="character.book.closed.ar" />
-        <Label>Learn</Label>
+        <NativeTabs.Trigger.Icon sf="character.book.closed.ar" />
+        <NativeTabs.Trigger.Label>Learn</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

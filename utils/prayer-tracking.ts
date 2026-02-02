@@ -125,20 +125,27 @@ export class PrayerTracker {
   // Create prayer records for a date
   async createPrayerRecords(date: Date, prayerTimes: Record<PrayerKey, Date>): Promise<void> {
     const dateStr = this.formatDate(date);
-    
-    // Remove existing records for this date
+
+    // Find existing records for this date to preserve completion status
+    const existingRecords = this.records.filter(record => record.date === dateStr);
+
+    // Remove existing records for this date from the main array
     this.records = this.records.filter(record => record.date !== dateStr);
-    
+
     // Create new records
-    const newRecords: PrayerRecord[] = Object.entries(prayerTimes).map(([prayer, time]) => ({
-      id: `${dateStr}_${prayer}`,
-      prayer: prayer as PrayerKey,
-      completed: false,
-      scheduledTime: time,
-      date: dateStr,
-      timestamp: Date.now(),
-    }));
-    
+    const newRecords: PrayerRecord[] = Object.entries(prayerTimes).map(([prayer, time]) => {
+      const existing = existingRecords.find(r => r.prayer === prayer);
+      return {
+        id: `${dateStr}_${prayer}`,
+        prayer: prayer as PrayerKey,
+        completed: existing ? existing.completed : false,
+        completedAt: existing ? existing.completedAt : undefined,
+        scheduledTime: time,
+        date: dateStr,
+        timestamp: Date.now(),
+      };
+    });
+
     this.records.push(...newRecords);
     await this.saveRecords();
     await this.updateStats();
@@ -146,24 +153,48 @@ export class PrayerTracker {
 
   // Mark prayer as completed
   async markPrayerCompleted(prayer: PrayerKey, date: string): Promise<void> {
-    const record = this.records.find(r => r.prayer === prayer && r.date === date);
-    if (record) {
-      record.completed = true;
-      record.completedAt = new Date();
-      await this.saveRecords();
-      await this.updateStats();
+    let record = this.records.find(r => r.prayer === prayer && r.date === date);
+
+    // Create the record if it doesn't exist
+    if (!record) {
+      record = {
+        id: `${date}_${prayer}`,
+        prayer,
+        completed: false,
+        scheduledTime: new Date(),
+        date,
+        timestamp: Date.now(),
+      };
+      this.records.push(record);
     }
+
+    record.completed = true;
+    record.completedAt = new Date();
+    await this.saveRecords();
+    await this.updateStats();
   }
 
   // Mark prayer as incomplete
   async markPrayerIncomplete(prayer: PrayerKey, date: string): Promise<void> {
-    const record = this.records.find(r => r.prayer === prayer && r.date === date);
-    if (record) {
-      record.completed = false;
-      record.completedAt = undefined;
-      await this.saveRecords();
-      await this.updateStats();
+    let record = this.records.find(r => r.prayer === prayer && r.date === date);
+
+    // Create the record if it doesn't exist
+    if (!record) {
+      record = {
+        id: `${date}_${prayer}`,
+        prayer,
+        completed: false,
+        scheduledTime: new Date(),
+        date,
+        timestamp: Date.now(),
+      };
+      this.records.push(record);
     }
+
+    record.completed = false;
+    record.completedAt = undefined;
+    await this.saveRecords();
+    await this.updateStats();
   }
 
   // Get records for a specific date
@@ -173,7 +204,7 @@ export class PrayerTracker {
 
   // Get records for a date range
   getRecordsForDateRange(startDate: string, endDate: string): PrayerRecord[] {
-    return this.records.filter(record => 
+    return this.records.filter(record =>
       record.date >= startDate && record.date <= endDate
     );
   }
@@ -188,14 +219,14 @@ export class PrayerTracker {
       maghrib: false,
       isha: false,
     };
-    
+
     let completedCount = 0;
-    
+
     records.forEach(record => {
       prayers[record.prayer] = record.completed;
       if (record.completed) completedCount++;
     });
-    
+
     return {
       date,
       prayers,

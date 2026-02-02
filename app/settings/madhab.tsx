@@ -3,12 +3,12 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   Pressable,
-  StyleSheet,
   Text,
   View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocation } from '@/hooks/useLocation';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -27,7 +27,7 @@ export default function MadhabScreen() {
   const { loc } = useLocation();
   const isDark = resolvedTheme === 'dark';
   const [madhab, setMadhab] = useState<MadhabKey>('Shafi');
-  const { top } = useSafeAreaInsets();
+  useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
   const accentColor = useThemeColor({}, 'accent');
   const textColor = useThemeColor({}, 'text');
@@ -65,21 +65,22 @@ export default function MadhabScreen() {
 
   return (
 
-        <View style={[styles.container, { backgroundColor }]}>
-          <Text style={[styles.title, { color: textColor }]}>
+        <View className="flex-1 px-6 pt-10 pb-10" style={{ backgroundColor }}>
+          <Text className="text-xl text-center mb-4 font-tajawal-bold" style={{ color: textColor }}>
             Madhab
           </Text>
 
-          <View style={styles.optionsList}>
+          <View className="mt-2">
             {getMadhabOptions().map((item) => {
               const active = item.key === madhab;
               return (
                 <Pressable
                   key={item.key}
                   onPress={() => handleMadhabChange(item.key)}
+                  className="flex-row justify-between items-center px-5 py-4 rounded-[20px] mb-2"
                   style={[
-                    styles.optionItem,
                     {
+                      borderCurve: 'continuous',
                       opacity: active ? 1 : 0.65,
                       backgroundColor: active
                         ? isDark
@@ -89,13 +90,11 @@ export default function MadhabScreen() {
                     },
                   ]}
                 >
-                  <Text style={[styles.optionText, { color: textColor }]}>
+                  <Text className="text-[17px] font-tajawal-medium flex-1" style={{ color: textColor }}>
                     {item.name}
                   </Text>
                   {active && (
-                    <Text style={[styles.checkmark, { color: accentColor }]}>
-                      ✓
-                    </Text>
+                    <IconSymbol name="checkmark.circle.fill" size={18} color={accentColor} />
                   )}
                 </Pressable>
               );
@@ -104,43 +103,3 @@ export default function MadhabScreen() {
         </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    paddingBottom: 40,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontFamily: 'Tajawal-Bold',
-  },
-  optionsList: {
-    marginTop: 8,
-  },
-  optionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderRadius: 20,
-    borderCurve: 'continuous',
-    marginBottom: 8,
-  },
-  optionText: {
-    fontSize: 17,
-    fontFamily: 'Tajawal-Medium',
-    flex: 1,
-  },
-  checkmark: {
-    fontSize: 18,
-    fontFamily: 'Tajawal-Bold',
-    marginLeft: 12,
-  },
-});
-

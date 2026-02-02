@@ -65,6 +65,35 @@ function getRandomPrayerMessage(prayer: PrayerKey): NotificationCopy {
   return messages[Math.floor(Math.random() * messages.length)];
 }
 
+// Reminder notifications - sent before prayer time ends
+const REMINDER_COPY: Record<PrayerKey, NotificationCopy[]> = {
+  fajr: [
+    { title: '⏰ Fajr time ending soon', body: 'Only 15 minutes left to pray Fajr before sunrise.' },
+    { title: '🌅 Fajr reminder', body: 'Sunrise is approaching. Complete your Fajr prayer.' },
+  ],
+  dhuhr: [
+    { title: '⏰ Dhuhr time ending soon', body: 'Only 15 minutes left to pray Dhuhr before Asr.' },
+    { title: '☀️ Dhuhr reminder', body: 'Asr is approaching. Complete your Dhuhr prayer.' },
+  ],
+  asr: [
+    { title: '⏰ Asr time ending soon', body: 'Only 15 minutes left to pray Asr before Maghrib.' },
+    { title: '🌤️ Asr reminder', body: 'Maghrib is approaching. Complete your Asr prayer.' },
+  ],
+  maghrib: [
+    { title: '⏰ Maghrib time ending soon', body: 'Only 15 minutes left to pray Maghrib before Isha.' },
+    { title: '🌙 Maghrib reminder', body: 'Isha is approaching. Complete your Maghrib prayer.' },
+  ],
+  isha: [
+    { title: '⏰ Isha time ending soon', body: 'Only 15 minutes left to pray Isha before midnight.' },
+    { title: '🌌 Isha reminder', body: 'Midnight is approaching. Complete your Isha prayer.' },
+  ],
+};
+
+function getRandomReminderMessage(prayer: PrayerKey): NotificationCopy {
+  const messages = REMINDER_COPY[prayer];
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
 class NotificationService {
   private static instance: NotificationService;
   private lastScheduledDate: Date | null = null;
@@ -279,6 +308,91 @@ class NotificationService {
   }
 
   /**
+   * Schedule reminder notifications for the next 7 days
+   * Reminders are sent X minutes before each prayer time ends
+   * Prayer end times: Fajr->Sunrise, Dhuhr->Asr, Asr->Maghrib, Maghrib->Isha, Isha->Midnight
+   */
+  async scheduleReminderNotifications(
+    lat: number,
+    lng: number,
+    enabledPrayers: PrayerKey[],
+    minutesBefore: number = 15
+  ): Promise<void> {
+    try {
+      const today = new Date();
+      const scheduledIds: string[] = [];
+
+      for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + dayOffset);
+        targetDate.setHours(0, 0, 0, 0);
+
+        const prayerTimes = await createPrayerTimes(lat, lng, undefined, undefined, targetDate);
+
+        for (const prayer of enabledPrayers) {
+          let prayerEndTime: Date | null = null;
+
+          // Calculate when each prayer time ends (start of next prayer)
+          switch (prayer) {
+            case 'fajr':
+              // Fajr ends at sunrise
+              prayerEndTime = new Date(prayerTimes.sunrise);
+              break;
+            case 'dhuhr':
+              // Dhuhr ends at Asr
+              prayerEndTime = new Date(prayerTimes.asr);
+              break;
+            case 'asr':
+              // Asr ends at Maghrib
+              prayerEndTime = new Date(prayerTimes.maghrib);
+              break;
+            case 'maghrib':
+              // Maghrib ends at Isha
+              prayerEndTime = new Date(prayerTimes.isha);
+              break;
+            case 'isha':
+              // Isha ends at midnight (Islamic midnight = halfway between sunset and Fajr)
+              // For simplicity, we use 11:45 PM as a reasonable cutoff
+              prayerEndTime = new Date(targetDate);
+              prayerEndTime.setHours(23, 59, 59, 999);
+              break;
+          }
+
+          if (prayerEndTime) {
+            // Calculate reminder time (X minutes before prayer ends)
+            const reminderTime = new Date(prayerEndTime);
+            reminderTime.setMinutes(reminderTime.getMinutes() - minutesBefore);
+
+            // Only schedule if the reminder time hasn't passed
+            if (reminderTime > new Date()) {
+              const message = getRandomReminderMessage(prayer);
+              const notificationId = await Notifications.scheduleNotificationAsync({
+                content: {
+                  title: message.title,
+                  body: message.body,
+                  sound: true,
+                  data: { type: 'reminder', prayer },
+                },
+                trigger: {
+                  type: Notifications.SchedulableTriggerInputTypes.DATE,
+                  date: reminderTime,
+                },
+              });
+
+              scheduledIds.push(notificationId);
+            }
+          }
+        }
+      }
+
+      console.log(`Scheduled ${scheduledIds.length} reminder notifications`);
+    } catch (error) {
+      console.error('Error scheduling reminder notifications:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Reschedule all notifications based on current settings
    */
   async rescheduleAll(lat: number, lng: number): Promise<void> {
@@ -309,6 +423,17 @@ class NotificationService {
       // Schedule prayer notifications
       if (enabledPrayers.length > 0) {
         await this.schedulePrayerNotifications(lat, lng, enabledPrayers);
+      }
+
+      // Schedule reminder notifications (15 min before prayer time ends)
+      // Only remind for prayers that have notifications enabled
+      if (settings.reminders?.enabled && enabledPrayers.length > 0) {
+        await this.scheduleReminderNotifications(
+          lat,
+          lng,
+          enabledPrayers,
+          settings.reminderMinutesBefore || 15
+        );
       }
 
       // Schedule dua notifications
