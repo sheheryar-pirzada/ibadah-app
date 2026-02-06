@@ -3,12 +3,13 @@ import { useFonts } from 'expo-font';
 import * as Notifications from 'expo-notifications';
 import { router, Stack } from 'expo-router';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
-import { useEffect } from 'react';
-import { AppState, LogBox } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { AppState, LogBox, Platform } from 'react-native';
 import 'react-native-reanimated';
 
 import { ChinProvider } from '@/components/chin';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
+import { updatePrayerWidgetsWithLocation, updateDuaWidgets } from '@/components/widgets';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { TranslationProvider } from '@/contexts/TranslationContext';
 import { LocationProvider, useLocation } from '@/hooks/useLocation';
@@ -17,6 +18,58 @@ import { configureAudioMode } from '@/utils/audio-service';
 import { notificationService } from '@/utils/notification-service';
 import { getNotificationSettings } from '@/utils/notification-settings';
 import '../global.css';
+
+function WidgetManager() {
+  const { loc } = useLocation();
+  const hasUpdatedWidgets = useRef(false);
+  const hasUpdatedDuaWidget = useRef(false);
+
+  useEffect(() => {
+    // Only run on iOS (widgets are iOS-only for now)
+    if (Platform.OS !== 'ios') return;
+
+    // Update dua widget on first mount (doesn't need location)
+    if (!hasUpdatedDuaWidget.current) {
+      hasUpdatedDuaWidget.current = true;
+      updateDuaWidgets().catch((error) => {
+        console.error('Error updating dua widget:', error);
+      });
+    }
+
+    // Update prayer widgets when location becomes available
+    if (loc && !hasUpdatedWidgets.current) {
+      hasUpdatedWidgets.current = true;
+      const { latitude, longitude } = loc.coords;
+      updatePrayerWidgetsWithLocation(latitude, longitude).catch((error) => {
+        console.error('Error updating widgets:', error);
+      });
+    }
+
+    // Update widgets when app comes to foreground
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        // Always update dua widget on foreground
+        updateDuaWidgets().catch((error) => {
+          console.error('Error updating dua widget on foreground:', error);
+        });
+
+        // Update prayer widgets if we have location
+        if (loc) {
+          const { latitude, longitude } = loc.coords;
+          updatePrayerWidgetsWithLocation(latitude, longitude).catch((error) => {
+            console.error('Error updating widgets on foreground:', error);
+          });
+        }
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [loc]);
+
+  return null;
+}
 
 function NotificationManager() {
   const { loc } = useLocation();
@@ -120,6 +173,7 @@ function RootLayoutContent() {
     <NavigationThemeProvider value={navigationTheme}>
       <LocationProvider>
         <NotificationManager />
+        <WidgetManager />
         <ChinProvider>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />

@@ -13,15 +13,6 @@ const withARKit = (config) => {
       config.modResults.NSMotionUsageDescription ||
       'Motion data is used to track device orientation for AR Qibla direction';
 
-    // Add ARKit required device capability
-    if (!config.modResults.UIRequiredDeviceCapabilities) {
-      config.modResults.UIRequiredDeviceCapabilities = [];
-    }
-    const capabilities = config.modResults.UIRequiredDeviceCapabilities;
-    if (!capabilities.includes('arkit')) {
-      capabilities.push('arkit');
-    }
-
     return config;
   });
 

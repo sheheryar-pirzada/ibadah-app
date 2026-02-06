@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  Platform,
   Pressable,
   Text,
   View
@@ -9,6 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { updatePrayerWidgetsWithLocation } from '@/components/widgets';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocation } from '@/hooks/useLocation';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -55,6 +57,12 @@ export default function MadhabScreen() {
       if (notificationSettings.enabled && loc) {
         const { latitude, longitude } = loc.coords;
         await notificationService.rescheduleAll(latitude, longitude);
+      }
+
+      // Update widgets with new prayer times
+      if (Platform.OS === 'ios' && loc) {
+        const { latitude, longitude } = loc.coords;
+        await updatePrayerWidgetsWithLocation(latitude, longitude);
       }
 
       router.back();
