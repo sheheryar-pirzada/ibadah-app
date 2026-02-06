@@ -190,6 +190,12 @@
             "displayName": "Despair",
             "description": "Do not despair of the mercy of Allah",
             "supportedFamilies": ["systemLarge"]
+          },
+          {
+            "id": "allah_names",
+            "displayName": "99 Names of Allah",
+            "description": "Daily name from the 99 Names of Allah",
+            "supportedFamilies": ["systemMedium"]
           }
         ]
       }],

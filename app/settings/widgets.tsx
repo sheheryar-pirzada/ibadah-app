@@ -16,7 +16,9 @@ import {
   LargePrayerWidget,
   MediumDuaWidget,
   LargeDuaWidget,
+  MediumAllahNamesWidget,
   getWidgetData,
+  getDailyAllahName,
   quranicDuas,
   widgetColors,
 } from '@/components/widgets';
@@ -180,6 +182,32 @@ export default function WidgetsScreen() {
           </View>
         );
       })}
+
+      {/* 99 Names of Allah Section */}
+      <Text className="text-lg font-tajawal-bold mb-2" style={{ color: textColor }}>
+        99 Names of Allah
+      </Text>
+      <Text className="text-sm font-tajawal mb-4" style={{ color: textMuted }}>
+        A new name is shown each day
+      </Text>
+
+      <View className="mb-8">
+        <Text className="text-sm font-tajawal-medium mb-3 ml-1" style={{ color: textMuted }}>
+          MEDIUM
+        </Text>
+        <View className="items-center">
+          <VoltraWidgetPreview
+            family="systemMedium"
+            style={{
+              borderRadius: 22,
+              overflow: 'hidden',
+              backgroundColor: colors.background,
+            }}
+          >
+            <MediumAllahNamesWidget name={getDailyAllahName()} colorScheme={colorScheme} />
+          </VoltraWidgetPreview>
+        </View>
+      </View>
 
       {/* Instructions */}
       <View

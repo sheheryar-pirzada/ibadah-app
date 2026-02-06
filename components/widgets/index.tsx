@@ -13,12 +13,16 @@ import {
 } from './widget-utils';
 import { SmallPrayerWidget, MediumPrayerWidget, LargePrayerWidget } from './PrayerWidget';
 import { MediumDuaWidget, LargeDuaWidget } from './DuaWidget';
+import { MediumAllahNamesWidget } from './AllahNamesWidget';
 import { quranicDuas, type QuranicDua } from './dua-data';
+import { getDailyAllahName } from './allah-names-data';
 import { getPrayerSettings, type CalculationMethodKey, type MadhabKey } from '@/utils/prayer-settings';
 
 export { SmallPrayerWidget, MediumPrayerWidget, LargePrayerWidget } from './PrayerWidget';
 export { MediumDuaWidget, LargeDuaWidget } from './DuaWidget';
+export { MediumAllahNamesWidget } from './AllahNamesWidget';
 export { quranicDuas, type QuranicDua } from './dua-data';
+export { getDailyAllahName, allahNames, type AllahName } from './allah-names-data';
 export { getWidgetData, saveWidgetLocation, widgetColors } from './widget-utils';
 
 const PRAYER_WIDGET_ID = 'prayer_times';
@@ -221,12 +225,39 @@ export async function updateDuaWidgets(): Promise<void> {
   await Promise.all(updatePromises);
 }
 
+// ============================================================================
+// ALLAH NAMES WIDGET
+// ============================================================================
+
+const ALLAH_NAMES_WIDGET_ID = 'allah_names';
+
 /**
- * Update all widgets (prayer times + duas)
+ * Update the 99 Names of Allah widget with today's name
+ */
+export async function updateAllahNamesWidget(): Promise<void> {
+  try {
+    const colorScheme = getColorScheme();
+    const dailyName = getDailyAllahName();
+
+    await updateWidget(
+      ALLAH_NAMES_WIDGET_ID,
+      {
+        systemMedium: <MediumAllahNamesWidget name={dailyName} colorScheme={colorScheme} />,
+      },
+      { deepLinkUrl: 'ibadah://' }
+    );
+  } catch (error) {
+    console.error('Error updating Allah names widget:', error);
+  }
+}
+
+/**
+ * Update all widgets (prayer times + duas + Allah names)
  */
 export async function updateAllWidgets(): Promise<void> {
   await Promise.all([
     updatePrayerWidgets(),
     updateDuaWidgets(),
+    updateAllahNamesWidget(),
   ]);
 }
