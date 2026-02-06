@@ -4,7 +4,7 @@ import * as Notifications from 'expo-notifications';
 import { router, Stack } from 'expo-router';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { useEffect } from 'react';
-import { AppState } from 'react-native';
+import { AppState, LogBox } from 'react-native';
 import 'react-native-reanimated';
 
 import { ChinProvider } from '@/components/chin';
@@ -22,6 +22,9 @@ function NotificationManager() {
   const { loc } = useLocation();
 
   useEffect(() => {
+    LogBox.ignoreLogs([
+      "SafeAreaView has been deprecated and will be removed in a future release.",
+    ]);
     // Initialize notification handler
     Notifications.setNotificationHandler({
       handleNotification: async () => ({

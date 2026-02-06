@@ -67,7 +67,7 @@ function DayRow({
               }}
             >
               <Text
-                className="text-base font-tajawal-bold"
+                className="text-base"
                 style={{ color: isToday ? '#fff' : textColor }}
               >
                 {day.hijriDay}
@@ -231,7 +231,7 @@ export default function RamadanCalendarScreen() {
       )}
 
       {/* Column Headers */}
-      <Animated.View
+      {/* <Animated.View
         entering={FadeInUp.delay(300).duration(600)}
         className="flex-row items-center px-4 mb-2"
       >
@@ -256,7 +256,7 @@ export default function RamadanCalendarScreen() {
         </View>
       </Animated.View>
 
-      <View style={{ height: 0.5, backgroundColor: dividerColor, marginBottom: 8 }} />
+      <View style={{ height: 0.5, backgroundColor: dividerColor, marginBottom: 8 }} /> */}
     </View>
   );
 

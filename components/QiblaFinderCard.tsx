@@ -47,41 +47,27 @@ export default function QiblaFinderCard() {
                   >
                     Qibla Finder
                   </Text>
-                  {/* <View className="p-1.5 rounded-lg justify-center items-center">
-                    <IconSymbol
-                      name="arkit"
-                      size={20}
-                      color={String(accentColor)}
-                    />
-                  </View> */}
-                </View>
-
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-1">
-                    <Text
-                      className="text-2xl font-tajawal-bold mb-1"
-                      style={{ color: textColor }}
-                    >
-                      Find Qibla Direction
-                    </Text>
-                    <Text
-                      className="text-sm font-tajawal-regular"
-                      style={{ color: textMuted }}
-                    >
-                      Use AR to find the direction of the Kaaba
-                    </Text>
-                  </View>
-
                   <View
-                    className="w-16 h-16 rounded-full items-center justify-center"
+                    className="w-12 h-12 rounded-full items-center justify-center"
                     style={{ backgroundColor: `${accentColor}15` }}
                   >
-                    <IconSymbol
-                    name="mecca"
-                    size={32}
-                    color={String(textMuted)}
-                  />
+                    <IconSymbol name="mecca" size={32} color={textColor} />
                   </View>
+                </View>
+
+                <View>
+                  <Text
+                    className="text-2xl font-tajawal-bold mb-1"
+                    style={{ color: textColor }}
+                  >
+                    Find Qibla Direction
+                  </Text>
+                  <Text
+                    className="text-sm font-tajawal-regular"
+                    style={{ color: textMuted }}
+                  >
+                    Use AR to find the direction of the Kaaba
+                  </Text>
                 </View>
 
                 <View

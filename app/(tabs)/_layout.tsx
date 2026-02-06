@@ -17,8 +17,8 @@ export default function TabsLayout() {
       tintColor={tabBarColors.tabIconSelected}
     >
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon sf="clock" />
-        <NativeTabs.Trigger.Label>Prayer Times</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="house.fill" />
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="track">

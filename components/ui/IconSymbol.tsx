@@ -58,6 +58,9 @@ const MAPPING: IconMapping = {
 
   // Share
   'square.and.arrow.up': 'share',
+
+  // Calendar
+  'calendar': 'calendar-today',
 };
 
 /**

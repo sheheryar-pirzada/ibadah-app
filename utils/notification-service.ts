@@ -241,7 +241,10 @@ class NotificationService {
   }
 
   /**
-   * Schedule dua notifications for the next 7 days
+   * Schedule dua notifications for the next 7 days:
+   * - Morning (Fajr + offset), Evening (Maghrib + offset)
+   * - After Prayer (5 min after every prayer)
+   * - Before Sleep (10 min after Isha)
    */
   async scheduleDuaNotifications(
     lat: number,
@@ -251,6 +254,9 @@ class NotificationService {
     try {
       const today = new Date();
       const scheduledIds: string[] = [];
+      const PRAYER_KEYS: PrayerKey[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+      const AFTER_PRAYER_OFFSET_MINUTES = 5;
+      const BEFORE_SLEEP_OFFSET_MINUTES = 10;
 
       for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
         const targetDate = new Date(today);
@@ -297,6 +303,47 @@ class NotificationService {
             },
           });
           scheduledIds.push(eveningId);
+        }
+
+        // After Prayer: 5 min after every prayer
+        for (const prayer of PRAYER_KEYS) {
+          const prayerTime = new Date(prayerTimes[prayer]);
+          const afterPrayerTime = new Date(prayerTime);
+          afterPrayerTime.setMinutes(afterPrayerTime.getMinutes() + AFTER_PRAYER_OFFSET_MINUTES);
+          if (afterPrayerTime > new Date()) {
+            const id = await Notifications.scheduleNotificationAsync({
+              content: {
+                title: '🕌 After Prayer Dua Reminder',
+                body: 'Take a moment for your post-prayer duas',
+                sound: true,
+                data: { type: 'dua', time: 'after-prayer', href: '/duas?category=after-prayer' },
+              },
+              trigger: {
+                type: Notifications.SchedulableTriggerInputTypes.DATE,
+                date: afterPrayerTime,
+              },
+            });
+            scheduledIds.push(id);
+          }
+        }
+
+        // Before Sleep: 10 min after Isha
+        const beforeSleepTime = new Date(prayerTimes.isha);
+        beforeSleepTime.setMinutes(beforeSleepTime.getMinutes() + BEFORE_SLEEP_OFFSET_MINUTES);
+        if (beforeSleepTime > new Date()) {
+          const id = await Notifications.scheduleNotificationAsync({
+            content: {
+              title: '🌙 Before Sleep Dua Reminder',
+              body: 'Recite your bedtime duas before you sleep',
+              sound: true,
+              data: { type: 'dua', time: 'before-sleep', href: '/duas?category=before-sleep' },
+            },
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: beforeSleepTime,
+            },
+          });
+          scheduledIds.push(id);
         }
       }
 
