@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.5</string>
+	<string>1.0.6</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -28,12 +28,11 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ibadah</string>
-				<string>com.peersahab.ibadah</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-6647730613417269~5665002947</string>
 	<key>GADDelayAppMeasurementInit</key>
@@ -61,6 +60,10 @@
 	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Motion data is used to track device orientation for AR Qibla direction</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<false/>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
@@ -300,5 +303,22 @@
 	<string>Automatic</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>Voltra_AppGroupIdentifier</key>
+	<string>group.com.peersahab.ibadah</string>
+	<key>Voltra_WidgetIds</key>
+	<array>
+		<string>prayer_times</string>
+		<string>dua_reflection</string>
+		<string>dua_calm</string>
+		<string>dua_anxiety</string>
+		<string>dua_sadness</string>
+		<string>dua_gratitude</string>
+		<string>dua_hope</string>
+		<string>dua_strength</string>
+		<string>dua_guidance</string>
+		<string>dua_trust</string>
+		<string>dua_peace</string>
+		<string>dua_despair</string>
+	</array>
 </dict>
 </plist>

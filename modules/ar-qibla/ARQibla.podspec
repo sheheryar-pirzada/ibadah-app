@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.license        = { :type => 'MIT' }
   s.authors        = { 'Peer Sahab' => 'dev@example.com' }
   s.homepage       = 'https://github.com/expo/expo'
-  s.platforms      = { :ios => '15.1' }
+  s.platforms      = { :ios => '16.2' }
   # Local module source (used by Expo autolinking)
   s.source         = { :path => '.' }
   s.static_framework = true

@@ -2,17 +2,20 @@
   "expo": {
     "name": "Ibadah",
     "slug": "ibadah",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "ibadah",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#000000",
     "ios": {
+      "deploymentTarget": "16.2",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Needed to calculate Prayer times",
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       },
       "bundleIdentifier": "com.peersahab.ibadah",
       "appleTeamId": "9Y5Y87RDPF"
@@ -112,7 +115,93 @@
           "color": "#0F3D2C"
         }
       ],
-      "./plugins/withARKit"
+      ["voltra", {
+        "groupIdentifier": "group.com.peersahab.ibadah",
+        "fonts": ["./assets/fonts/Amiri"],
+        "widgets": [
+          {
+            "id": "prayer_times",
+            "displayName": "Prayer Times",
+            "description": "Shows prayer times and countdown to next prayer",
+            "supportedFamilies": ["systemSmall", "systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_reflection",
+            "displayName": "Reflection",
+            "description": "So where are you going?",
+            "supportedFamilies": ["systemMedium"]
+          },
+          {
+            "id": "dua_calm",
+            "displayName": "Calm & Ease",
+            "description": "In the remembrance of Allah do hearts find rest",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_anxiety",
+            "displayName": "Anxiety & Fear",
+            "description": "Allah is sufficient for us",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_sadness",
+            "displayName": "Sadness",
+            "description": "Do not grieve. Indeed Allah is with us",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_gratitude",
+            "displayName": "Gratitude",
+            "description": "If you are grateful, I will increase you",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_hope",
+            "displayName": "Hope & Mercy",
+            "description": "With hardship comes ease",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_strength",
+            "displayName": "Strength",
+            "description": "Allah does not burden a soul beyond capacity",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_guidance",
+            "displayName": "Guidance",
+            "description": "Guide us to the straight path",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_trust",
+            "displayName": "Trust in Allah",
+            "description": "Whoever relies upon Allah, He is sufficient",
+            "supportedFamilies": ["systemMedium", "systemLarge"]
+          },
+          {
+            "id": "dua_peace",
+            "displayName": "Peace",
+            "description": "He sends tranquility into the hearts of believers",
+            "supportedFamilies": ["systemLarge"]
+          },
+          {
+            "id": "dua_despair",
+            "displayName": "Despair",
+            "description": "Do not despair of the mercy of Allah",
+            "supportedFamilies": ["systemLarge"]
+          }
+        ]
+      }],
+      "./plugins/withARKit",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.2"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
