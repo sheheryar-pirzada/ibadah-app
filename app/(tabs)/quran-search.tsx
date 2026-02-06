@@ -10,21 +10,27 @@ import { useQuranChapters } from '@/hooks/useQuranChapters';
 import { useQuranSearch } from '@/hooks/useQuranSearch';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { quranAPI, SearchResult } from '@/utils/quran-api';
+import {
+    getQuranSearchPreferences,
+    saveQuranSearchMode,
+    saveQuranSearchReadByVerse,
+    type QuranSearchMode,
+} from '@/utils/quran-search-settings';
 import { getReciterSettings } from '@/utils/reciter-settings';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  FlatList,
-  Keyboard,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View
+    ActivityIndicator,
+    FlatList,
+    Keyboard,
+    Pressable,
+    StyleSheet,
+    Text,
+    TextInput,
+    View
 } from 'react-native';
 
 export default function QuranSearchScreen() {
@@ -56,12 +62,30 @@ export default function QuranSearchScreen() {
   const [loadingAudioVerseKey, setLoadingAudioVerseKey] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareContent, setShareContent] = useState<ShareContent | null>(null);
-  const [mode, setMode] = useState<'Search' | 'Read'>('Search');
+  const [mode, setMode] = useState<QuranSearchMode>('Search');
   const [surahSearchQuery, setSurahSearchQuery] = useState('');
   const [isAscending, setIsAscending] = useState(true);
-  const [readByVerse, setReadByVerse] = useState(true); // true = by verse (current), false = by page
+  const [readByVerse, setReadByVerse] = useState(true); // true = by verse, false = by page
 
   const chin = useChin();
+
+  // Load persisted preferences on mount
+  useEffect(() => {
+    getQuranSearchPreferences().then((prefs) => {
+      setMode(prefs.mode);
+      setReadByVerse(prefs.readByVerse);
+    });
+  }, []);
+
+  const handleModeChange = useCallback((newMode: QuranSearchMode) => {
+    setMode(newMode);
+    saveQuranSearchMode(newMode);
+  }, []);
+
+  const handleReadByVerseChange = useCallback((byVerse: boolean) => {
+    setReadByVerse(byVerse);
+    saveQuranSearchReadByVerse(byVerse);
+  }, []);
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
@@ -180,9 +204,9 @@ export default function QuranSearchScreen() {
       totalResults={totalResults}
       resultsCount={results.length}
       mode={mode}
-      onModeChange={setMode}
+      onModeChange={handleModeChange}
     />
-  ), [searchQuery, setSearchQuery, handleClearSearch, isSearching, hasSearched, totalResults, results.length, mode]);
+  ), [searchQuery, setSearchQuery, handleClearSearch, isSearching, hasSearched, totalResults, results.length, mode, handleModeChange]);
 
   const ListFooter = useMemo(() => {
     if (mode !== 'Search') return null;
@@ -320,7 +344,7 @@ export default function QuranSearchScreen() {
                       onPress={() => {
                         if (!readByVerse) {
                           Haptics.selectionAsync();
-                          setReadByVerse(true);
+                          handleReadByVerseChange(true);
                         }
                       }}
                       className="px-4 py-2.5 rounded-2xl"
@@ -337,7 +361,7 @@ export default function QuranSearchScreen() {
                       onPress={() => {
                         if (readByVerse) {
                           Haptics.selectionAsync();
-                          setReadByVerse(false);
+                          handleReadByVerseChange(false);
                         }
                       }}
                       className="px-4 py-2.5 rounded-2xl"

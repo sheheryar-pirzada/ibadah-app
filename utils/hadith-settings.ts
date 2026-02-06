@@ -134,10 +134,28 @@ export function cleanHadithText(text: string): string {
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
-    .replace(/رضی اللہ عنہا|رضي الله عنها/g, '(RA)')
-    .replace(/رضی اللہ عنہ|رضي الله عنه/g, '(RA)')
-    .replace(/رضی اللہ عنہم|رضي الله عنهم/g, '(RA)')
-    .replace(/صلی اللہ علیہ وسلم|صلى الله عليه وسلم|ﷺ/g, 'SAW')
+    // Normalize special spaces to regular spaces
+    .replace(/[\u200c\u200f\u202f\u00a0\u200e]/g, ' ')
+    // Arabic honorifics (female, male, plural) -> (RA)
+    .replace(/\(\s*(رضی الله عنها|رضي الله عنها|رضی اللہ تعالیٰ عنہا|رضي الله تعالى عنها)\s*\)|رضی اللہ عنہا|رضي الله عنها|رضی اللہ تعالیٰ عنہا|رضي الله تعالى عنها/gi, '(RA)')
+    .replace(/\(\s*(رضی الله عنه|رضي الله عنه|رضی اللہ تعالیٰ عنہ|رضي الله تعالى عنه)\s*\)|رضی اللہ عنہ|رضي الله عنه|رضی اللہ تعالیٰ عنہ|رضي الله تعالى عنه/gi, '(RA)')
+    .replace(/\(\s*(رضی الله عنهم|رضي الله عنهم|رضی اللہ تعالیٰ عنہم|رضي الله تعالى عنهم)\s*\)|رضی اللہ عنہم|رضي الله عنهم|رضی اللہ تعالیٰ عنہم|رضي الله تعالى عنهم/gi, '(RA)')
+    // Arabic salawat, with or without parentheses -> (SAW)
+    .replace(
+      /\(\s*[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]*ص[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]*سلم[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]*\)\s*|\b[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]*ص[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]*سلم[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s]*\b|ﷺ/giu,
+      '(SAW)'
+    )
+    // Cleanup duplicated SAW parentheses/spaces
+    .replace(/\(\s*\(SAW\)\s*\)/g, '(SAW)')
+    .replace(/\(SAW\)\s*\)/g, '(SAW)')
+    .replace(/\(\s*\(SAW\)/g, '(SAW)')
+    // English honorifics
+    // .replace(/(Allah['’]s Messenger)(?!\s*\(SAW\))/gi, "$1 (SAW)")
+    // .replace(/(Messenger of Allah)(?!\s*\(SAW\))/gi, "$1 (SAW)")
+    // .replace(/(Prophet Muhammad)(?!\s*\(SAW\))/gi, "$1 (SAW)")
+    // .replace(/(Prophet)\s*\(?(peace be upon him|pbu[h]?|pbuh)\)?/gi, "Prophet (SAW)")
+    // Clean up duplicate spaces after replacements
+    .replace(/\s{2,}/g, ' ')
     .trim();
 }
 

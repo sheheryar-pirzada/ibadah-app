@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ibadah",
     "slug": "ibadah",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "ibadah",
@@ -111,7 +111,8 @@
           "icon": "./assets/images/icon.png",
           "color": "#0F3D2C"
         }
-      ]
+      ],
+      "./plugins/withARKit"
     ],
     "experiments": {
       "typedRoutes": true,

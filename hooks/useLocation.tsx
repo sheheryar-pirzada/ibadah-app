@@ -1,8 +1,8 @@
 // hooks/useLocation.ts
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import { Coordinates, Qibla } from 'adhan';
 import * as Location from 'expo-location';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { Qibla, Coordinates } from 'adhan';
 
 type LocationContextType = {
   loc: Location.LocationObject | null;

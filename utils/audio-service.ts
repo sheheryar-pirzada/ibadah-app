@@ -58,7 +58,7 @@ export function useQuranAudio(audioUrl: string | null) {
   // Handle dynamic URL changes using replace() for smoother transitions
   useEffect(() => {
     if (audioUrl) {
-      console.log('AudioService: URL changed, replacing source:', audioUrl);
+      // console.log('AudioService: URL changed, replacing source:', audioUrl);
       const wasPlaying = player.playing;
       player.replace(audioUrl);
       if (wasPlaying) {
@@ -70,7 +70,7 @@ export function useQuranAudio(audioUrl: string | null) {
   const play = () => {
     try {
       if (audioUrl || status.duration > 0) {
-        console.log('AudioService: Playing', audioUrl || 'current buffer');
+        // console.log('AudioService: Playing', audioUrl || 'current buffer');
         player.play();
       }
     } catch (e) {

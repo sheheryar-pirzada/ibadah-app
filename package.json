@@ -19,6 +19,7 @@
     "@react-navigation/native": "^7.1.6",
     "@shopify/react-native-skia": "^2.4.14",
     "adhan": "^4.4.3",
+    "ar-qibla": "file:modules/ar-qibla",
     "expo": "55.0.0-preview.5",
     "expo-asset": "~55.0.1",
     "expo-audio": "~55.0.1",

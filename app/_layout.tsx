@@ -2,14 +2,15 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } fro
 import { useFonts } from 'expo-font';
 import * as Notifications from 'expo-notifications';
 import { router, Stack } from 'expo-router';
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import 'react-native-reanimated';
-import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 
 import { ChinProvider } from '@/components/chin';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
+import { TranslationProvider } from '@/contexts/TranslationContext';
 import { LocationProvider, useLocation } from '@/hooks/useLocation';
 import { useAppOpenAd } from '@/utils/app-open-ad';
 import { configureAudioMode } from '@/utils/audio-service';
@@ -134,6 +135,13 @@ function RootLayoutContent() {
                 animation: 'fade',
               }}
             />
+            <Stack.Screen
+              name="qibla-ar"
+              options={{
+                presentation: 'fullScreenModal',
+                animation: 'slide_from_bottom',
+              }}
+            />
           </Stack>
         </ChinProvider>
       </LocationProvider>
@@ -164,7 +172,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <RootLayoutContent />
+      <TranslationProvider>
+        <RootLayoutContent />
+      </TranslationProvider>
     </ThemeProvider>
   );
 }

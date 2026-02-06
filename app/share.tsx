@@ -213,7 +213,7 @@ export default function ShareScreen() {
           disabled={isCapturing}
           className="absolute flex-row items-center gap-2 px-8 py-4 rounded-full"
           style={[
-            { bottom: insets.bottom + 32 },
+            { bottom: insets.bottom },
             isCapturing && { opacity: 0.6 },
           ]}
         >
