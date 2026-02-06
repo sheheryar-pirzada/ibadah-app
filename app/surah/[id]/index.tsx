@@ -1,6 +1,7 @@
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { useQuranChapters } from '@/hooks/useQuranChapters';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useQuranAudio } from '@/utils/audio-service';
@@ -32,6 +33,7 @@ export default function SurahDetailScreenComponent() {
     const [verses, setVerses] = useState<Verse[]>([]);
     const [isLoadingVerses, setIsLoadingVerses] = useState(false);
     const [isVerseLoading, setIsVerseLoading] = useState(false);
+    const { translationId } = useTranslation();
 
     // Audio Player
     const currentAudioUrl = verses[currentVerseIndex]?.audio?.url || null;
@@ -130,7 +132,7 @@ export default function SurahDetailScreenComponent() {
                 // in real app handle pagination or larger limits
                 const versesData = await quranAPI.getVersesByChapter(chapterId, {
                     perPage: 300,
-                    translations: [85], // M.A.S. Abdel Haleem (Verified on stable API)
+                    translations: [translationId],
                     textType: 'uthmani',
                     audio: settings.reciterId,
                     words: true,
@@ -162,7 +164,7 @@ export default function SurahDetailScreenComponent() {
         };
 
         fetchData();
-    }, [id]);
+    }, [id, translationId]);
 
     // Fetch details for current verse when index changes
     useEffect(() => {
@@ -180,16 +182,16 @@ export default function SurahDetailScreenComponent() {
                 const [detailedVerse, translationText, verseAudio] = await Promise.all([
                     quranAPI.getVerse(verseKey, {
                         textType: 'uthmani',
-                        translations: [85]
+                        translations: [translationId]
                     }),
-                    quranAPI.getVerseTranslation(85, verseKey), // 85 = M.A.S. Abdel Haleem
+                    quranAPI.getVerseTranslation(translationId, verseKey),
                     quranAPI.getVerseAudio(verseKey, settings.reciterId)
                 ]);
 
                 if (detailedVerse) {
                     detailedVerse.audio = verseAudio || undefined;
                     if (translationText) {
-                        detailedVerse.translations = [{ resource_id: 85, text: translationText }];
+                        detailedVerse.translations = [{ resource_id: translationId, text: translationText }];
                     }
 
                     setVerses(prev => {

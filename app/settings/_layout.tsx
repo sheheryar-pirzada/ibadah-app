@@ -96,6 +96,19 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen
+        name="translation"
+        options={{
+          headerShown: false,
+          animation: 'slide_from_bottom',
+          presentation: 'formSheet',
+          sheetAllowedDetents: [0.85],
+          sheetGrabberVisible: true,
+          contentStyle: {
+            backgroundColor: 'transparent',
+          },
+        }}
+      />
+      <Stack.Screen
         name="hadith-book"
         options={{
           headerShown: false,

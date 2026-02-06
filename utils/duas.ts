@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { allDuas, Dua, DuaCategory } from './duas-data';
+import { allDuas, Dua, DuaCategory, enrichAllDuas } from './duas-data';
+import { getTranslationSettings } from './translation-settings';
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -18,9 +19,14 @@ export class DuaManager {
     return DuaManager.instance;
   }
 
-  // Initialize and load favorites
+  // Initialize and load favorites, enrich all duas
   async initialize(): Promise<void> {
     await this.loadFavorites();
+    // Enrich all duas with API data in background (non-blocking)
+    const translationSettings = await getTranslationSettings();
+    enrichAllDuas(translationSettings.translationId).catch((error) => {
+      console.error('Error enriching duas:', error);
+    });
   }
 
   // Load favorite duas from storage

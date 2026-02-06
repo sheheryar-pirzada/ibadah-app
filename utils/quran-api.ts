@@ -2,11 +2,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const QURAN_API_BASE = 'https://api.quran.com/api/v4';
+// const QURAN_API_BASE = 'https://apis-prelive.quran.foundation/content/api/v4'
 
 
 const STORAGE_KEYS = {
   RECITERS_CACHE: 'quran_reciters_cache',
   RECITERS_CACHE_TIME: 'quran_reciters_cache_time',
+  TRANSLATIONS_CACHE: 'quran_translations_cache',
+  TRANSLATIONS_CACHE_TIME: 'quran_translations_cache_time',
 };
 
 // Cache duration: 7 days
@@ -20,6 +23,15 @@ export interface Reciter {
     name: string;
     language_name: string;
   };
+}
+
+export interface TranslationResource {
+  id: number;
+  name: string;
+  language_name?: string;
+  translator_name?: string;
+  // allow extra fields from API without breaking
+  [key: string]: any;
 }
 
 export interface VerseAudio {
@@ -142,6 +154,32 @@ class QuranAPIService {
       console.error('Error fetching reciters:', error);
       // Return cached data even if expired, as fallback
       const fallback = await this.getCachedReciters(true);
+      return fallback || [];
+    }
+  }
+
+  /**
+   * Get list of available translations (api.quran.com, no auth).
+   * This is used only for populating the settings picker.
+   */
+  async getTranslationResources(): Promise<TranslationResource[]> {
+    // Cache first
+    const cached = await this.getCachedTranslations();
+    if (cached) return cached;
+
+    try {
+      const response = await fetch(`${QURAN_API_BASE}/resources/translations?language=en`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch translations: ${response.status}`);
+      }
+      const data = await response.json();
+      const items: TranslationResource[] = data?.translations ?? [];
+
+      await this.cacheTranslations(items);
+      return items;
+    } catch (error) {
+      console.error('Error fetching translations:', error);
+      const fallback = await this.getCachedTranslations(true);
       return fallback || [];
     }
   }
@@ -549,6 +587,35 @@ class QuranAPIService {
   }
 
   // Cache helpers
+
+  private async getCachedTranslations(allowExpired: boolean = false): Promise<TranslationResource[] | null> {
+    try {
+      const [raw, rawTime] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEYS.TRANSLATIONS_CACHE),
+        AsyncStorage.getItem(STORAGE_KEYS.TRANSLATIONS_CACHE_TIME),
+      ]);
+      if (!raw || !rawTime) return null;
+
+      const savedAt = Number(rawTime);
+      if (!allowExpired && Date.now() - savedAt > CACHE_DURATION) {
+        return null;
+      }
+      return JSON.parse(raw) as TranslationResource[];
+    } catch {
+      return null;
+    }
+  }
+
+  private async cacheTranslations(items: TranslationResource[]): Promise<void> {
+    try {
+      await Promise.all([
+        AsyncStorage.setItem(STORAGE_KEYS.TRANSLATIONS_CACHE, JSON.stringify(items)),
+        AsyncStorage.setItem(STORAGE_KEYS.TRANSLATIONS_CACHE_TIME, String(Date.now())),
+      ]);
+    } catch {
+      // ignore cache errors
+    }
+  }
   private async getCachedReciters(ignoreExpiry: boolean = false): Promise<Reciter[] | null> {
     try {
       const [cachedData, cacheTime] = await Promise.all([

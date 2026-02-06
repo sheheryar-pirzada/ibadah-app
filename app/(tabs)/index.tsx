@@ -4,6 +4,7 @@ import { ChinAudioPlayer, useChin } from '@/components/chin';
 import DailyHadithCard from '@/components/DailyHadithCard';
 import DailyVerseCard from '@/components/DailyVerseCard';
 import { HadithBooksGrid } from '@/components/HadithBooksGrid';
+import QiblaFinderCard from '@/components/QiblaFinderCard';
 import { ImmersiveOverlay } from "@/components/immersive-overlay";
 import { useImmersiveOverlay } from "@/components/immersive-overlay/store";
 import { PrayerCard } from '@/components/PrayerCard';
@@ -269,6 +270,8 @@ export default function PrayerTimesScreen() {
         </View>
 
         <RamadanCalendarCard />
+        
+        <QiblaFinderCard />
 
         <DailyVerseCard
           verse={dailyVerse}

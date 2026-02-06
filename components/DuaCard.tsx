@@ -2,6 +2,7 @@ import type { ChinAudioMetadata } from "@/components/chin";
 import { useChinStore } from "@/components/chin";
 import { ThemedBlurView } from "@/components/ThemedBlurView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useTranslation } from "@/contexts/TranslationContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Dua } from "@/utils/duas-data";
 import { quranAPI } from "@/utils/quran-api";
@@ -27,8 +28,95 @@ interface DuaCardProps {
 export default function DuaCard({ dua, isFavorite, onToggleFavorite, onAudioToggle, index = 0 }: DuaCardProps) {
   const [audioUrls, setAudioUrls] = useState<string[]>([]);
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const [fetchedVerse, setFetchedVerse] = useState<{ arabic: string; translation: string; translationId: number } | null>(null);
+  const { translationId } = useTranslation();
 
   const chinIsVisible = useChinStore((state) => state.isVisible);
+
+  function buildArabicFromWords(words: any[] | undefined): string {
+    if (!words?.length) return '';
+    return words
+      .filter((w) => w?.char_type_name !== 'end')
+      .map((w) => w?.text_uthmani ?? w?.text_imlaei ?? w?.text ?? '')
+      .filter((t) => typeof t === 'string' && t.trim().length > 0)
+      .join(' ');
+  }
+
+  function stripHtml(input: string | undefined | null): string {
+    return String(input ?? '').replace(/<[^>]*>/g, '');
+  }
+
+  // Fetch verse text when needed (single verse)
+  useEffect(() => {
+    if (!dua.verseKey) return;
+    let cancelled = false;
+    (async () => {
+      const verse = await quranAPI.getVerse(dua.verseKey!, {
+        translations: [translationId],
+        words: true,
+        textType: 'uthmani',
+      });
+      if (cancelled) return;
+      const arabic =
+        (verse?.text_uthmani ?? verse?.text_imlaei ?? '').trim() ||
+        buildArabicFromWords(verse?.words as any[]);
+      const translation = stripHtml(verse?.translations?.[0]?.text);
+      setFetchedVerse({ arabic, translation, translationId });
+    })();
+    return () => { cancelled = true; };
+  }, [dua.verseKey, translationId]);
+
+  // Fetch verse text when needed (verse range)
+  useEffect(() => {
+    if (!dua.verseRange) return;
+    let cancelled = false;
+    (async () => {
+      const { surah, startVerse, endVerse } = dua.verseRange!;
+      const arabicParts: string[] = [];
+      const translationParts: string[] = [];
+      const transliterationParts: string[] = [];
+
+      for (let verseNum = startVerse; verseNum <= endVerse; verseNum++) {
+        const verseKey = `${surah}:${verseNum}`;
+        const verse = await quranAPI.getVerse(verseKey, {
+          translations: [translationId],
+          words: true,
+          textType: 'uthmani',
+        });
+        if (cancelled) return;
+        if (!verse) continue;
+
+        const arabic =
+          (verse.text_uthmani ?? verse.text_imlaei ?? '').trim() ||
+          buildArabicFromWords(verse.words as any[]);
+        if (arabic) arabicParts.push(arabic);
+
+        const translation = stripHtml(verse.translations?.[0]?.text);
+        if (translation) translationParts.push(translation);
+
+        if (verse.words?.length) {
+          const verseTranslit = verse.words
+            .map((w) => w.transliteration?.text)
+            .filter((t): t is string => !!t)
+            .join(' ');
+          if (verseTranslit) transliterationParts.push(verseTranslit);
+        }
+      }
+
+      setFetchedVerse({
+        arabic: arabicParts.join(' '),
+        translation: translationParts.join(' '),
+        translationId,
+      });
+    })();
+    return () => { cancelled = true; };
+  }, [dua.verseRange, translationId]);
+
+  // Always prefer fetched translation when it matches current translationId
+  const fetchedMatches = fetchedVerse?.translationId === translationId;
+  const displayArabic = (fetchedMatches ? fetchedVerse?.arabic : undefined) ?? dua.arabic;
+  const displayTranslation = (fetchedMatches ? fetchedVerse?.translation : undefined) ?? dua.translation;
+  const verseLoading = (dua.verseKey || dua.verseRange) && !dua.arabic?.trim() && !fetchedVerse;
 
   // Sync audio icon state with chin visibility
   useEffect(() => {
@@ -127,8 +215,8 @@ export default function DuaCard({ dua, isFavorite, onToggleFavorite, onAudioTogg
       href={{
         pathname: "/share",
         params: {
-          arabic: dua.arabic,
-          translation: dua.translation,
+          arabic: displayArabic,
+          translation: displayTranslation,
           reference: dua.reference || dua.title,
         },
       }}
@@ -203,18 +291,11 @@ export default function DuaCard({ dua, isFavorite, onToggleFavorite, onAudioTogg
                   className="text-2xl text-right leading-[42px] font-amiri"
                   style={{ color: textColor }}
                 >
-                  {dua.arabic}
+                  {verseLoading ? '…' : displayArabic}
                 </Text>
               </View>
 
-              <View className="mb-3 py-2 border-t" style={{ borderTopColor: dividerColor }}>
-                <Text
-                  className="text-sm italic leading-5 font-sans"
-                  style={{ color: textSecondary }}
-                >
-                  {dua.transliteration}
-                </Text>
-              </View>
+              {/* Transliteration hidden for now */}
 
               <View className="mb-2">
                 <Text
@@ -222,7 +303,7 @@ export default function DuaCard({ dua, isFavorite, onToggleFavorite, onAudioTogg
                   style={{ color: textSecondary }}
                   numberOfLines={3}
                 >
-                  {dua.translation}
+                  {verseLoading ? 'Loading…' : displayTranslation}
                 </Text>
               </View>
 

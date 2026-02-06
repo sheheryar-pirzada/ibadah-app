@@ -38,7 +38,11 @@ export default function DuasScreen() {
 
   // Handle deep link category param
   useEffect(() => {
-    if (category && ['morning', 'evening', 'after-prayer', 'before-sleep', 'protection', 'forgiveness', 'guidance', 'favorites', 'all'].includes(category)) {
+    if (category && [
+      'morning', 'evening', 'after-prayer', 'before-sleep', 'protection', 'forgiveness', 'guidance',
+      'mood-sad', 'mood-anxious', 'mood-depressed', 'mood-happy', 'mood-lost', 'mood-guilty',
+      'favorites', 'all'
+    ].includes(category)) {
       setSelectedCategory(category as CategoryFilter);
     }
   }, [category]);
@@ -132,7 +136,6 @@ export default function DuasScreen() {
 
   const loadDuas = () => {
     let filteredDuas: Dua[] = [];
-
     if (searchQuery.trim()) {
       filteredDuas = duaManager.searchDuas(searchQuery);
     } else if (selectedCategory === 'favorites') {
@@ -142,7 +145,6 @@ export default function DuasScreen() {
     } else {
       filteredDuas = duaManager.getDuasByCategory(selectedCategory);
     }
-
     setDuas(filteredDuas);
   };
 
@@ -176,11 +178,8 @@ export default function DuasScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedCategory(categoryValue);
     setSearchQuery('');
-
-    // Scroll to keep the selected category visible
     const layout = categoryLayoutsRef.current[categoryValue];
     if (layout && categoryScrollRef.current) {
-      // Scroll so the button is roughly centered, with some padding
       const scrollX = Math.max(0, layout.x - 16);
       categoryScrollRef.current.scrollTo({ x: scrollX, animated: true });
     }
@@ -195,6 +194,12 @@ export default function DuasScreen() {
     { label: 'Protection', value: 'protection' },
     { label: 'Forgiveness', value: 'forgiveness' },
     { label: 'Guidance', value: 'guidance' },
+    { label: 'Sad', value: 'mood-sad' },
+    { label: 'Anxious', value: 'mood-anxious' },
+    { label: 'Depressed', value: 'mood-depressed' },
+    { label: 'Happy', value: 'mood-happy' },
+    { label: 'Lost', value: 'mood-lost' },
+    { label: 'Guilty', value: 'mood-guilty' },
     { label: 'Favorites', value: 'favorites' },
   ];
 

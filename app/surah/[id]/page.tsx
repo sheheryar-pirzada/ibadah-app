@@ -1,6 +1,7 @@
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { useQuranChapters } from '@/hooks/useQuranChapters';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useQuranAudio, type PlaybackRate } from '@/utils/audio-service';
@@ -11,12 +12,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import Animated, { Easing, FadeIn, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,6 +27,7 @@ const MIN_PAGE = 1;
 const MAX_PAGE = 604;
 
 export default function SurahPageScreen() {
+  const { translationId } = useTranslation();
   const { id, name, nameArabic, firstPage } = useLocalSearchParams<{
     id: string;
     name?: string;
@@ -94,12 +96,11 @@ export default function SurahPageScreen() {
     try {
       const settings = await getReciterSettings();
       const { verses: nextVerses } = await quranAPI.getVersesByPage(pageNum, {
-        translations: TRANSLATION_IDS,
+        translations: [translationId],
         perPage: 50,
         audio: settings.reciterId,
         words: true,
       });
-      const translationId = TRANSLATION_IDS[0];
       const withTranslations = await Promise.all(
         nextVerses.map(async (v) => {
           const text = await quranAPI.getVerseTranslation(translationId, v.verse_key);
@@ -119,7 +120,7 @@ export default function SurahPageScreen() {
     } finally {
       setIsLoadingVerses(false);
     }
-  }, []);
+  }, [translationId]);
 
   useEffect(() => {
     fetchPage(currentPageNumber);

@@ -2,35 +2,36 @@ import * as Haptics from 'expo-haptics';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Pressable,
-  ScrollView,
-  Switch,
-  Text,
-  View,
+    Pressable,
+    ScrollView,
+    Switch,
+    Text,
+    View,
 } from 'react-native';
 
 import { useTheme } from '@/contexts/ThemeContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { useLocation } from '@/hooks/useLocation';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useHadithSettings } from '@/utils/hadith-settings';
 import { notificationService } from '@/utils/notification-service';
 import {
-  getNotificationSettings,
-  updateDuaToggle,
-  updateNotificationEnabled,
-  updateRemindersEnabled,
+    getNotificationSettings,
+    updateDuaToggle,
+    updateNotificationEnabled,
+    updateRemindersEnabled,
 } from '@/utils/notification-settings';
 import {
-  getCalculationMethodOptions,
-  getMadhabOptions,
-  getPrayerSettings,
-  type CalculationMethodKey,
-  type MadhabKey,
+    getCalculationMethodOptions,
+    getMadhabOptions,
+    getPrayerSettings,
+    type CalculationMethodKey,
+    type MadhabKey,
 } from '@/utils/prayer-settings';
 import {
-  getReciterDisplayName,
-  getReciterSettings,
+    getReciterDisplayName,
+    getReciterSettings,
 } from '@/utils/reciter-settings';
-import { useHadithSettings } from '@/utils/hadith-settings';
 
 export default function SettingsScreen() {
   const { themeMode, setThemeMode, resolvedTheme } = useTheme();
@@ -43,6 +44,7 @@ export default function SettingsScreen() {
   const [madhab, setMadhab] = useState<MadhabKey>('Shafi');
   const [reciterName, setReciterName] = useState<string>("Mishari Rashid al-`Afasy");
   const [reciterStyle, setReciterStyle] = useState<string | null>(null);
+  const { translationName } = useTranslation();
   const { selectedBook: selectedHadithBook } = useHadithSettings();
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -354,6 +356,26 @@ export default function SettingsScreen() {
                 </Text>
                 <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
                   {getReciterDisplayName(reciterName, reciterStyle)}
+                </Text>
+              </View>
+            </Pressable>
+          </Link>
+
+          <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
+
+          <Link href="/settings/translation" asChild>
+            <Pressable
+              className="flex-row justify-between items-center px-5 py-4"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              }}
+            >
+              <View className="flex-1 justify-center">
+                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                  Quran Translation
+                </Text>
+                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                  {translationName}
                 </Text>
               </View>
             </Pressable>

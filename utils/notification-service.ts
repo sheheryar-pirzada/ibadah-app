@@ -233,7 +233,7 @@ class NotificationService {
       }
 
       this.lastScheduledDate = today;
-      console.log(`Scheduled ${scheduledIds.length} prayer notifications`);
+      // console.log(`Scheduled ${scheduledIds.length} prayer notifications`);
     } catch (error) {
       console.error('Error scheduling prayer notifications:', error);
       throw error;
@@ -300,7 +300,7 @@ class NotificationService {
         }
       }
 
-      console.log(`Scheduled ${scheduledIds.length} dua notifications`);
+      // console.log(`Scheduled ${scheduledIds.length} dua notifications`);
     } catch (error) {
       console.error('Error scheduling dua notifications:', error);
       throw error;
@@ -385,7 +385,7 @@ class NotificationService {
         }
       }
 
-      console.log(`Scheduled ${scheduledIds.length} reminder notifications`);
+      // console.log(`Scheduled ${scheduledIds.length} reminder notifications`);
     } catch (error) {
       console.error('Error scheduling reminder notifications:', error);
       throw error;
