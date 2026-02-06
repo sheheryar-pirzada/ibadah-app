@@ -8,6 +8,7 @@ import QiblaFinderCard from '@/components/QiblaFinderCard';
 import { ImmersiveOverlay } from "@/components/immersive-overlay";
 import { useImmersiveOverlay } from "@/components/immersive-overlay/store";
 import { PrayerCard } from '@/components/PrayerCard';
+import { RamadanCalendarCard } from '@/components/RamadanCalendarCard';
 import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
@@ -268,6 +269,8 @@ export default function PrayerTimesScreen() {
           </View>
         </View>
 
+        <RamadanCalendarCard />
+        
         <QiblaFinderCard />
 
         <DailyVerseCard

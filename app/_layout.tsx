@@ -128,6 +128,7 @@ function RootLayoutContent() {
                 animation: 'fade',
               }}
             />
+            <Stack.Screen name="ramadan-calendar" />
             <Stack.Screen
               name="letter-detail"
               options={{

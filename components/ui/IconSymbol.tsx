@@ -43,6 +43,7 @@ const MAPPING: IconMapping = {
   'sun.max.fill': 'wb-sunny',
   'cloud.sun.fill': 'wb-cloudy',
   'moon.fill': 'nights-stay',
+  'moon.stars.fill': 'nights-stay',
 
   // Audio
   'play.fill': 'play-arrow',
