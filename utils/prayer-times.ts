@@ -165,7 +165,15 @@ export function getTimeForPrayer(
 /**
  * Convert prayer enum to PrayerKey type used in the app
  */
+const VALID_PRAYER_KEYS = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+
 export function prayerToKey(prayer: typeof Prayer[keyof typeof Prayer]): 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha' | null {
-  if (prayer === Prayer.None) return null;
-  return prayer as 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+  // Check for None explicitly (handles both enum and string comparison)
+  if (prayer === Prayer.None || prayer === 'none') return null;
+  // Validate it's a valid prayer key
+  const prayerStr = String(prayer);
+  if (VALID_PRAYER_KEYS.includes(prayerStr as any)) {
+    return prayerStr as 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+  }
+  return null;
 }

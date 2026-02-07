@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -10,8 +11,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
+import { IconSymbol } from '@/components/ui/IconSymbol.ios';
+import { updatePrayerWidgetsWithLocation } from '@/components/widgets';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocation } from '@/hooks/useLocation';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { notificationService } from '@/utils/notification-service';
 import { getNotificationSettings } from '@/utils/notification-settings';
 import {
@@ -20,8 +24,6 @@ import {
   updateCalculationMethod,
   type CalculationMethodKey,
 } from '@/utils/prayer-settings';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 
 export default function CalculationMethodScreen() {
   const router = useRouter();
@@ -58,6 +60,12 @@ export default function CalculationMethodScreen() {
       if (notificationSettings.enabled && loc) {
         const { latitude, longitude } = loc.coords;
         await notificationService.rescheduleAll(latitude, longitude);
+      }
+
+      // Update widgets with new prayer times
+      if (Platform.OS === 'ios' && loc) {
+        const { latitude, longitude } = loc.coords;
+        await updatePrayerWidgetsWithLocation(latitude, longitude);
       }
 
       router.back();

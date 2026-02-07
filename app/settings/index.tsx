@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+    Platform,
     Pressable,
     ScrollView,
     Switch,
@@ -401,6 +402,31 @@ export default function SettingsScreen() {
             </Pressable>
           </Link>
         </View>
+
+        {Platform.OS === 'ios' && __DEV__ && (
+          <View
+            className="rounded-3xl mb-4 overflow-hidden"
+            style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
+          >
+            <Link href={"/settings/widgets" as any} asChild>
+              <Pressable
+                className="flex-row justify-between items-center px-5 py-4"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+              >
+                <View className="flex-1 justify-center">
+                  <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+                    Home Screen Widgets
+                  </Text>
+                  <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
+                    Preview and learn how to add widgets
+                  </Text>
+                </View>
+              </Pressable>
+            </Link>
+          </View>
+        )}
       </ScrollView>
     </>
   );

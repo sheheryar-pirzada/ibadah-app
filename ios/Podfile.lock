@@ -2337,6 +2337,9 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
+  - Voltra (1.1.2):
+    - ExpoModulesCore
+  - VoltraWidget (1.1.2)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -2449,6 +2452,8 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
+  - Voltra (from `../node_modules/voltra/ios`)
+  - VoltraWidget (from `../node_modules/voltra/ios`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2681,11 +2686,15 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNWorklets:
     :path: "../node_modules/react-native-worklets"
+  Voltra:
+    :path: "../node_modules/voltra/ios"
+  VoltraWidget:
+    :path: "../node_modules/voltra/ios"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  ARQibla: acd2d216e5785eccb54a2b682753c564db395b74
+  ARQibla: e369c45414ed021f672448d05e74830b9a5f30b5
   EXApplication: f2a5c1caea259925b11a670027cf29ee6c18db3a
   EXConstants: eca5ffaef862c3f0884b189393a3da58b0e7f8dd
   Expo: eb8375b0ea526c118baa79b6aabee2100690e426
@@ -2802,8 +2811,10 @@ SPEC CHECKSUMS:
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
+  Voltra: f82bed58efc58026a3eee2da48a2179cfc5d94de
+  VoltraWidget: 70381f08065b28f80b8aa093a36b7581173d40eb
   Yoga: 35d573dff66536d48493acb65a519482f8219fe8
 
-PODFILE CHECKSUM: 685fd4d9f7db6647e38a8f1eb9476daddc3d8576
+PODFILE CHECKSUM: 5190537d00594f4fea143ccd2dfb8f774598a035
 
 COCOAPODS: 1.16.2
