@@ -16,6 +16,7 @@ import {
   LargePrayerWidget,
   MediumDuaWidget,
   LargeDuaWidget,
+  SmallAllahNamesWidget,
   MediumAllahNamesWidget,
   getWidgetData,
   getDailyAllahName,
@@ -190,6 +191,24 @@ export default function WidgetsScreen() {
       <Text className="text-sm font-tajawal mb-4" style={{ color: textMuted }}>
         A new name is shown each day
       </Text>
+
+      <View className="mb-6">
+        <Text className="text-sm font-tajawal-medium mb-3 ml-1" style={{ color: textMuted }}>
+          SMALL
+        </Text>
+        <View className="items-center">
+          <VoltraWidgetPreview
+            family="systemSmall"
+            style={{
+              borderRadius: 22,
+              overflow: 'hidden',
+              backgroundColor: colors.background,
+            }}
+          >
+            <SmallAllahNamesWidget name={getDailyAllahName()} colorScheme={colorScheme} />
+          </VoltraWidgetPreview>
+        </View>
+      </View>
 
       <View className="mb-8">
         <Text className="text-sm font-tajawal-medium mb-3 ml-1" style={{ color: textMuted }}>

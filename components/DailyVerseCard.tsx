@@ -96,7 +96,7 @@ export default function DailyVerseCard({ verse, isLoading, onAudioToggle }: Dail
     return (
       <Animated.View
         entering={FadeInUp.delay(300).duration(800)}
-        className="mb-6 overflow-hidden rounded-[40px]"
+        className="mb-4 overflow-hidden rounded-[40px]"
         style={{ borderColor: cardBorder, borderWidth: 0.5, borderCurve: 'continuous' }}
       >
         <ThemedBlurView intensity={25} className="p-5">

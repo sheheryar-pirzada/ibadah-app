@@ -105,18 +105,16 @@ export function SmallPrayerWidget({ data, colorScheme = 'dark' }: PrayerWidgetPr
         {nextPrayer?.time || '--:--'}
       </Voltra.Text>
 
-      {nextPrayer?.timeMs && (
-        <Voltra.Timer
-          endAtMs={nextPrayer.timeMs}
-          direction="down"
-          textStyle="relative"
-          showHours={true}
+      {nextPrayer?.timeRemaining && (
+        <Voltra.Text
           style={{
-            fontSize: 20,
-            fontWeight: '600',
+            fontSize: 14,
+            fontWeight: '500',
             color: colors.textSecondary,
           }}
-        />
+        >
+          {nextPrayer.timeRemaining}
+        </Voltra.Text>
       )}
     </Voltra.VStack>
   );
@@ -220,18 +218,16 @@ export function MediumPrayerWidget({ data, colorScheme = 'dark' }: PrayerWidgetP
           {nextPrayer?.time || '--:--'}
         </Voltra.Text>
 
-        {nextPrayer?.timeMs && (
-          <Voltra.Timer
-            endAtMs={nextPrayer.timeMs}
-            direction="down"
-            textStyle="relative"
-            showHours={true}
+        {nextPrayer?.timeRemaining && (
+          <Voltra.Text
             style={{
               fontSize: 16,
               fontWeight: '600',
               color: colors.textSecondary,
             }}
-          />
+          >
+            {nextPrayer.timeRemaining}
+          </Voltra.Text>
         )}
       </Voltra.VStack>
 
@@ -368,7 +364,7 @@ export function LargePrayerWidget({ data, colorScheme = 'dark' }: PrayerWidgetPr
 
         <Voltra.Spacer />
 
-        {nextPrayer?.timeMs && (
+        {nextPrayer?.timeRemaining && (
           <Voltra.VStack alignment="trailing" spacing={2}>
             <Voltra.Text
               style={{
@@ -379,17 +375,15 @@ export function LargePrayerWidget({ data, colorScheme = 'dark' }: PrayerWidgetPr
             >
               Next in
             </Voltra.Text>
-            <Voltra.Timer
-              endAtMs={nextPrayer.timeMs}
-              direction="down"
-              textStyle="relative"
-              showHours={true}
+            <Voltra.Text
               style={{
                 fontSize: 14,
-                fontWeight: '600',
+                fontWeight: '500',
                 color: colors.accent,
               }}
-            />
+            >
+              {nextPrayer.timeRemaining}
+            </Voltra.Text>
           </Voltra.VStack>
         )}
       </Voltra.HStack>

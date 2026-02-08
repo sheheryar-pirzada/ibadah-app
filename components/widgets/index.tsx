@@ -1,7 +1,10 @@
 'use no memo';
 
 import React from 'react';
-import { updateWidget, scheduleWidget } from 'voltra/client';
+import {
+  updateWidget,
+  scheduleWidget,
+} from 'voltra/client';
 import { Appearance } from 'react-native';
 import {
   getWidgetData,
@@ -13,14 +16,14 @@ import {
 } from './widget-utils';
 import { SmallPrayerWidget, MediumPrayerWidget, LargePrayerWidget } from './PrayerWidget';
 import { MediumDuaWidget, LargeDuaWidget } from './DuaWidget';
-import { MediumAllahNamesWidget } from './AllahNamesWidget';
+import { SmallAllahNamesWidget, MediumAllahNamesWidget } from './AllahNamesWidget';
 import { quranicDuas, type QuranicDua } from './dua-data';
 import { getDailyAllahName } from './allah-names-data';
 import { getPrayerSettings, type CalculationMethodKey, type MadhabKey } from '@/utils/prayer-settings';
 
 export { SmallPrayerWidget, MediumPrayerWidget, LargePrayerWidget } from './PrayerWidget';
 export { MediumDuaWidget, LargeDuaWidget } from './DuaWidget';
-export { MediumAllahNamesWidget } from './AllahNamesWidget';
+export { SmallAllahNamesWidget, MediumAllahNamesWidget } from './AllahNamesWidget';
 export { quranicDuas, type QuranicDua } from './dua-data';
 export { getDailyAllahName, allahNames, type AllahName } from './allah-names-data';
 export { getWidgetData, saveWidgetLocation, widgetColors } from './widget-utils';
@@ -242,6 +245,7 @@ export async function updateAllahNamesWidget(): Promise<void> {
     await updateWidget(
       ALLAH_NAMES_WIDGET_ID,
       {
+        systemSmall: <SmallAllahNamesWidget name={dailyName} colorScheme={colorScheme} />,
         systemMedium: <MediumAllahNamesWidget name={dailyName} colorScheme={colorScheme} />,
       },
       { deepLinkUrl: 'ibadah://' }
@@ -261,3 +265,4 @@ export async function updateAllWidgets(): Promise<void> {
     updateAllahNamesWidget(),
   ]);
 }
+

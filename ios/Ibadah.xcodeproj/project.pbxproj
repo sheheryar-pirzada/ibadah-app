@@ -8,39 +8,39 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		3A35D4F33000426CAFEDEB5F /* Amiri-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E3AD81F4CF134BA68CB873E7 /* Amiri-Bold.ttf */; };
+		1991BE849D8F4482899D9484 /* IbadahLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 704516EAEDC246539B6184E7 /* IbadahLiveActivity.appex */; };
+		2632F8D2322D4FA7809B185B /* Amiri-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA512C73EE7B420DA0E512E6 /* Amiri-Regular.ttf */; };
+		3239944E3BB748ADA1D82DEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91F7DD1E241D48A0AF8D0535 /* Assets.xcassets */; };
+		37148E8AD3214DA6A258D6EA /* libPods-IbadahLiveActivity.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 75774D447752D2CAF11EA46E /* libPods-IbadahLiveActivity.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		404CAFC701A44B4E3D35E9B2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C595E946D399B0045E73CEC7 /* PrivacyInfo.xcprivacy */; };
-		41D3529066744FF39CCF32E0 /* Amiri-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D4C6AA257FC45F8A1F95631 /* Amiri-Regular.ttf */; };
-		681B0C574482DB4A9034C522 /* libPods-IbadahLiveActivity.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7191EE1E122E2C0EC02195B2 /* libPods-IbadahLiveActivity.a */; };
-		A4B7A04500E0847CF16CD765 /* libPods-Ibadah.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 434A432AC652D00282AB4125 /* libPods-Ibadah.a */; };
+		613D7C05910E54FD25D03086 /* libPods-Ibadah.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFBFEE2DCB936B276D6F3382 /* libPods-Ibadah.a */; };
+		8516FE8470E740119247430F /* Amiri-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9E56D99A853F490F8DD96A0B /* Amiri-Bold.ttf */; };
+		88A3EA6EB0EC246ED4B32FE5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 560ECB6AFC59E626ECE6EC9F /* PrivacyInfo.xcprivacy */; };
+		8FE42960DDCF4DF9A286D517 /* VoltraWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD9DF90CD5AF4E89B0687F32 /* VoltraWidgetBundle.swift */; };
+		B39B00D72A234C43BBA6D15F /* VoltraWidgetInitialStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F366A14661743A9B0468299 /* VoltraWidgetInitialStates.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C4A7B91D8A6541B399AB4AE9 /* VoltraWidgetInitialStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEEF3D90F3264CC38FB3B35C /* VoltraWidgetInitialStates.swift */; };
-		D46B6174488E4D56A9E44314 /* IbadahLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 741FBF77BDB24FBAA9CD0E6C /* IbadahLiveActivity.appex */; };
-		E2259DE4B8FD440EB5EAC8CD /* VoltraWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C502FD7903F4DAC813527AE /* VoltraWidgetBundle.swift */; };
-		E98C0EEACE3885A9533FF2F8 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADA96A9DB6707D6441105A2 /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		FCFF44CDCD8E4AB49DD5B88B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BEFF17E8CA5C4D40B5BB3F84 /* Assets.xcassets */; };
+		F9064ADA4C0138B35D816DB7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10284AE12D6D8C3B27BB614 /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		008D25F9F930437DBFAE5AE0 /* PBXContainerItemProxy */ = {
+		E40FED6DA3C04FF396CFF006 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D26B988873BD43B9A1CB6F3E;
+			remoteGlobalIDString = 22CF97FB4B60478097BFB8A8;
 			remoteInfo = IbadahLiveActivity;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		70AFC5DFF48E4F16B86ABB72 /* Embed Foundation Extensions */ = {
+		8CA9EC61AB2B4B1B973BB79F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				D46B6174488E4D56A9E44314 /* IbadahLiveActivity.appex in Embed Foundation Extensions */,
+				1991BE849D8F4482899D9484 /* IbadahLiveActivity.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,30 +48,30 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0B5BE0ABDE9625A5ED1791FF /* Pods-Ibadah.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ibadah.debug.xcconfig"; path = "Target Support Files/Pods-Ibadah/Pods-Ibadah.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Ibadah.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ibadah.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Ibadah/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Ibadah/Info.plist; sourceTree = "<group>"; };
-		1D4C6AA257FC45F8A1F95631 /* Amiri-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Amiri-Regular.ttf"; path = "../assets/fonts/Amiri/Amiri-Regular.ttf"; sourceTree = "<group>"; };
-		1FFEF1D6C12949B35D167B30 /* Pods-IbadahLiveActivity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IbadahLiveActivity.release.xcconfig"; path = "Target Support Files/Pods-IbadahLiveActivity/Pods-IbadahLiveActivity.release.xcconfig"; sourceTree = "<group>"; };
-		2CF89182518D41E5837A943D /* IbadahLiveActivity.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = IbadahLiveActivity.entitlements; path = IbadahLiveActivity.entitlements; sourceTree = "<group>"; };
-		434A432AC652D00282AB4125 /* libPods-Ibadah.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ibadah.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5C502FD7903F4DAC813527AE /* VoltraWidgetBundle.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = VoltraWidgetBundle.swift; path = VoltraWidgetBundle.swift; sourceTree = "<group>"; };
-		7191EE1E122E2C0EC02195B2 /* libPods-IbadahLiveActivity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IbadahLiveActivity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		741FBF77BDB24FBAA9CD0E6C /* IbadahLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = IbadahLiveActivity.appex; path = IbadahLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A7B5E34012546C79B0A315F /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
+		3F366A14661743A9B0468299 /* VoltraWidgetInitialStates.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = VoltraWidgetInitialStates.swift; path = VoltraWidgetInitialStates.swift; sourceTree = "<group>"; };
+		4F0B4B4436A8B398F5EBC82B /* Pods-IbadahLiveActivity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IbadahLiveActivity.release.xcconfig"; path = "Target Support Files/Pods-IbadahLiveActivity/Pods-IbadahLiveActivity.release.xcconfig"; sourceTree = "<group>"; };
+		560ECB6AFC59E626ECE6EC9F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Ibadah/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		704516EAEDC246539B6184E7 /* IbadahLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = IbadahLiveActivity.appex; path = IbadahLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		752D23246F37436E92BF98D7 /* IbadahLiveActivity.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = IbadahLiveActivity.entitlements; path = IbadahLiveActivity.entitlements; sourceTree = "<group>"; };
+		75774D447752D2CAF11EA46E /* libPods-IbadahLiveActivity.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IbadahLiveActivity.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		91F7DD1E241D48A0AF8D0535 /* Assets.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Assets.xcassets; sourceTree = "<group>"; };
+		9A9EA1ED40DE358C13E7ABB2 /* Pods-Ibadah.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ibadah.release.xcconfig"; path = "Target Support Files/Pods-Ibadah/Pods-Ibadah.release.xcconfig"; sourceTree = "<group>"; };
+		9E56D99A853F490F8DD96A0B /* Amiri-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Amiri-Bold.ttf"; path = "../assets/fonts/Amiri/Amiri-Bold.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Ibadah/SplashScreen.storyboard; sourceTree = "<group>"; };
-		AEEF3D90F3264CC38FB3B35C /* VoltraWidgetInitialStates.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = VoltraWidgetInitialStates.swift; path = VoltraWidgetInitialStates.swift; sourceTree = "<group>"; };
-		B69C408238838AA0D670AD0C /* Pods-Ibadah.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ibadah.release.xcconfig"; path = "Target Support Files/Pods-Ibadah/Pods-Ibadah.release.xcconfig"; sourceTree = "<group>"; };
-		BADA96A9DB6707D6441105A2 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Ibadah/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		BA0292BB6AF17AB40B12EC80 /* Pods-IbadahLiveActivity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IbadahLiveActivity.debug.xcconfig"; path = "Target Support Files/Pods-IbadahLiveActivity/Pods-IbadahLiveActivity.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		BEFF17E8CA5C4D40B5BB3F84 /* Assets.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Assets.xcassets; sourceTree = "<group>"; };
-		C595E946D399B0045E73CEC7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Ibadah/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		C9D79ABE6F410321C7F84AAC /* Pods-IbadahLiveActivity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IbadahLiveActivity.debug.xcconfig"; path = "Target Support Files/Pods-IbadahLiveActivity/Pods-IbadahLiveActivity.debug.xcconfig"; sourceTree = "<group>"; };
-		D95DFD1D039D40E6B30F0BC8 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
-		E3AD81F4CF134BA68CB873E7 /* Amiri-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Amiri-Bold.ttf"; path = "../assets/fonts/Amiri/Amiri-Bold.ttf"; sourceTree = "<group>"; };
+		CA512C73EE7B420DA0E512E6 /* Amiri-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Amiri-Regular.ttf"; path = "../assets/fonts/Amiri/Amiri-Regular.ttf"; sourceTree = "<group>"; };
+		D10284AE12D6D8C3B27BB614 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Ibadah/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		DD9DF90CD5AF4E89B0687F32 /* VoltraWidgetBundle.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = VoltraWidgetBundle.swift; path = VoltraWidgetBundle.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Ibadah/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Ibadah-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Ibadah-Bridging-Header.h"; path = "Ibadah/Ibadah-Bridging-Header.h"; sourceTree = "<group>"; };
+		FF45002E705755475A3063E2 /* Pods-Ibadah.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ibadah.debug.xcconfig"; path = "Target Support Files/Pods-Ibadah/Pods-Ibadah.debug.xcconfig"; sourceTree = "<group>"; };
+		FFBFEE2DCB936B276D6F3382 /* libPods-Ibadah.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ibadah.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,35 +79,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4B7A04500E0847CF16CD765 /* libPods-Ibadah.a in Frameworks */,
+				613D7C05910E54FD25D03086 /* libPods-Ibadah.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		22B75105EB604A0E9D07415B /* Frameworks */ = {
+		9D789A803C8245E9A6511DF9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				681B0C574482DB4A9034C522 /* libPods-IbadahLiveActivity.a in Frameworks */,
+				37148E8AD3214DA6A258D6EA /* libPods-IbadahLiveActivity.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		09F288AC4EE54855B9DD6AF3 /* VoltraResources */ = {
+		045F949F25E2CC012F4B4BF2 /* Ibadah */ = {
 			isa = PBXGroup;
 			children = (
-				E3AD81F4CF134BA68CB873E7 /* Amiri-Bold.ttf */,
-				1D4C6AA257FC45F8A1F95631 /* Amiri-Regular.ttf */,
-			);
-			name = VoltraResources;
-			path = "";
-			sourceTree = "<group>";
-		};
-		0B2F436698E7A97AD63FEEB7 /* Ibadah */ = {
-			isa = PBXGroup;
-			children = (
-				BADA96A9DB6707D6441105A2 /* ExpoModulesProvider.swift */,
+				D10284AE12D6D8C3B27BB614 /* ExpoModulesProvider.swift */,
 			);
 			name = Ibadah;
 			sourceTree = "<group>";
@@ -121,44 +111,50 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				C595E946D399B0045E73CEC7 /* PrivacyInfo.xcprivacy */,
+				560ECB6AFC59E626ECE6EC9F /* PrivacyInfo.xcprivacy */,
 			);
 			name = Ibadah;
-			sourceTree = "<group>";
-		};
-		1D99C8B35B72456A9BFF16B5 /* IbadahLiveActivity */ = {
-			isa = PBXGroup;
-			children = (
-				5C502FD7903F4DAC813527AE /* VoltraWidgetBundle.swift */,
-				AEEF3D90F3264CC38FB3B35C /* VoltraWidgetInitialStates.swift */,
-				2CF89182518D41E5837A943D /* IbadahLiveActivity.entitlements */,
-				D95DFD1D039D40E6B30F0BC8 /* Info.plist */,
-				BEFF17E8CA5C4D40B5BB3F84 /* Assets.xcassets */,
-			);
-			name = IbadahLiveActivity;
-			path = IbadahLiveActivity;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				434A432AC652D00282AB4125 /* libPods-Ibadah.a */,
-				7191EE1E122E2C0EC02195B2 /* libPods-IbadahLiveActivity.a */,
+				FFBFEE2DCB936B276D6F3382 /* libPods-Ibadah.a */,
+				75774D447752D2CAF11EA46E /* libPods-IbadahLiveActivity.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4CD6414B9C362749CECB9904 /* Pods */ = {
+		39D43DAC61374E36B2EB7866 /* VoltraResources */ = {
 			isa = PBXGroup;
 			children = (
-				0B5BE0ABDE9625A5ED1791FF /* Pods-Ibadah.debug.xcconfig */,
-				B69C408238838AA0D670AD0C /* Pods-Ibadah.release.xcconfig */,
-				C9D79ABE6F410321C7F84AAC /* Pods-IbadahLiveActivity.debug.xcconfig */,
-				1FFEF1D6C12949B35D167B30 /* Pods-IbadahLiveActivity.release.xcconfig */,
+				9E56D99A853F490F8DD96A0B /* Amiri-Bold.ttf */,
+				CA512C73EE7B420DA0E512E6 /* Amiri-Regular.ttf */,
 			);
-			name = Pods;
-			path = Pods;
+			name = VoltraResources;
+			path = "";
+			sourceTree = "<group>";
+		};
+		5EF69DF90A020C19732C5159 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				045F949F25E2CC012F4B4BF2 /* Ibadah */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		794697C7040F430DBC4D9AF0 /* IbadahLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				DD9DF90CD5AF4E89B0687F32 /* VoltraWidgetBundle.swift */,
+				3F366A14661743A9B0468299 /* VoltraWidgetInitialStates.swift */,
+				752D23246F37436E92BF98D7 /* IbadahLiveActivity.entitlements */,
+				3A7B5E34012546C79B0A315F /* Info.plist */,
+				91F7DD1E241D48A0AF8D0535 /* Assets.xcassets */,
+			);
+			name = IbadahLiveActivity;
+			path = IbadahLiveActivity;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -175,10 +171,10 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				1D99C8B35B72456A9BFF16B5 /* IbadahLiveActivity */,
-				09F288AC4EE54855B9DD6AF3 /* VoltraResources */,
-				4CD6414B9C362749CECB9904 /* Pods */,
-				AAF8713B41D7D6E180F59612 /* ExpoModulesProviders */,
+				794697C7040F430DBC4D9AF0 /* IbadahLiveActivity */,
+				39D43DAC61374E36B2EB7866 /* VoltraResources */,
+				938CD7F2CDC4511FBDAEF781 /* Pods */,
+				5EF69DF90A020C19732C5159 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -189,17 +185,21 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Ibadah.app */,
-				741FBF77BDB24FBAA9CD0E6C /* IbadahLiveActivity.appex */,
+				704516EAEDC246539B6184E7 /* IbadahLiveActivity.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AAF8713B41D7D6E180F59612 /* ExpoModulesProviders */ = {
+		938CD7F2CDC4511FBDAEF781 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0B2F436698E7A97AD63FEEB7 /* Ibadah */,
+				FF45002E705755475A3063E2 /* Pods-Ibadah.debug.xcconfig */,
+				9A9EA1ED40DE358C13E7ABB2 /* Pods-Ibadah.release.xcconfig */,
+				BA0292BB6AF17AB40B12EC80 /* Pods-IbadahLiveActivity.debug.xcconfig */,
+				4F0B4B4436A8B398F5EBC82B /* Pods-IbadahLiveActivity.release.xcconfig */,
 			);
-			name = ExpoModulesProviders;
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -219,34 +219,34 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Ibadah" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				4D4D1F5F8510C1A288A27E48 /* [Expo] Configure project */,
+				282915FE8EC1A3CB72CA90A3 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				70AFC5DFF48E4F16B86ABB72 /* Embed Foundation Extensions */,
-				2563A7D3D24E0EB0B2449296 /* [CP] Embed Pods Frameworks */,
-				A20CA2E077306868A388BA61 /* [CP-User] [RNGoogleMobileAds] Configuration */,
+				8CA9EC61AB2B4B1B973BB79F /* Embed Foundation Extensions */,
+				34753899C9F955438735AA59 /* [CP] Embed Pods Frameworks */,
+				1DA790FD32D6B4A7E5BDDFB2 /* [CP-User] [RNGoogleMobileAds] Configuration */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3E3C01BCA06D468E8CDBB997 /* PBXTargetDependency */,
+				B0937ED0BC4A417582CC9CE4 /* PBXTargetDependency */,
 			);
 			name = Ibadah;
 			productName = Ibadah;
 			productReference = 13B07F961A680F5B00A75B9A /* Ibadah.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D26B988873BD43B9A1CB6F3E /* IbadahLiveActivity */ = {
+		22CF97FB4B60478097BFB8A8 /* IbadahLiveActivity */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E4F98B2880E2486288373980 /* Build configuration list for PBXNativeTarget "IbadahLiveActivity" */;
+			buildConfigurationList = 3544E2DD92284D32A0BBFD32 /* Build configuration list for PBXNativeTarget "IbadahLiveActivity" */;
 			buildPhases = (
-				383459191F49095D7AC3F710 /* [CP] Check Pods Manifest.lock */,
-				72CFD36D879D49939A096CD2 /* Sources */,
-				22B75105EB604A0E9D07415B /* Frameworks */,
-				64D50D24E41049CFA2215E7A /* Resources */,
+				A0CFF5B54F68FDE04AA8200F /* [CP] Check Pods Manifest.lock */,
+				1052FE1D15C44A9791CDFEC3 /* Sources */,
+				9D789A803C8245E9A6511DF9 /* Frameworks */,
+				68D0A1E693F941B18BA396B9 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -254,7 +254,7 @@
 			);
 			name = IbadahLiveActivity;
 			productName = IbadahLiveActivity;
-			productReference = 741FBF77BDB24FBAA9CD0E6C /* IbadahLiveActivity.appex */;
+			productReference = 704516EAEDC246539B6184E7 /* IbadahLiveActivity.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -268,7 +268,7 @@
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
 					};
-					D26B988873BD43B9A1CB6F3E = {
+					22CF97FB4B60478097BFB8A8 = {
 						LastSwiftMigration = 1250;
 					};
 				};
@@ -287,7 +287,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Ibadah */,
-				D26B988873BD43B9A1CB6F3E /* IbadahLiveActivity */,
+				22CF97FB4B60478097BFB8A8 /* IbadahLiveActivity */,
 			);
 		};
 /* End PBXProject section */
@@ -300,17 +300,17 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				404CAFC701A44B4E3D35E9B2 /* PrivacyInfo.xcprivacy in Resources */,
+				88A3EA6EB0EC246ED4B32FE5 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		64D50D24E41049CFA2215E7A /* Resources */ = {
+		68D0A1E693F941B18BA396B9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FCFF44CDCD8E4AB49DD5B88B /* Assets.xcassets in Resources */,
-				3A35D4F33000426CAFEDEB5F /* Amiri-Bold.ttf in Resources */,
-				41D3529066744FF39CCF32E0 /* Amiri-Regular.ttf in Resources */,
+				3239944E3BB748ADA1D82DEF /* Assets.xcassets in Resources */,
+				8516FE8470E740119247430F /* Amiri-Bold.ttf in Resources */,
+				2632F8D2322D4FA7809B185B /* Amiri-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,51 +356,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2563A7D3D24E0EB0B2449296 /* [CP] Embed Pods Frameworks */ = {
+		1DA790FD32D6B4A7E5BDDFB2 /* [CP-User] [RNGoogleMobileAds] Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Ibadah/Pods-Ibadah-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermesvm.framework/hermesvm",
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermesvm.framework",
-			);
+			name = "[CP-User] [RNGoogleMobileAds] Configuration";
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Ibadah/Pods-Ibadah-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n##########################################################################\n##########################################################################\n#\n#  NOTE THAT IF YOU CHANGE THIS FILE YOU MUST RUN pod install AFTERWARDS\n#\n#  This file is installed as an Xcode build script in the project file\n#  by cocoapods, and you will not see your changes until you pod install\n#\n##########################################################################\n##########################################################################\n\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_PROJECT_ABBREVIATION=\"RNGoogleMobileAds\"\n_JSON_ROOT=\"'react-native-google-mobile-ads'\"\n_JSON_FILE_NAME='app.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n_PACKAGE_JSON_NAME='package.json'\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"note:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"note:      '$1' already exists\"\n}\n\nfunction getJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -KU -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"note: -> ${_PROJECT_ABBREVIATION} build script started\"\necho \"note: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == *.generated ]]; then continue; fi\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"note:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | /usr/bin/head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"note:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -KU -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    if ! python3 --version >/dev/null 2>&1; then echo \"error: python3 not found, app.json file processing error.\" && exit 1; fi\n    _JSON_OUTPUT_BASE64=$(python3 -c 'import json,sys,base64;print(base64.b64encode(bytes(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"', '\"'rb'\"').read())['${_JSON_ROOT}']), '\"'utf-8'\"')).decode())' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"google_mobile_ads_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.delay_app_measurement_init\n  _DELAY_APP_MEASUREMENT=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"delay_app_measurement_init\")\n  if [[ $_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.ios_app_id\n  _IOS_APP_ID=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"ios_app_id\")\n  if [[ $_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_IOS_APP_ID\")\n  fi\n\n  # config.sk_ad_network_items\n  _SK_AD_NETWORK_ITEMS=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"sk_ad_network_items\")\n  if [[ $_SK_AD_NETWORK_ITEMS ]]; then\n    _PLIST_ENTRY_KEYS+=(\"SKAdNetworkItems\")\n    _PLIST_ENTRY_TYPES+=(\"array\")\n    _PLIST_ENTRY_VALUES+=(\"\")\n\n    oldifs=$IFS\n    IFS=\"\n\"\n    array=($(echo \"$_SK_AD_NETWORK_ITEMS\"))\n    IFS=$oldifs\n    for i in \"${!array[@]}\"; do\n      _PLIST_ENTRY_KEYS+=(\"SKAdNetworkItems:$i:SKAdNetworkIdentifier\")\n      _PLIST_ENTRY_TYPES+=(\"string\")\n      _PLIST_ENTRY_VALUES+=(\"${array[i]}\")  \n    done\n  fi\n\n    # config.user_tracking_usage_description\n  _USER_TRACKING_USAGE_DESCRIPTION=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"user_tracking_usage_description\")\n  if [[ $_USER_TRACKING_USAGE_DESCRIPTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"NSUserTrackingUsageDescription\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_USER_TRACKING_USAGE_DESCRIPTION\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"google_mobile_ads_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"note:   An ${_JSON_FILE_NAME} file was not found, whilst this file is optional it is recommended to include it to auto-configure services.\"\nfi;\n\necho \"note: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nif ! [[ -f \"${_TARGET_PLIST}\" ]]; then\n  echo \"error: unable to locate Info.plist to set properties. App will crash without GADApplicationIdentifier set.\"\n  exit 1\nfi\n\nif ! [[ $_IOS_APP_ID ]]; then\n  echo \"warning:  ios_app_id key not found in react-native-google-mobile-ads key in app.json. App will crash without it. You may safely ignore this warning if you are using our Expo config plugin.\"\n  exit 0\nfi\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally\n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"note: <- ${_PROJECT_ABBREVIATION} build script finished\"\n";
 		};
-		383459191F49095D7AC3F710 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-IbadahLiveActivity-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4D4D1F5F8510C1A288A27E48 /* [Expo] Configure project */ = {
+		282915FE8EC1A3CB72CA90A3 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -423,6 +392,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Ibadah/expo-configure-project.sh\"\n";
+		};
+		34753899C9F955438735AA59 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Ibadah/Pods-Ibadah-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/FBAEMKit/FBAEMKit.framework/FBAEMKit",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework/FBSDKCoreKit",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/FBSDKCoreKit_Basics/FBSDKCoreKit_Basics.framework/FBSDKCoreKit_Basics",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/FBSDKGamingServicesKit/FBSDKGamingServicesKit.framework/FBSDKGamingServicesKit",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework/FBSDKLoginKit",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/FBSDKShareKit/FBSDKShareKit.framework/FBSDKShareKit",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermesvm.framework/hermesvm",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBAEMKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit_Basics.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKGamingServicesKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKShareKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermesvm.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Ibadah/Pods-Ibadah-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -466,54 +469,63 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Ibadah/Pods-Ibadah-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A20CA2E077306868A388BA61 /* [CP-User] [RNGoogleMobileAds] Configuration */ = {
+		A0CFF5B54F68FDE04AA8200F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			inputFileListPaths = (
 			);
-			name = "[CP-User] [RNGoogleMobileAds] Configuration";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-IbadahLiveActivity-checkManifestLockResult.txt",
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n##########################################################################\n##########################################################################\n#\n#  NOTE THAT IF YOU CHANGE THIS FILE YOU MUST RUN pod install AFTERWARDS\n#\n#  This file is installed as an Xcode build script in the project file\n#  by cocoapods, and you will not see your changes until you pod install\n#\n##########################################################################\n##########################################################################\n\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_PROJECT_ABBREVIATION=\"RNGoogleMobileAds\"\n_JSON_ROOT=\"'react-native-google-mobile-ads'\"\n_JSON_FILE_NAME='app.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n_PACKAGE_JSON_NAME='package.json'\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"note:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"note:      '$1' already exists\"\n}\n\nfunction getJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -KU -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"note: -> ${_PROJECT_ABBREVIATION} build script started\"\necho \"note: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == *.generated ]]; then continue; fi\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"note:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | /usr/bin/head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"note:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -KU -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    if ! python3 --version >/dev/null 2>&1; then echo \"error: python3 not found, app.json file processing error.\" && exit 1; fi\n    _JSON_OUTPUT_BASE64=$(python3 -c 'import json,sys,base64;print(base64.b64encode(bytes(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"', '\"'rb'\"').read())['${_JSON_ROOT}']), '\"'utf-8'\"')).decode())' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"google_mobile_ads_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.delay_app_measurement_init\n  _DELAY_APP_MEASUREMENT=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"delay_app_measurement_init\")\n  if [[ $_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.ios_app_id\n  _IOS_APP_ID=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"ios_app_id\")\n  if [[ $_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_IOS_APP_ID\")\n  fi\n\n  # config.sk_ad_network_items\n  _SK_AD_NETWORK_ITEMS=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"sk_ad_network_items\")\n  if [[ $_SK_AD_NETWORK_ITEMS ]]; then\n    _PLIST_ENTRY_KEYS+=(\"SKAdNetworkItems\")\n    _PLIST_ENTRY_TYPES+=(\"array\")\n    _PLIST_ENTRY_VALUES+=(\"\")\n\n    oldifs=$IFS\n    IFS=\"\n\"\n    array=($(echo \"$_SK_AD_NETWORK_ITEMS\"))\n    IFS=$oldifs\n    for i in \"${!array[@]}\"; do\n      _PLIST_ENTRY_KEYS+=(\"SKAdNetworkItems:$i:SKAdNetworkIdentifier\")\n      _PLIST_ENTRY_TYPES+=(\"string\")\n      _PLIST_ENTRY_VALUES+=(\"${array[i]}\")  \n    done\n  fi\n\n    # config.user_tracking_usage_description\n  _USER_TRACKING_USAGE_DESCRIPTION=$(getJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"user_tracking_usage_description\")\n  if [[ $_USER_TRACKING_USAGE_DESCRIPTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"NSUserTrackingUsageDescription\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_USER_TRACKING_USAGE_DESCRIPTION\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"google_mobile_ads_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"note:   An ${_JSON_FILE_NAME} file was not found, whilst this file is optional it is recommended to include it to auto-configure services.\"\nfi;\n\necho \"note: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nif ! [[ -f \"${_TARGET_PLIST}\" ]]; then\n  echo \"error: unable to locate Info.plist to set properties. App will crash without GADApplicationIdentifier set.\"\n  exit 1\nfi\n\nif ! [[ $_IOS_APP_ID ]]; then\n  echo \"warning:  ios_app_id key not found in react-native-google-mobile-ads key in app.json. App will crash without it. You may safely ignore this warning if you are using our Expo config plugin.\"\n  exit 0\nfi\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally\n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"note: <- ${_PROJECT_ABBREVIATION} build script finished\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1052FE1D15C44A9791CDFEC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FE42960DDCF4DF9A286D517 /* VoltraWidgetBundle.swift in Sources */,
+				B39B00D72A234C43BBA6D15F /* VoltraWidgetInitialStates.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F871A680F5B00A75B9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				E98C0EEACE3885A9533FF2F8 /* ExpoModulesProvider.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		72CFD36D879D49939A096CD2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E2259DE4B8FD440EB5EAC8CD /* VoltraWidgetBundle.swift in Sources */,
-				C4A7B91D8A6541B399AB4AE9 /* VoltraWidgetInitialStates.swift in Sources */,
+				F9064ADA4C0138B35D816DB7 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3E3C01BCA06D468E8CDBB997 /* PBXTargetDependency */ = {
+		B0937ED0BC4A417582CC9CE4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D26B988873BD43B9A1CB6F3E /* IbadahLiveActivity */;
-			targetProxy = 008D25F9F930437DBFAE5AE0 /* PBXContainerItemProxy */;
+			target = 22CF97FB4B60478097BFB8A8 /* IbadahLiveActivity */;
+			targetProxy = E40FED6DA3C04FF396CFF006 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0B5BE0ABDE9625A5ED1791FF /* Pods-Ibadah.debug.xcconfig */;
+			baseConfigurationReference = FF45002E705755475A3063E2 /* Pods-Ibadah.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -550,7 +562,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B69C408238838AA0D670AD0C /* Pods-Ibadah.release.xcconfig */;
+			baseConfigurationReference = 9A9EA1ED40DE358C13E7ABB2 /* Pods-Ibadah.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -576,6 +588,29 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		5897D8401C2B4FE6B23CE33D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4F0B4B4436A8B398F5EBC82B /* Pods-IbadahLiveActivity.release.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = IbadahLiveActivity/IbadahLiveActivity.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9Y5Y87RDPF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IbadahLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IbadahLiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.6;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.peersahab.ibadah.IbadahLiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -701,9 +736,9 @@
 			};
 			name = Release;
 		};
-		C6A2D011AE634B19A3950F91 /* Debug */ = {
+		EE550A4E34C14B0AB1357D9D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C9D79ABE6F410321C7F84AAC /* Pods-IbadahLiveActivity.debug.xcconfig */;
+			baseConfigurationReference = BA0292BB6AF17AB40B12EC80 /* Pods-IbadahLiveActivity.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = IbadahLiveActivity/IbadahLiveActivity.entitlements;
@@ -724,29 +759,6 @@
 			};
 			name = Debug;
 		};
-		E90B224117C9456D853A1369 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1FFEF1D6C12949B35D167B30 /* Pods-IbadahLiveActivity.release.xcconfig */;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = IbadahLiveActivity/IbadahLiveActivity.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9Y5Y87RDPF;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = IbadahLiveActivity/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = IbadahLiveActivity;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.6;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.peersahab.ibadah.IbadahLiveActivity;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -759,20 +771,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		3544E2DD92284D32A0BBFD32 /* Build configuration list for PBXNativeTarget "IbadahLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE550A4E34C14B0AB1357D9D /* Debug */,
+				5897D8401C2B4FE6B23CE33D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Ibadah" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E4F98B2880E2486288373980 /* Build configuration list for PBXNativeTarget "IbadahLiveActivity" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C6A2D011AE634B19A3950F91 /* Debug */,
-				E90B224117C9456D853A1369 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

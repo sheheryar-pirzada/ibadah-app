@@ -2,21 +2,24 @@ import { ThemedBlurView } from "@/components/ThemedBlurView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import * as Haptics from "expo-haptics";
-import { Image as ExpoImage } from 'expo-image';
+import { Image as ExpoImage } from "expo-image";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   Dimensions,
   Image,
-  Platform,
   Pressable,
-  Share,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Share, { type ShareSingleOptions } from "react-native-share";
 import { captureScreen } from "react-native-view-shot";
+
+const FACEBOOK_APP_ID = "3345730002248977";
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -88,13 +91,28 @@ export default function ShareScreen() {
         quality: 1,
       });
 
-      if (Platform.OS === "ios") {
-        await Share.share({ url: uri });
-      } else {
-        await Share.share({ message: uri });
+      const shareOptions: ShareSingleOptions = {
+        backgroundImage: uri,
+        linkUrl: "instagram://user?username=ibadah.app",
+        linkText: "Follow",
+        attributionURL: "ibadah://",
+        social: Share.Social.INSTAGRAM_STORIES as ShareSingleOptions["social"],
+        appId: FACEBOOK_APP_ID,
+      };
+
+      await Share.shareSingle(shareOptions);
+    } catch (error: unknown) {
+      const message = error && typeof error === "object" && "message" in error ? String((error as { message: string }).message) : "";
+      if (message?.toLowerCase().includes("user did not share") || message?.toLowerCase().includes("cancel")) {
+        // User cancelled – no need to alert
+        return;
       }
-    } catch (error) {
+      if (message?.toLowerCase().includes("not installed") || message?.toLowerCase().includes("instagram")) {
+        Alert.alert("Instagram not installed", "Install Instagram to share to Stories.");
+        return;
+      }
       console.error("Share capture failed:", error);
+      Alert.alert("Share failed", "Could not open Instagram Stories. Try again or install Instagram.");
     } finally {
       setHideControls(false);
       setIsCapturing(false);

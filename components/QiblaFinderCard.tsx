@@ -29,7 +29,7 @@ export default function QiblaFinderCard() {
         <AppleZoom>
           <View
             style={{
-              marginBottom: 24,
+              marginBottom: 16,
               borderRadius: 40,
               overflow: 'hidden',
               borderColor: cardBorder,

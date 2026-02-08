@@ -9,12 +9,14 @@ import 'react-native-reanimated';
 
 import { ChinProvider } from '@/components/chin';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
-import { updatePrayerWidgetsWithLocation, updateDuaWidgets } from '@/components/widgets';
+import { updatePrayerWidgetsWithLocation, updateDuaWidgets, updateAllahNamesWidget } from '@/components/widgets';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { TranslationProvider } from '@/contexts/TranslationContext';
 import { LocationProvider, useLocation } from '@/hooks/useLocation';
 import { useAppOpenAd } from '@/utils/app-open-ad';
 import { configureAudioMode } from '@/utils/audio-service';
+import * as TrackingTransparency from 'expo-tracking-transparency';
+import { Settings } from 'react-native-fbsdk-next';
 import { notificationService } from '@/utils/notification-service';
 import { getNotificationSettings } from '@/utils/notification-settings';
 import '../global.css';
@@ -28,11 +30,14 @@ function WidgetManager() {
     // Only run on iOS (widgets are iOS-only for now)
     if (Platform.OS !== 'ios') return;
 
-    // Update dua widget on first mount (doesn't need location)
+    // Update dua and Allah names widgets on first mount (don't need location)
     if (!hasUpdatedDuaWidget.current) {
       hasUpdatedDuaWidget.current = true;
       updateDuaWidgets().catch((error) => {
         console.error('Error updating dua widget:', error);
+      });
+      updateAllahNamesWidget().catch((error) => {
+        console.error('Error updating Allah names widget:', error);
       });
     }
 
@@ -48,9 +53,12 @@ function WidgetManager() {
     // Update widgets when app comes to foreground
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
-        // Always update dua widget on foreground
+        // Always update dua and Allah names widgets on foreground
         updateDuaWidgets().catch((error) => {
           console.error('Error updating dua widget on foreground:', error);
+        });
+        updateAllahNamesWidget().catch((error) => {
+          console.error('Error updating Allah names widget on foreground:', error);
         });
 
         // Update prayer widgets if we have location
@@ -165,6 +173,22 @@ function RootLayoutContent() {
   useEffect(() => {
     setColorScheme(resolvedTheme);
   }, [resolvedTheme, setColorScheme]);
+
+  // Request App Tracking Transparency (iOS) before any tracking/SDK that could use IDFA, then init SDKs.
+  useEffect(() => {
+    const initTrackingAndSDK = async () => {
+      if (Platform.OS === 'ios') {
+        const { status } = await TrackingTransparency.requestTrackingPermissionsAsync();
+        if (status === 'granted') {
+          await Settings.setAdvertiserTrackingEnabled(true);
+        } else {
+          await Settings.setAdvertiserTrackingEnabled(false);
+        }
+      }
+      Settings.initializeSDK();
+    };
+    initTrackingAndSDK();
+  }, []);
 
   // Initialize App Open Ads
   useAppOpenAd();

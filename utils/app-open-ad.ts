@@ -79,22 +79,19 @@ export const appOpenAdManager = new AppOpenAdManager();
 
 export function useAppOpenAd() {
   const appState = useRef(AppState.currentState);
-  const [isReady, setIsReady] = useState(false);
+  const hasBeenInBackground = useRef(false);
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
 
-    // Show ad on initial app load after a brief delay
-    const timer = setTimeout(() => {
-      setIsReady(true);
-      appOpenAdManager.showAdIfAvailable();
-    }, 1000);
-
-    // Handle app state changes (show ad when returning to foreground)
     const subscription = AppState.addEventListener(
       'change',
       (nextAppState: AppStateStatus) => {
+        if (nextAppState === 'background' || nextAppState === 'inactive') {
+          hasBeenInBackground.current = true;
+        }
         if (
+          hasBeenInBackground.current &&
           appState.current.match(/inactive|background/) &&
           nextAppState === 'active'
         ) {
@@ -104,11 +101,8 @@ export function useAppOpenAd() {
       }
     );
 
-    return () => {
-      clearTimeout(timer);
-      subscription.remove();
-    };
+    return () => subscription.remove();
   }, []);
 
-  return { isReady };
+  return {};
 }

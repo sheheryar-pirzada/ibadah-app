@@ -80,7 +80,7 @@ export default function DailyHadithCard({ hadith, isLoading }: DailyHadithCardPr
         <AppleZoom>
           <Animated.View
             entering={FadeInUp.delay(400).duration(800)}
-            className="mb-6 overflow-hidden"
+            className="mb-4 overflow-hidden"
             style={{ borderColor: cardBorder, borderCurve: 'continuous', borderRadius: 40, borderWidth: 0.5 }}
           >
             <ThemedBlurView intensity={25} className="p-5">

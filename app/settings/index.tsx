@@ -2,12 +2,12 @@ import * as Haptics from 'expo-haptics';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    Platform,
-    Pressable,
-    ScrollView,
-    Switch,
-    Text,
-    View,
+  Platform,
+  Pressable,
+  ScrollView,
+  Switch,
+  Text,
+  View,
 } from 'react-native';
 
 import { useTheme } from '@/contexts/ThemeContext';
@@ -17,21 +17,21 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useHadithSettings } from '@/utils/hadith-settings';
 import { notificationService } from '@/utils/notification-service';
 import {
-    getNotificationSettings,
-    updateDuaToggle,
-    updateNotificationEnabled,
-    updateRemindersEnabled,
+  getNotificationSettings,
+  updateDuaToggle,
+  updateNotificationEnabled,
+  updateRemindersEnabled,
 } from '@/utils/notification-settings';
 import {
-    getCalculationMethodOptions,
-    getMadhabOptions,
-    getPrayerSettings,
-    type CalculationMethodKey,
-    type MadhabKey,
+  getCalculationMethodOptions,
+  getMadhabOptions,
+  getPrayerSettings,
+  type CalculationMethodKey,
+  type MadhabKey,
 } from '@/utils/prayer-settings';
 import {
-    getReciterDisplayName,
-    getReciterSettings,
+  getReciterDisplayName,
+  getReciterSettings,
 } from '@/utils/reciter-settings';
 
 export default function SettingsScreen() {

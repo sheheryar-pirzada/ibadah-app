@@ -17,6 +17,7 @@
 
       // Home Screen Widgets
       VoltraWidget_prayer_times()
+  VoltraWidget_allah_names()
   VoltraWidget_dua_reflection()
   VoltraWidget_dua_calm()
   VoltraWidget_dua_anxiety()
@@ -51,6 +52,28 @@ public var body: some WidgetConfiguration {
   .configurationDisplayName("Prayer Times")
   .description("Shows prayer times and countdown to next prayer")
   .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+  .contentMarginsDisabled()
+}
+}
+
+public struct VoltraWidget_allah_names: Widget {
+private let widgetId = "allah_names"
+
+public init() {}
+
+public var body: some WidgetConfiguration {
+  StaticConfiguration(
+    kind: "Voltra_Widget_allah_names",
+    provider: VoltraHomeWidgetProvider(
+      widgetId: widgetId,
+      initialState: VoltraWidgetInitialStates.getInitialState(for: widgetId)
+    )
+  ) { entry in
+    VoltraHomeWidgetView(entry: entry)
+  }
+  .configurationDisplayName("99 Names of Allah")
+  .description("Daily name from the 99 Names of Allah")
+  .supportedFamilies([.systemSmall, .systemMedium])
   .contentMarginsDisabled()
 }
 }
