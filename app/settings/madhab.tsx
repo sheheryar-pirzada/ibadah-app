@@ -73,7 +73,7 @@ export default function MadhabScreen() {
 
   return (
 
-        <View className="flex-1 px-6 pt-10 pb-10" style={{ backgroundColor }}>
+        <View className="flex-1 px-6 pt-10 pb-10" style={{ backgroundColor: 'transparent' }}>
           <Text className="text-xl text-center mb-4 font-tajawal-bold" style={{ color: textColor }}>
             Madhab
           </Text>

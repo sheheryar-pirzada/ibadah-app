@@ -27,7 +27,7 @@ const HadithSearchListItem = ({ item, index }: HadithSearchListItemProps) => {
         return (
             <Animated.View
                 entering={FadeIn.delay(index * 50).duration(300)}
-                className="overflow-hidden mb-3"
+                className="overflow-hidden"
                 style={{ borderColor: cardBorder, borderCurve: 'continuous', borderRadius: 20, borderWidth: 0.5 }}
             >
                 <ThemedBlurView intensity={20} className="p-5 flex-row items-center gap-4">

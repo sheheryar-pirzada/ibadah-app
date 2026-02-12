@@ -1,12 +1,12 @@
-import { View, Text } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
 
-import { TasbeehCanvas, TasbeehCounter, TasbeehControls } from '@/components/tasbeeh';
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { BackgroundImage } from '@/components/BackgroundImage';
+import { TasbeehCanvas, TasbeehControls, TasbeehCounter } from '@/components/tasbeeh';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function TasbeehScreen() {
   const insets = useSafeAreaInsets();
@@ -22,16 +22,9 @@ export default function TasbeehScreen() {
       : (['#E8E4D9', '#F5F2E8', '#E8E4D9'] as const);
 
   return (
-    <GestureHandlerRootView className="flex-1" style={{ backgroundColor }}>
+    <BackgroundImage>
+    <GestureHandlerRootView className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
-
-      {/* Background gradient */}
-      <LinearGradient
-        colors={gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="absolute inset-0"
-      />
 
       {/* Main content */}
       <View className="flex-1" style={{ paddingTop: insets.top + 60 }}>
@@ -57,5 +50,6 @@ export default function TasbeehScreen() {
         </View>
       </View>
     </GestureHandlerRootView>
+    </BackgroundImage>
   );
 }

@@ -1,21 +1,27 @@
 /**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
+ * Returns a theme color by name. Respects both app theme (light/dark) and background preference (solid vs grain1/2/3).
+ * When background is solid, uses light or dark palette. When background is a grain image, uses that grain's palette.
  */
 
-import { Colors } from '@/constants/Colors';
+import { Colors, type ColorSchemeKey } from '@/constants/Colors';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const { resolvedTheme } = useTheme();
-  const colorFromProps = props[resolvedTheme];
+export type ThemeColorName = keyof typeof Colors.light;
 
+export function useThemeColor(
+  props: { light?: string; dark?: string } & Partial<Record<ColorSchemeKey, string>>,
+  colorName: ThemeColorName
+): string {
+  const { resolvedTheme } = useTheme();
+  const { backgroundKey } = useBackground();
+
+  const effectiveScheme: ColorSchemeKey =
+    backgroundKey === 'solid' ? resolvedTheme : backgroundKey;
+
+  const colorFromProps = props[effectiveScheme] ?? props[resolvedTheme];
   if (colorFromProps) {
     return colorFromProps;
-  } else {
-    return Colors[resolvedTheme][colorName];
   }
+  return Colors[effectiveScheme][colorName];
 }

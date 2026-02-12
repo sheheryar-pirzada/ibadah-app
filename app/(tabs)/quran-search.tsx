@@ -1,40 +1,42 @@
+import { ChipGroup } from '@/components/animated-chip/Chip';
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { ChinAudioPlayer, useChin } from '@/components/chin';
 import QuranSearchHeader from '@/components/QuranSearchHeader';
 import QuranSearchResultItem from '@/components/QuranSearchResultItem';
 import ShareModal, { ShareContent } from '@/components/ShareModal';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
-import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useQuranChapters } from '@/hooks/useQuranChapters';
 import { useQuranSearch } from '@/hooks/useQuranSearch';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { quranAPI, SearchResult } from '@/utils/quran-api';
 import {
-    getQuranSearchPreferences,
-    saveQuranSearchMode,
-    saveQuranSearchReadByVerse,
-    type QuranSearchMode,
+  getQuranSearchPreferences,
+  saveQuranSearchMode,
+  saveQuranSearchReadByVerse,
+  type QuranSearchMode,
 } from '@/utils/quran-search-settings';
 import { getReciterSettings } from '@/utils/reciter-settings';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-    ActivityIndicator,
-    FlatList,
-    Keyboard,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
+  ActivityIndicator,
+  FlatList,
+  Keyboard,
+  Pressable,
+  Text,
+  TextInput,
+  View
 } from 'react-native';
 
 export default function QuranSearchScreen() {
   const { resolvedTheme } = useTheme();
+  const { backgroundKey } = useBackground();
 
   const {
     searchQuery,
@@ -87,14 +89,47 @@ export default function QuranSearchScreen() {
     saveQuranSearchReadByVerse(byVerse);
   }, []);
 
-  const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const textMuted = useThemeColor({}, 'textMuted');
   const accentColor = useThemeColor({}, 'accent');
   const borderColor = useThemeColor({}, 'border');
-  const gradientColors = resolvedTheme === 'dark'
-    ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
-    : (['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.15)'] as const);
+  const textInverse = useThemeColor({}, 'textInverse');
+
+  // Solid + light → dark inactive bg, solid + dark → light inactive bg, grain → translucent white
+  const chipInactiveBg = backgroundKey === 'solid'
+    ? resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
+    : 'rgba(255,255,255,0.2)';
+
+  const chips = useMemo(() => [
+    {
+      label: "By Verse",
+      activeColor: accentColor,
+      inActiveBackgroundColor: chipInactiveBg,
+      labelColor: textInverse,
+      icon: () => (
+        <SymbolView
+          resizeMode="scaleAspectFit"
+          name="text.line.first.and.arrowtriangle.forward"
+          size={20}
+          tintColor={readByVerse ? textInverse : accentColor}
+        />
+      ),
+    },
+    {
+      label: "By Page",
+      activeColor: accentColor,
+      inActiveBackgroundColor: chipInactiveBg,
+      labelColor: textInverse,
+      icon: () => (
+        <SymbolView
+          resizeMode="scaleAspectFit"
+          name="text.page.fill"
+          size={20}
+          tintColor={!readByVerse ? textInverse : accentColor}
+        />
+      ),
+    },
+  ], [readByVerse, textInverse, accentColor, chipInactiveBg]);
 
   const filteredChapters = useMemo(() => {
     let result = [...chapters];
@@ -242,14 +277,8 @@ export default function QuranSearchScreen() {
   }, [isLoadingMore, accentColor, textMuted, currentPage, totalPages, results.length, loadMore, mode]);
 
   return (
-    <>
-      <View className="flex-1" style={{ backgroundColor }}>
-        <ThemedStatusBar />
-        <LinearGradient
-          colors={gradientColors}
-          style={StyleSheet.absoluteFillObject}
-        />
-
+    <BackgroundImage>
+      <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
         {mode === 'Search' ? (
           <FlatList
             data={results}
@@ -339,42 +368,14 @@ export default function QuranSearchScreen() {
 
                 {/* Read mode toggle: verse vs page */}
                 <View className="px-4 pb-2 flex-row justify-end">
-                  <View className="flex-row rounded-2xl overflow-hidden border-[0.5px]" style={{ borderColor: 'rgba(150,150,150,0.2)', borderCurve: 'continuous' }}>
-                    <Pressable
-                      onPress={() => {
-                        if (!readByVerse) {
-                          Haptics.selectionAsync();
-                          handleReadByVerseChange(true);
-                        }
-                      }}
-                      className="px-4 py-2.5 rounded-2xl"
-                      style={{ backgroundColor: readByVerse ? accentColor : 'transparent', borderCurve: 'continuous' }}
-                    >
-                      <Text
-                        className="text-md"
-                        style={{ color: readByVerse ? '#fff' : textMuted }}
-                      >
-                        By verse
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={() => {
-                        if (readByVerse) {
-                          Haptics.selectionAsync();
-                          handleReadByVerseChange(false);
-                        }
-                      }}
-                      className="px-4 py-2.5 rounded-2xl"
-                      style={{ backgroundColor: !readByVerse ? accentColor : 'transparent', borderCurve: 'continuous' }}
-                    >
-                      <Text
-                        className="text-md"
-                        style={{ color: !readByVerse ? '#fff' : textMuted }}
-                      >
-                        By page
-                      </Text>
-                    </Pressable>
-                  </View>
+                <ChipGroup
+                    chips={chips}
+                    selectedIndex={readByVerse ? 0 : 1}
+                    onChange={(index) => {
+                      Haptics.selectionAsync();
+                      handleReadByVerseChange(index === 0);
+                    }}
+                  />
                 </View>
 
                 <FlatList
@@ -429,6 +430,6 @@ export default function QuranSearchScreen() {
           content={shareContent}
         />
       )}
-    </>
+    </BackgroundImage>
   );
 }

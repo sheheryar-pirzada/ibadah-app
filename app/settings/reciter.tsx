@@ -69,7 +69,7 @@ export default function ReciterScreen() {
   if (isLoading) {
     return (
       <ScrollView
-        style={{ flex: 1, backgroundColor }}
+        style={{ flex: 1, backgroundColor: 'transparent' }}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 60 }}
       >
         <ActivityIndicator size="large" color={accentColor} />
@@ -81,7 +81,7 @@ export default function ReciterScreen() {
   if (error) {
     return (
       <ScrollView
-        style={{ flex: 1, backgroundColor }}
+        style={{ flex: 1, backgroundColor: 'transparent' }}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}
       >
         <Text className="text-base font-sans text-center mb-4" style={{ color: textColor }}>{error}</Text>
@@ -95,7 +95,7 @@ export default function ReciterScreen() {
   return (
     // <View style={{ flex: 1, backgroundColor }}>
       <ScrollView
-        style={{ flex: 1, backgroundColor }}
+        style={{ flex: 1, backgroundColor: 'transparent' }}
         contentContainerStyle={{ paddingBottom: 40, paddingTop: 24, paddingHorizontal: 24 }}
         showsVerticalScrollIndicator={false}
       >

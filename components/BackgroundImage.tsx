@@ -1,32 +1,35 @@
-import { Image, type ImageProps } from 'expo-image';
+import { ImageBackground, type ImageProps } from 'expo-image';
 import React from 'react';
 import { View, type ViewProps } from 'react-native';
 
-const DEFAULT_SOURCE = require('@/assets/backgrounds/grain1.jpg');
+import { useBackground } from '@/contexts/BackgroundContext';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import {
+  getBackgroundImageSource,
+} from '@/utils/background-settings';
 
 export type BackgroundImageProps = ViewProps & {
-  /** Image source. Defaults to grain1.jpg. */
+  /**
+   * When provided, overrides the user's preference and uses this image as the background.
+   * When omitted, uses the app preference: solid (theme color) or the selected grain image.
+   */
   source?: ImageProps['source'];
-  /** How the image is resized. Defaults to "cover". */
+  /** How the image is resized. Defaults to "cover". Only used when showing an image. */
   contentFit?: ImageProps['contentFit'];
   /** Optional blurhash for the image. */
   placeholder?: ImageProps['placeholder'];
 };
 
 /**
- * Full-screen background image component. Renders the image in an absolute layer
- * behind children. Use as a wrapper around screen content.
+ * Full-screen background component. Uses the user's background preference from context:
+ * - "solid" → theme background color (light/dark).
+ * - "grain1" | "grain2" | "grain3" → the corresponding grain image.
+ * Pass `source` to override and always show a specific image instead of the preference.
  *
- * @example
- * <BackgroundImage>
- *   <ScrollView>...</ScrollView>
- * </BackgroundImage>
- *
- * @example With custom image
- * <BackgroundImage source={require('@/assets/backgrounds/other.jpg')} />
+ * Must be used within BackgroundProvider and ThemeProvider.
  */
 export function BackgroundImage({
-  source = DEFAULT_SOURCE,
+  source: sourceOverride,
   contentFit = 'cover',
   placeholder,
   children,
@@ -34,14 +37,37 @@ export function BackgroundImage({
   style,
   ...viewProps
 }: BackgroundImageProps) {
+  const { backgroundKey } = useBackground();
+  const themeBackground = useThemeColor({}, 'background');
+
+  const imageSource = sourceOverride ?? getBackgroundImageSource(backgroundKey);
+  const useSolid = backgroundKey === 'solid' && sourceOverride == null;
+
   return (
     <View className={className} style={[{ flex: 1 }, style]} {...viewProps}>
-      <Image
-        source={source}
-        contentFit={contentFit}
-        placeholder={placeholder}
-        style={{ flex: 1, position: 'absolute', inset: 0 }}
-      />
+      {useSolid ? (
+        <View
+          style={[
+            { flex: 1, position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+            { backgroundColor: themeBackground },
+          ]}
+        />
+      ) : imageSource != null ? (
+        <ImageBackground
+          source={imageSource}
+          contentFit={contentFit}
+          placeholder={placeholder}
+          cachePolicy="memory-disk"
+          style={{ flex: 1, position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+        />
+      ) : (
+        <View
+          style={[
+            { flex: 1, position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+            { backgroundColor: themeBackground },
+          ]}
+        />
+      )}
       {children}
     </View>
   );

@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export function SettingsHeaderButton() {
@@ -17,7 +17,7 @@ export function SettingsHeaderButton() {
       }}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
-      <IconSymbol name="gearshape.fill" size={24} color={tintColor} />
+      <IconSymbol name="gearshape.fill" size={28} color={tintColor} />
     </TouchableOpacity>
   );
 }

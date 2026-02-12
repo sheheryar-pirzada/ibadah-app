@@ -1,3 +1,4 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import HadithSearchHeader from '@/components/HadithSearchHeader';
 import HadithSearchListItem from '@/components/HadithSearchListItem';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
@@ -151,13 +152,8 @@ export default function HadithSearchScreen() {
   }, [hasSearched, results.length, chapterResults.length, isLoadingMore, accentColor, searchMode, currentPage, lastPage, handleLoadMore, textMuted]);
 
   return (
-    <View className="flex-1" style={{ backgroundColor }}>
-      <ThemedStatusBar />
-      <LinearGradient
-        colors={gradientColors}
-        style={StyleSheet.absoluteFill}
-      />
-
+    <BackgroundImage>
+    <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <FlatList
         data={searchMode === 'chapter' ? chapterResults : results}
         renderItem={({ item, index }) => <HadithSearchListItem item={item} index={index} />}
@@ -171,6 +167,7 @@ export default function HadithSearchScreen() {
         onEndReachedThreshold={0.3}
       />
     </View>
+    </BackgroundImage>
   );
 }
 

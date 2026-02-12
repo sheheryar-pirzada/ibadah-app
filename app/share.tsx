@@ -1,3 +1,4 @@
+import { BackgroundImage } from "@/components/BackgroundImage";
 import { ThemedBlurView } from "@/components/ThemedBlurView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -10,9 +11,8 @@ import {
   Dimensions,
   Image,
   Pressable,
-  StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Share, { type ShareSingleOptions } from "react-native-share";
@@ -125,8 +125,9 @@ export default function ShareScreen() {
   };
 
   return (
-    <View style={{ backgroundColor: backgroundColor }} className="flex-1 justify-center items-center">
-      <ThemedBlurView intensity={80} style={StyleSheet.absoluteFill} />
+    <BackgroundImage>
+    <View style={{ backgroundColor: 'transparent' }} className="flex-1 justify-center items-center">
+      {/* <ThemedBlurView intensity={80} style={StyleSheet.absoluteFill} /> */}
 
       {/* Close button */}
       {!hideControls && (
@@ -251,5 +252,6 @@ export default function ShareScreen() {
         </Pressable>
       )}
     </View>
+    </BackgroundImage>
   );
 }

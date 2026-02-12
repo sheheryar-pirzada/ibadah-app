@@ -1,6 +1,7 @@
 import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import * as Haptics from 'expo-haptics';
@@ -35,12 +36,22 @@ const QuranSearchHeader = ({
     onModeChange,
 }: QuranSearchHeaderProps) => {
     const { resolvedTheme } = useTheme();
+    const { backgroundKey } = useBackground();
     const isDark = resolvedTheme === 'dark';
 
     const textColor = useThemeColor({}, 'text');
     const textMuted = useThemeColor({}, 'textMuted');
     const accentColor = useThemeColor({}, 'accent');
     const borderColor = useThemeColor({}, 'border');
+
+    const getChipBackground = (isSelected: boolean) => {
+        if (backgroundKey === 'solid') {
+            return isSelected
+                ? (isDark ? 'rgba(212,175,55,0.25)' : 'rgba(212,175,55,0.2)')
+                : 'transparent';
+        }
+        return isSelected ? `${accentColor}40` : 'transparent';
+    };
 
     return (
         <>
@@ -71,9 +82,7 @@ const QuranSearchHeader = ({
                                     key={option}
                                     className="flex-1 py-3 px-4 rounded-2xl border-[0.5px] items-center justify-center"
                                     style={{
-                                        backgroundColor: isSelected
-                                            ? (isDark ? 'rgba(212,175,55,0.25)' : 'rgba(212,175,55,0.2)')
-                                            : 'transparent',
+                                        backgroundColor: getChipBackground(isSelected),
                                         borderColor: isSelected ? accentColor : 'transparent',
                                     }}
                                     onPress={() => {
@@ -168,14 +177,6 @@ const QuranSearchHeader = ({
                     )}
                 </>
             )}
-
-            {/* {mode === 'Read' && (
-                <View className="items-center py-[60px]">
-                    <Text className="text-base font-tajawal-medium" style={{ color: textMuted }}>
-                        Read Mode Coming Soon
-                    </Text>
-                </View>
-            )} */}
         </>
     );
 };

@@ -1,4 +1,4 @@
-import { ThemedStatusBar } from '@/components/ThemedStatusBar';
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -8,10 +8,9 @@ import { useQuranAudio } from '@/utils/audio-service';
 import { quranAPI, Verse } from '@/utils/quran-api';
 import { getReciterSettings } from '@/utils/reciter-settings';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import Animated, { Easing, FadeIn, FadeOut, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -313,21 +312,13 @@ export default function SurahDetailScreenComponent() {
     const backgroundColor = useThemeColor({}, 'background');
     const textColor = useThemeColor({}, 'text');
     const accentColor = useThemeColor({}, 'accent');
-
-    const gradientColors = resolvedTheme === 'dark'
-        ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
-        : (['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.15)'] as const);
+    const textInverse = useThemeColor({}, 'textInverse');
 
     const chapter = chapters.find(c => c.id.toString() === id);
 
     return (
-        <View style={{ flex: 1, backgroundColor }}>
-            <ThemedStatusBar />
-            <LinearGradient
-                colors={gradientColors}
-                style={StyleSheet.absoluteFillObject}
-            />
-
+        <BackgroundImage>
+        <View style={{ flex: 1, backgroundColor: 'transparent' }}>
             {/* Back button */}
             <Pressable
                 onPress={() => {
@@ -342,7 +333,7 @@ export default function SurahDetailScreenComponent() {
                 }}
                 hitSlop={12}
             >
-                <IconSymbol name="chevron.left" size={28} color={textColor} />
+                <IconSymbol weight="light" name="chevron.left" size={28} color={textColor} />
             </Pressable>
 
             {/* Verse Number Indicator */}
@@ -431,7 +422,7 @@ export default function SurahDetailScreenComponent() {
                                     {isLoadingVerses ? (
                                         <ActivityIndicator color="white" />
                                     ) : (
-                                        <Text className="text-white text-2xl">Start</Text>
+                                        <Text className="text-2xl" style={{ color: textInverse }}>Start</Text>
                                     )}
                                 </Pressable>
                             </Animated.View>
@@ -487,5 +478,6 @@ export default function SurahDetailScreenComponent() {
                 )}
             </View>
         </View >
+        </BackgroundImage>
     );
 }

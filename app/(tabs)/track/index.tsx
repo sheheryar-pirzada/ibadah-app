@@ -17,9 +17,11 @@ import Animated, {
   withTiming
 } from 'react-native-reanimated';
 
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol.ios';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocation } from '@/hooks/useLocation';
 import { usePrayerTimes } from '@/hooks/usePrayerTimes';
@@ -30,6 +32,7 @@ import { Image } from 'expo-image';
 export default function TrackScreen() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { backgroundKey } = useBackground();
 
   // Location and Prayer Times for initialization
   const { loc: location } = useLocation();
@@ -50,6 +53,13 @@ export default function TrackScreen() {
   const accentColor = useThemeColor({}, 'accent');
   const borderColor = useThemeColor({}, 'border');
   const cardBorder = useThemeColor({}, 'cardBorder');
+
+  const getIconBadgeBg = (opacity: { solidLight: string; solidDark: string }) => {
+    if (backgroundKey === 'solid') {
+      return resolvedTheme === 'dark' ? opacity.solidDark : opacity.solidLight;
+    }
+    return `${accentColor}26`;
+  };
 
   // Gradient overlay - adjust opacity based on theme
   const gradientColors = resolvedTheme === 'dark'
@@ -161,21 +171,18 @@ export default function TrackScreen() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor }}>
+      <BackgroundImage>
+      <View className="items-center justify-center" style={{ flex: 1, backgroundColor: 'transparent' }}>
         <ThemedStatusBar />
-        <ThemedBlurView
-          intensity={20}
-          style={{ borderColor: cardBorder }}
-          className="flex-1 justify-center items-center m-5 p-10 rounded-3xl border-[0.5px]"
-        >
-          <Text style={{ fontFamily: 'Tajawal-Regular', color: textColor }} className="text-lg font-medium">Loading prayer tracking...</Text>
-        </ThemedBlurView>
+        <Text style={{ fontFamily: 'Tajawal-Bold', color: textColor }} className="text-lg font-medium">Loading prayer tracking...</Text>
       </View>
+      </BackgroundImage>
     );
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor }}>
+    <BackgroundImage>
+    <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <ThemedStatusBar />
       <LinearGradient
         colors={gradientColors}
@@ -202,12 +209,12 @@ export default function TrackScreen() {
                   router.push('/track/analytics');
                 }}
                 className="p-2 rounded-2xl"
-                style={{ backgroundColor: resolvedTheme === 'dark' ? 'rgba(212,175,55,0.1)' : 'rgba(212,175,55,0.15)' }}
+                style={{ backgroundColor: getIconBadgeBg({ solidDark: 'rgba(212,175,55,0.1)', solidLight: 'rgba(212,175,55,0.15)' }) }}
               >
                 <Image
                   source="sf:chart.bar.fill"
                   style={{ width: 20, aspectRatio: 1 }}
-                  tintColor="#d4af37"
+                  tintColor={accentColor}
                   sfEffect={{
                     effect: "variable-color/cumulative",
                     repeat: 1
@@ -333,9 +340,9 @@ export default function TrackScreen() {
                 <View className="flex-row items-center gap-4">
                   <View
                     className="w-14 h-14 rounded-2xl items-center justify-center"
-                    style={{ backgroundColor: resolvedTheme === 'dark' ? 'rgba(212,175,55,0.15)' : 'rgba(212,175,55,0.2)' }}
+                    style={{ backgroundColor: getIconBadgeBg({ solidDark: 'rgba(212,175,55,0.15)', solidLight: 'rgba(212,175,55,0.2)' }) }}
                   >
-                    <IconSymbol name="circle.grid.3x3" size={28} color="#d4af37" />
+                    <IconSymbol name="circle.grid.3x3" size={28} color={accentColor} />
                   </View>
                   <View>
                     <Text className="text-xl font-tajawal-bold" style={{ color: textColor }}>Tasbeeh Counter</Text>
@@ -352,7 +359,7 @@ export default function TrackScreen() {
         <Animated.View
           entering={FadeInUp.delay(800).duration(800)}
           className="rounded-[40px] overflow-hidden border-[0.5px]"
-          style={{ borderColor: cardBorder }}
+          style={{ borderColor: cardBorder, borderCurve: 'continuous' }}
         >
           <ThemedBlurView intensity={25} className="p-6">
             <Text className="text-lg font-tajawal-bold mb-4" style={{ color: textColor }}>Quick Actions</Text>
@@ -373,7 +380,7 @@ export default function TrackScreen() {
                   });
                 }}
               >
-                <IconSymbol name="checkmark.circle.fill" size={24} color="#d4af37" />
+                <IconSymbol name="checkmark.circle.fill" size={24} color={accentColor} />
                 <Text className="text-base font-tajawal-medium" style={{ color: textColor }}>Mark All Complete</Text>
               </TouchableOpacity>
 
@@ -413,5 +420,6 @@ export default function TrackScreen() {
         </Animated.View>
       </ScrollView>
     </View>
+    </BackgroundImage>
   );
 }

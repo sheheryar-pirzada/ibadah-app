@@ -1,3 +1,4 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { BookmarkedHadiths } from '@/components/BookmarkedHadiths';
 import type { ChinAudioMetadata } from '@/components/chin';
 import { ChinAudioPlayer, useChin } from '@/components/chin';
@@ -11,7 +12,6 @@ import QiblaFinderCard from '@/components/QiblaFinderCard';
 import { RamadanCalendarCard } from '@/components/RamadanCalendarCard';
 import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
-import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useDailyContent } from '@/hooks/useDailyContent';
 import { useLocation } from '@/hooks/useLocation';
@@ -29,7 +29,6 @@ import {
 } from '@/utils/prayer-ui';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -134,12 +133,9 @@ export default function PrayerTimesScreen() {
 
   if (!location || !prayerTimes) {
     return (
-      <View className="flex-1" style={{ backgroundColor }}>
-        <ThemedStatusBar />
-        <LinearGradient
-          colors={gradientColors}
-          className="absolute inset-0"
-        />
+      <BackgroundImage>
+      <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
+        
         <View className="flex-1 justify-center items-center px-5">
           <ThemedBlurView
             intensity={25}
@@ -153,6 +149,7 @@ export default function PrayerTimesScreen() {
           </ThemedBlurView>
         </View>
       </View>
+      </BackgroundImage>
     );
   }
 
@@ -160,13 +157,10 @@ export default function PrayerTimesScreen() {
 
   return (
     <ImmersiveOverlay allowDismiss onDismiss={dismiss}>
-      <LinearGradient
-        colors={gradientColors}
-        className="absolute inset-0"
-      />
+      <BackgroundImage>
       <ScrollView
         className="font-sans"
-        style={{ backgroundColor }}
+        style={{ backgroundColor: 'transparent' }}
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="pb-10 px-4"
         showsVerticalScrollIndicator={false}
@@ -188,7 +182,7 @@ export default function PrayerTimesScreen() {
           className="mb-4 overflow-hidden rounded-[28px]"
           style={{ borderCurve: 'continuous', borderWidth: 0.5, borderColor: cardBorder }}
         >
-          <ThemedBlurView intensity={25} className="p-8">
+          <ThemedBlurView intensity={0} className="p-8">
             <View className="items-center">
               <View className="items-center mb-3">
                 <Image
@@ -271,6 +265,7 @@ export default function PrayerTimesScreen() {
 
         <RamadanCalendarCard />
         
+
         <QiblaFinderCard />
 
         <DailyVerseCard
@@ -291,9 +286,7 @@ export default function PrayerTimesScreen() {
           onRemove={removeBookmark}
         />
       </ScrollView>
+      </BackgroundImage>
     </ImmersiveOverlay>
   );
 }
-
-
-

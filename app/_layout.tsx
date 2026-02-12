@@ -9,16 +9,17 @@ import 'react-native-reanimated';
 
 import { ChinProvider } from '@/components/chin';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
-import { updatePrayerWidgetsWithLocation, updateDuaWidgets, updateAllahNamesWidget } from '@/components/widgets';
+import { updateAllahNamesWidget, updateDuaWidgets, updatePrayerWidgetsWithLocation } from '@/components/widgets';
+import { BackgroundProvider } from '@/contexts/BackgroundContext';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { TranslationProvider } from '@/contexts/TranslationContext';
 import { LocationProvider, useLocation } from '@/hooks/useLocation';
-import { useAppOpenAd } from '@/utils/app-open-ad';
+// import { useAppOpenAd } from '@/utils/app-open-ad';
 import { configureAudioMode } from '@/utils/audio-service';
-import * as TrackingTransparency from 'expo-tracking-transparency';
-import { Settings } from 'react-native-fbsdk-next';
 import { notificationService } from '@/utils/notification-service';
 import { getNotificationSettings } from '@/utils/notification-settings';
+import * as TrackingTransparency from 'expo-tracking-transparency';
+import { Settings } from 'react-native-fbsdk-next';
 import '../global.css';
 
 function WidgetManager() {
@@ -174,16 +175,16 @@ function RootLayoutContent() {
     setColorScheme(resolvedTheme);
   }, [resolvedTheme, setColorScheme]);
 
-  // Request App Tracking Transparency (iOS) before any tracking/SDK that could use IDFA, then init SDKs.
+  // Request App Tracking Transparency (iOS) before any tracking/SDK that could use IDFA.
+  // Delay slightly to ensure the UI is fully mounted — iPadOS may silently drop the prompt otherwise.
   useEffect(() => {
     const initTrackingAndSDK = async () => {
       if (Platform.OS === 'ios') {
+        // Wait for the UI to be fully visible before showing the ATT prompt
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
         const { status } = await TrackingTransparency.requestTrackingPermissionsAsync();
-        if (status === 'granted') {
-          await Settings.setAdvertiserTrackingEnabled(true);
-        } else {
-          await Settings.setAdvertiserTrackingEnabled(false);
-        }
+        const granted = status === 'granted';
+        await Settings.setAdvertiserTrackingEnabled(granted);
       }
       Settings.initializeSDK();
     };
@@ -191,7 +192,7 @@ function RootLayoutContent() {
   }, []);
 
   // Initialize App Open Ads
-  useAppOpenAd();
+  // useAppOpenAd();
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
@@ -254,9 +255,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <TranslationProvider>
-        <RootLayoutContent />
-      </TranslationProvider>
+      <BackgroundProvider>
+        <TranslationProvider>
+          <RootLayoutContent />
+        </TranslationProvider>
+      </BackgroundProvider>
     </ThemeProvider>
   );
 }

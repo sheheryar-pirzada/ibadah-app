@@ -20,6 +20,10 @@ export default function QiblaFinderCard() {
   const cardBorder = useThemeColor({}, 'cardBorder');
 
   return (
+    <View className="mt-2">
+      <Animated.Text entering={FadeInUp.delay(400).duration(600)} className="text-[22px] font-tajawal-bold mb-5 tracking-[-0.3px]" style={{ color: textColor }}>
+        Qibla Finder
+      </Animated.Text>
     <Link
       href="/qibla-ar"
       asChild
@@ -40,12 +44,15 @@ export default function QiblaFinderCard() {
             <Animated.View entering={FadeInUp.delay(350).duration(800)}>
               <ThemedBlurView intensity={25} className="p-5">
               <View className="w-full">
-                <View className="flex-row justify-between items-center mb-4">
+
+
+                <View className="flex-col">
+                  <View className="flex-row items-center justify-between">
                   <Text
-                    className="text-xs font-tajawal-bold uppercase tracking-[1px]"
-                    style={{ color: textMuted }}
+                    className="text-xl font-tajawal-bold mb-1"
+                    style={{ color: textColor }}
                   >
-                    Qibla Finder
+                    Find Qibla Direction
                   </Text>
                   <View
                     className="w-12 h-12 rounded-full items-center justify-center"
@@ -53,15 +60,7 @@ export default function QiblaFinderCard() {
                   >
                     <IconSymbol name="mecca" size={32} color={textColor} />
                   </View>
-                </View>
-
-                <View>
-                  <Text
-                    className="text-2xl font-tajawal-bold mb-1"
-                    style={{ color: textColor }}
-                  >
-                    Find Qibla Direction
-                  </Text>
+                  </View>
                   <Text
                     className="text-sm font-tajawal-regular"
                     style={{ color: textMuted }}
@@ -93,5 +92,6 @@ export default function QiblaFinderCard() {
         </AppleZoom>
       </Pressable>
     </Link>
+    </View>
   );
 }
