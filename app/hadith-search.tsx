@@ -6,6 +6,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useHadithSearch } from '@/hooks/useHadithSearch';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useHadithSettings } from '@/utils/hadith-settings';
+import { Chapter } from '@/utils/hadith-types';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -72,6 +73,19 @@ export default function HadithSearchScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.back();
   }, []);
+
+  const handleChapterPress = useCallback((chapter: Chapter) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({
+      pathname: '/hadith-chapter',
+      params: {
+        bookSlug: bookInfo?.bookSlug ?? '',
+        chapterNumber: chapter.chapterNumber,
+        chapterEnglish: chapter.chapterEnglish,
+        chapterArabic: chapter.chapterArabic ?? '',
+      },
+    });
+  }, [bookInfo?.bookSlug]);
 
   const ListHeader = useMemo(() => (
     <HadithSearchHeader
@@ -156,7 +170,7 @@ export default function HadithSearchScreen() {
     <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <FlatList
         data={searchMode === 'chapter' ? chapterResults : results}
-        renderItem={({ item, index }) => <HadithSearchListItem item={item} index={index} />}
+        renderItem={({ item, index }) => <HadithSearchListItem item={item} index={index} onChapterPress={handleChapterPress} />}
         keyExtractor={(item: any) => searchMode === 'chapter' ? `chapter-${item.id}` : `${item.bookSlug}-${item.hadithNumber}-${item.id}`}
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 120, paddingHorizontal: 16 }}
         keyboardShouldPersistTaps="handled"

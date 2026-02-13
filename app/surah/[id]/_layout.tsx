@@ -1,7 +1,5 @@
-import { Colors } from '@/constants/Colors';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { BlurView } from 'expo-blur';
 import { Stack } from 'expo-router';
 import { Platform } from 'react-native';
 

@@ -4,23 +4,27 @@ import * as Notifications from 'expo-notifications';
 import { router, Stack } from 'expo-router';
 import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { useEffect, useRef } from 'react';
-import { AppState, LogBox, Platform } from 'react-native';
+import { AppState, LogBox, Platform, TouchableOpacity } from 'react-native';
 import 'react-native-reanimated';
 
 import { ChinProvider } from '@/components/chin';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { updateAllahNamesWidget, updateDuaWidgets, updatePrayerWidgetsWithLocation } from '@/components/widgets';
-import { BackgroundProvider } from '@/contexts/BackgroundContext';
+import { BackgroundProvider, useBackground } from '@/contexts/BackgroundContext';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { TranslationProvider } from '@/contexts/TranslationContext';
 import { LocationProvider, useLocation } from '@/hooks/useLocation';
 // import { useAppOpenAd } from '@/utils/app-open-ad';
+import { Colors } from '@/constants/Colors';
 import { configureAudioMode } from '@/utils/audio-service';
 import { notificationService } from '@/utils/notification-service';
 import { getNotificationSettings } from '@/utils/notification-settings';
+import { BlurView } from 'expo-blur';
 import * as TrackingTransparency from 'expo-tracking-transparency';
 import { Settings } from 'react-native-fbsdk-next';
 import '../global.css';
+import { IconSymbol } from '@/components/ui/IconSymbol.ios';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 function WidgetManager() {
   const { loc } = useLocation();
@@ -168,7 +172,9 @@ function NotificationManager() {
 function RootLayoutContent() {
   const { resolvedTheme } = useTheme();
   const navigationTheme = resolvedTheme === 'dark' ? DarkTheme : DefaultTheme;
-
+  const colorScheme = resolvedTheme || 'light';
+  const { backgroundKey } = useBackground();
+  const textColor = useThemeColor({}, 'text');
   // Keep Tailwind `dark:` styles in sync with in-app theme setting.
   const { setColorScheme } = useNativeWindColorScheme();
   useEffect(() => {
@@ -223,6 +229,30 @@ function RootLayoutContent() {
               options={{
                 presentation: 'fullScreenModal',
                 animation: 'slide_from_bottom',
+              }}
+            />
+            <Stack.Screen
+              name="hadith-chapter"
+              options={{
+                headerShown: true,
+                headerTransparent: true,
+                headerShadowVisible: false,
+                headerBackVisible: true,
+                headerLeft: () => (
+                  <TouchableOpacity onPress={() => router.back()}>
+                    <IconSymbol weight="light" name="chevron.left" size={28} color={textColor} />
+                  </TouchableOpacity>
+                ),
+                headerBackground: () => (
+                  <BlurView
+                    className="flex-1"
+                    intensity={backgroundKey === 'solid' ? 30 : 0}
+                    tint={Colors[colorScheme].blurTint}
+                  />
+                ),
+                headerTitle: 'Hadith Chapter',
+                presentation: 'fullScreenModal',
+                animation: "fade",
               }}
             />
           </Stack>

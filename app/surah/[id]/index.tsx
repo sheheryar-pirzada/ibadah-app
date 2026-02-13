@@ -1,6 +1,5 @@
 import { BackgroundImage } from '@/components/BackgroundImage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { useQuranChapters } from '@/hooks/useQuranChapters';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -10,14 +9,13 @@ import { getReciterSettings } from '@/utils/reciter-settings';
 import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
-import Animated, { Easing, FadeIn, FadeOut, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
+import { ActivityIndicator, Dimensions, Pressable, ScrollView, Text, View } from 'react-native';
+import Animated, { Easing, FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, FadeOutUp, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SurahDetailScreenComponent() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
-    const { resolvedTheme } = useTheme();
     const { chapters, isLoading } = useQuranChapters();
     const insets = useSafeAreaInsets();
     const [isReading, setIsReading] = useState(false);
@@ -42,7 +40,7 @@ export default function SurahDetailScreenComponent() {
     const didPlayRef = useRef(false);
     // Debounce flag to prevent rapid re-triggering of verse-end logic
     const isProcessingRepeatRef = useRef(false);
-
+    const { height: screenHeight } = Dimensions.get('window');
     // Reset didPlay flag when verse changes
     useEffect(() => {
         didPlayRef.current = false;
@@ -211,6 +209,7 @@ export default function SurahDetailScreenComponent() {
 
     // Helpers
     const togglePlay = async () => {
+        if (!isReading) setIsReading(true);
         let url = currentAudioUrl;
         console.log('Toggle Play. currentAudioUrl:', url);
 
@@ -254,16 +253,18 @@ export default function SurahDetailScreenComponent() {
     };
 
     const handleNextVerse = () => {
+        if (!isReading) setIsReading(true);
         if (currentVerseIndex < verses.length - 1) {
+            directionRef.current = 'down';
             setCurrentVerseIndex(prev => prev + 1);
-            // We don't call play() here; the sync effect will catch the index/URL change
-            // and trigger playback because isPlaying remains true.
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
     };
 
     const handlePreviousVerse = () => {
+        if (!isReading) setIsReading(true);
         if (currentVerseIndex > 0) {
+            directionRef.current = 'up';
             setCurrentVerseIndex(prev => prev - 1);
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         }
@@ -293,20 +294,30 @@ export default function SurahDetailScreenComponent() {
 
     // Calculate dynamic font size based on Arabic text length
     const getArabicFontSize = (text: string | undefined) => {
-        if (!text) return { fontSize: 36, lineHeight: 56 };
+        if (!text) return { fontSize: 36, lineHeight: 66 };
 
         const length = text.length;
 
         // Scale: short verses (< 50 chars) = 42px, long verses (> 300 chars) = 24px
-        if (length < 50) return { fontSize: 40, lineHeight: 66 };
-        if (length < 100) return { fontSize: 38, lineHeight: 60 };
-        if (length < 150) return { fontSize: 34, lineHeight: 54 };
-        if (length < 200) return { fontSize: 30, lineHeight: 48 };
-        if (length < 300) return { fontSize: 28, lineHeight: 44 };
-        return { fontSize: 24, lineHeight: 40 };
+        if (length < 50) return { fontSize: 40, lineHeight: 76 };
+        if (length < 100) return { fontSize: 38, lineHeight: 70 };
+        if (length < 150) return { fontSize: 34, lineHeight: 64 };
+        if (length < 200) return { fontSize: 30, lineHeight: 58 };
+        if (length < 300) return { fontSize: 28, lineHeight: 54 };
+        return { fontSize: 24, lineHeight: 50 };
     };
 
     const arabicFontStyle = getArabicFontSize(verses[currentVerseIndex]?.text_uthmani);
+
+    // Track scroll direction for enter/exit animations
+    const directionRef = useRef<'down' | 'up'>('down');
+
+    const goToVerse = (index: number) => {
+        if (index === currentVerseIndex || index < 0 || index >= verses.length) return;
+        directionRef.current = index > currentVerseIndex ? 'down' : 'up';
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setCurrentVerseIndex(index);
+    };
 
 
     const backgroundColor = useThemeColor({}, 'background');
@@ -336,28 +347,8 @@ export default function SurahDetailScreenComponent() {
                 <IconSymbol weight="light" name="chevron.left" size={28} color={textColor} />
             </Pressable>
 
-            {/* Verse Number Indicator */}
-            {isReading && verses.length > 0 && (
-                <View
-                    key={`verse-num-${currentVerseIndex}`}
-                    style={{
-                        position: 'absolute',
-                        top: insets.top + 24,
-                        right: insets.right + 32,
-                        // backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                        // paddingHorizontal: 14,
-                        // paddingVertical: 8,
-                        // borderRadius: 20,
-                    }}
-                >
-                    <Animated.Text entering={FadeIn.duration(400)} exiting={FadeOut.duration(300)} style={{ color: textColor, fontFamily: 'Tajawal-Light', fontSize: 24, opacity: 0.8 }}>
-                        {currentVerseIndex + 1}
-                    </Animated.Text>
-                </View>
-            )}
-
             <Stack.Toolbar placement="bottom">
-                <Stack.Toolbar.Menu title="Playback Settings" icon="gearshape.fill">
+                <Stack.Toolbar.Menu hidden={!isReading} title="Playback Settings" icon="gearshape.fill">
                     <Stack.Toolbar.MenuAction isOn={autoPlay} onPress={() => toggleAutoPlay(true)}>
                         <Stack.Toolbar.Icon sf="forward.end.circle.fill" />
                         <Stack.Toolbar.Label>Auto-play next verse</Stack.Toolbar.Label>
@@ -368,20 +359,24 @@ export default function SurahDetailScreenComponent() {
                     </Stack.Toolbar.MenuAction>
                 </Stack.Toolbar.Menu>
                 <Stack.Toolbar.Spacer />
-                <Stack.Toolbar.Button hidden={!isReading}
+                <Stack.Toolbar.Button
+                    hidden={!isReading}
                     onPress={handlePreviousVerse}
                     icon="backward.fill"
                 />
-                <Stack.Toolbar.Button hidden={!isReading}
+                <Stack.Toolbar.Button
+                    hidden={!isReading}
                     onPress={togglePlay}
                     icon={isPlaying ? "pause.fill" : "play.fill"}
                 />
-                <Stack.Toolbar.Button hidden={!isReading}
+                <Stack.Toolbar.Button
+                    hidden={!isReading}
                     onPress={handleNextVerse}
                     icon="forward.fill"
                 />
                 <Stack.Toolbar.Spacer />
                 <Stack.Toolbar.Button
+                    hidden={!isReading}
                     onPress={toggleRepeat}
                     icon={getRepeatIcon()}
                     tintColor={repeatMode !== 'off' ? accentColor : textColor}
@@ -428,48 +423,102 @@ export default function SurahDetailScreenComponent() {
                             </Animated.View>
                         )}
 
-                        {isReading && verses.length > 0 && verses[currentVerseIndex] && (
-                            <Animated.View
-                                entering={FadeIn.duration(1000).delay(600)} // Reset entering for safety
-                                layout={LinearTransition}
-                                className="flex-1 justify-start items-center w-full px-4 mt-8"
-                            >
+                        {isReading && verses.length > 0 && verses[currentVerseIndex] && (() => {
+                            const currentVerse = verses[currentVerseIndex];
+                            const nextVerse = verses[currentVerseIndex + 1];
+                            const prevVerse = verses[currentVerseIndex - 1];
+                            const entering = directionRef.current === 'down'
+                                ? FadeInDown.duration(400)
+                                : FadeInUp.duration(400);
+                            const exiting = directionRef.current === 'down'
+                                ? FadeOutUp.duration(300)
+                                : FadeOutDown.duration(300);
+
+                            return (
                                 <Animated.View
-                                    key={`verse-${currentVerseIndex}`}
-                                    entering={FadeIn.duration(600)}
-                                    exiting={FadeOutLeft.duration(100)}
-                                    className="items-center"
+                                    entering={FadeIn.duration(800).delay(400)}
+                                    className="w-full h-[78%]"
                                 >
-                                    <View
-                                        className="mb-8 p-6 w-full items-center justify-center min-h-[150px]"
-                                    // style={{ backgroundColor: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
-                                    >
-                                        {isVerseLoading ? (
-                                            <ActivityIndicator color={textColor} />
-                                        ) : (
+                                    {/* Previous verse preview */}
+                                    {prevVerse && (
+                                        <Pressable
+                                            onPress={() => goToVerse(currentVerseIndex - 1)}
+                                            className="px-4 pb-2 pt-4"
+                                            style={{ opacity: 0.25 }}
+                                        >
                                             <Text
                                                 className="font-amiri text-center"
-                                                style={{
-                                                    color: textColor,
-                                                    fontSize: arabicFontStyle.fontSize,
-                                                    lineHeight: arabicFontStyle.lineHeight,
-                                                }}
+                                                style={{ color: textColor, fontSize: 22, lineHeight: 48 }}
+                                                numberOfLines={1}
                                             >
-                                                {verses[currentVerseIndex].text_uthmani}
+                                                {prevVerse.text_uthmani || '…'}
                                             </Text>
-                                        )}
-                                    </View>
+                                        </Pressable>
+                                    )}
 
-                                    {!isVerseLoading && (
-                                        <View className="w-full px-2">
-                                            <Text className="text-xl font-tajawal-medium text-center leading-8" style={{ color: textColor, opacity: 0.9 }}>
-                                                {verses[currentVerseIndex].translations?.[0]?.text?.replace(/<[^>]*>/g, '')}
+                                    {/* Active verse */}
+                                    <ScrollView
+                                        contentContainerStyle={{ paddingHorizontal: 12, paddingVertical: 16, flexGrow: 1, justifyContent: 'flex-start' }}
+                                        showsVerticalScrollIndicator={false}
+                                        
+                                    >
+                                        <Animated.View
+                                            key={currentVerseIndex}
+                                            entering={entering}
+                                            exiting={exiting}
+                                        >
+                                            <Text
+                                                className="text-center mb-3"
+                                                style={{ color: textColor, fontFamily: 'Tajawal-Light', fontSize: 22, opacity: 0.75 }}
+                                            >
+                                                {currentVerseIndex + 1}
                                             </Text>
-                                        </View>
+                                            {isVerseLoading ? (
+                                                <ActivityIndicator color={textColor} />
+                                            ) : (
+                                                <Text
+                                                    className="font-amiri text-center"
+                                                    style={{
+                                                        color: textColor,
+                                                        fontSize: arabicFontStyle.fontSize,
+                                                        lineHeight: arabicFontStyle.lineHeight,
+                                                    }}
+                                                >
+                                                    {currentVerse.text_uthmani}
+                                                </Text>
+                                            )}
+                                            {!isVerseLoading && currentVerse.translations?.[0]?.text && (
+                                                <View className="mt-6 px-2">
+                                                    <Text
+                                                        className="text-lg font-tajawal-medium text-center leading-7"
+                                                        style={{ color: textColor, opacity: 0.85 }}
+                                                    >
+                                                        {currentVerse.translations[0].text.replace(/<[^>]*>/g, '')}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                        </Animated.View>
+                                    </ScrollView>
+
+                                    {/* Next verse preview */}
+                                    {nextVerse && (
+                                        <Pressable
+                                            onPress={() => goToVerse(currentVerseIndex + 1)}
+                                            className="px-4 pt-2 pb-4"
+                                            style={{ opacity: 0.25 }}
+                                        >
+                                            <Text
+                                                className="font-amiri text-center"
+                                                style={{ color: textColor, fontSize: 22, lineHeight: 48 }}
+                                                numberOfLines={1}
+                                            >
+                                                {nextVerse.text_uthmani || '…'}
+                                            </Text>
+                                        </Pressable>
                                     )}
                                 </Animated.View>
-                            </Animated.View>
-                        )}
+                            );
+                        })()}
                     </>
                 ) : (
                     <Text style={{ color: textColor, fontFamily: 'Tajawal-Regular' }}>
