@@ -15,6 +15,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+import { BackgroundImage } from '@/components/BackgroundImage';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { MonthlyStats, prayerTracker, WeeklyStats } from '@/utils/prayer-tracking';
@@ -25,6 +27,7 @@ const PERIOD_OPTIONS = ['This Week', 'This Month'];
 export default function AnalyticsScreen() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { backgroundKey } = useBackground();
   const isDark = resolvedTheme === 'dark';
   const [weeklyStats, setWeeklyStats] = useState<WeeklyStats | null>(null);
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats | null>(null);
@@ -40,6 +43,15 @@ export default function AnalyticsScreen() {
   // const cardBackground = useThemeColor({}, 'cardBackground'); // Unused in original mapping? Using dynamic instead
   const cardBorder = useThemeColor({}, 'cardBorder');
   const borderColor = useThemeColor({}, 'border');
+
+  const getChipBackground = (isSelected: boolean) => {
+    if (backgroundKey === 'solid') {
+      return isSelected
+        ? (isDark ? 'rgba(212,175,55,0.25)' : 'rgba(212,175,55,0.2)')
+        : 'transparent';
+    }
+    return isSelected ? `${accentColor}40` : 'transparent';
+  };
 
   const chartValue = useSharedValue(0);
 
@@ -130,21 +142,17 @@ export default function AnalyticsScreen() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor }}>
-        <BlurView
-          intensity={20}
-          tint={blurTint}
-          style={{ borderColor: cardBorder }}
-          className="flex-1 justify-center items-center m-5 p-10 rounded-[36px] border-[0.5px]"
-        >
-          <Text style={{ fontFamily: 'Tajawal-Regular', color: textColor }} className="text-lg font-medium">Loading analytics...</Text>
-        </BlurView>
+      <BackgroundImage>
+      <View className="items-center justify-center" style={{ flex: 1, backgroundColor: 'transparent' }}>
+        <Text style={{ fontFamily: 'Tajawal-Bold', color: textColor }} className="text-lg font-medium">Loading analytics...</Text>
       </View>
+      </BackgroundImage>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor }}>
+    <BackgroundImage>
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
       <LinearGradient
         colors={gradientColors}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
@@ -169,9 +177,7 @@ export default function AnalyticsScreen() {
                     key={option}
                     className="flex-1 py-3 px-4 rounded-2xl border-[0.5px] items-center justify-center"
                     style={{
-                      backgroundColor: isSelected
-                        ? (isDark ? 'rgba(212,175,55,0.25)' : 'rgba(212,175,55,0.2)')
-                        : 'transparent',
+                      backgroundColor: getChipBackground(isSelected),
                       borderColor: isSelected ? accentColor : 'transparent',
                     }}
                     onPress={() => {
@@ -184,7 +190,7 @@ export default function AnalyticsScreen() {
                       className="text-[15px]"
                       style={{
                         color: isSelected ? accentColor : textMuted,
-                        fontFamily: isSelected ? 'Tajawal-Bold' : 'Tajawal-Medium',
+                        fontWeight: isSelected ? 'bold' : 'medium',
                       }}
                     >
                       {option}
@@ -401,5 +407,6 @@ export default function AnalyticsScreen() {
         )}
       </ScrollView>
     </View>
+    </BackgroundImage>
   );
 }

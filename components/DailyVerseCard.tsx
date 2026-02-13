@@ -112,6 +112,10 @@ export default function DailyVerseCard({ verse, isLoading, onAudioToggle }: Dail
   }
 
   return (
+    <View className="mt-2">
+      <Animated.Text entering={FadeInUp.delay(400).duration(600)} className="text-[22px] font-tajawal-bold mb-5 tracking-[-0.3px]" style={{ color: textColor }}>
+        Daily Verse
+      </Animated.Text>
     <Link
       href={{
         pathname: '/share',
@@ -133,10 +137,10 @@ export default function DailyVerseCard({ verse, isLoading, onAudioToggle }: Dail
           >
             <ThemedBlurView intensity={25} className="p-5">
               <View className="w-full">
-                <View className="flex-row justify-between items-center mb-4">
-                  <Text className="text-xs font-tajawal-bold uppercase tracking-[1px]" style={{ color: textMuted }}>
+                <View className="flex-row justify-end items-center mb-4">
+                  {/* <Text className="text-xs font-tajawal-bold uppercase tracking-[1px]" style={{ color: textMuted }}>
                     Daily Verse
-                  </Text>
+                  </Text> */}
                   <View className="flex-row items-center">
                     <View className="p-1.5 rounded-lg justify-center items-center">
                       <IconSymbol
@@ -192,5 +196,6 @@ export default function DailyVerseCard({ verse, isLoading, onAudioToggle }: Dail
         </AppleZoom>
       </Pressable>
     </Link>
+    </View>
   );
 }

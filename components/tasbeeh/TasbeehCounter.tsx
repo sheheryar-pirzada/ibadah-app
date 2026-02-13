@@ -8,12 +8,13 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { ThemedBlurView } from '@/components/ThemedBlurView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 import {
   DHIKR_OPTIONS,
   TASBEEH_COLORS,
   type DhikrOption,
 } from '@/constants/tasbeeh';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useTasbeehStore } from './store';
 
@@ -70,6 +71,7 @@ export function TasbeehCounter({ onTargetPress }: TasbeehCounterProps) {
   const textColor = useThemeColor({}, 'text');
   const textMuted = useThemeColor({}, 'textMuted');
   const cardBorder = useThemeColor({}, 'cardBorder');
+  const { backgroundKey } = useBackground();
   const accentColor = useThemeColor({}, 'accent');
 
   // Animation for count changes
@@ -139,7 +141,7 @@ export function TasbeehCounter({ onTargetPress }: TasbeehCounterProps) {
 
   return (
     <ThemedBlurView
-      intensity={30}
+      intensity={backgroundKey === 'solid' ? 30 : 0}
       className="rounded-[28px] overflow-hidden mx-4"
       style={{
         borderWidth: 0.5,
@@ -183,6 +185,7 @@ export function TasbeehCounter({ onTargetPress }: TasbeehCounterProps) {
             hitSlop={12}
           >
             <IconSymbol
+              weight="light"
               name="chevron.left"
               size={28}
               color={safeIndex === 0 ? textMuted : textColor}
@@ -203,6 +206,7 @@ export function TasbeehCounter({ onTargetPress }: TasbeehCounterProps) {
             hitSlop={12}
           >
             <IconSymbol
+              weight="light"
               name="chevron.right"
               size={28}
               color={

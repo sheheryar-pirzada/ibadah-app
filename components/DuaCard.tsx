@@ -223,7 +223,7 @@ export default function DuaCard({ dua, isFavorite, onToggleFavorite, onAudioTogg
       asChild
       onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
     >
-      <Pressable>
+      <Pressable className="">
         <AppleZoom>
           <Animated.View
             entering={FadeInUp.delay(index * 100).duration(600)}
@@ -235,7 +235,7 @@ export default function DuaCard({ dua, isFavorite, onToggleFavorite, onAudioTogg
               borderColor: cardBorder,
             }}
           >
-            <ThemedBlurView intensity={25} className="p-5">
+            <ThemedBlurView intensity={20} className="p-5">
               <View className="flex-row justify-between items-center mb-3">
                 <Text className="text-lg flex-1 font-tajawal-bold" style={{ color: textColor }}>
                   {dua.title}

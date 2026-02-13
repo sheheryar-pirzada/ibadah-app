@@ -64,6 +64,10 @@ export default function DailyHadithCard({ hadith, isLoading }: DailyHadithCardPr
   const reference = `${hadith.book.bookName} ${hadith.hadithNumber}`;
 
   return (
+    <View className="mt-2">
+      <Animated.Text entering={FadeInUp.delay(400).duration(600)} className="text-[22px] font-tajawal-bold mb-5 tracking-[-0.3px]" style={{ color: textColor }}>
+        Daily Hadith
+      </Animated.Text>
     <Link
       href={{
         pathname: '/share',
@@ -85,13 +89,7 @@ export default function DailyHadithCard({ hadith, isLoading }: DailyHadithCardPr
           >
             <ThemedBlurView intensity={25} className="p-5">
               <View className="w-full">
-                <View className="flex-row justify-between items-center mb-4">
-                  <Text
-                    className="text-xs uppercase tracking-wider"
-                    style={{ color: textMuted, fontFamily: 'Tajawal-Bold' }}
-                  >
-                    Hadith of the Day
-                  </Text>
+                <View className="flex-row justify-end items-center mb-4">
                   <View className="flex-row items-center gap-1">
                     <View className="p-1.5 rounded-lg">
                       <IconSymbol
@@ -157,5 +155,6 @@ export default function DailyHadithCard({ hadith, isLoading }: DailyHadithCardPr
         </AppleZoom>
       </Pressable>
     </Link>
+    </View>
   );
 }

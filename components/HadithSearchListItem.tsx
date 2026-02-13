@@ -4,15 +4,16 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { cleanHadithText, Hadith } from '@/utils/hadith-settings';
 import { Chapter } from '@/utils/hadith-types';
 import React, { memo } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface HadithSearchListItemProps {
     item: Hadith | Chapter;
     index: number;
+    onChapterPress?: (chapter: Chapter) => void;
 }
 
-const HadithSearchListItem = ({ item, index }: HadithSearchListItemProps) => {
+const HadithSearchListItem = ({ item, index, onChapterPress }: HadithSearchListItemProps) => {
     const textColor = useThemeColor({}, 'text');
     const textMuted = useThemeColor({}, 'textMuted');
     const textSecondary = useThemeColor({}, 'textSecondary');
@@ -25,27 +26,29 @@ const HadithSearchListItem = ({ item, index }: HadithSearchListItemProps) => {
     if (isChapter) {
         const chapter = item as Chapter;
         return (
-            <Animated.View
-                entering={FadeIn.delay(index * 50).duration(300)}
-                className="overflow-hidden mb-3"
-                style={{ borderColor: cardBorder, borderCurve: 'continuous', borderRadius: 20, borderWidth: 0.5 }}
-            >
-                <ThemedBlurView intensity={20} className="p-5 flex-row items-center gap-4">
-                    <View
-                        className="w-10 h-10 rounded-full items-center justify-center"
-                        style={{ backgroundColor: `${accentColor}15` }}
-                    >
-                        <Text className="font-tajawal-bold text-lg" style={{ color: accentColor }}>
-                            {chapter.chapterNumber}
-                        </Text>
-                    </View>
-                    <View className="flex-1">
-                        <Text className="text-lg font-tajawal-bold" style={{ color: textColor }}>
-                            {chapter.chapterEnglish}
-                        </Text>
-                    </View>
-                </ThemedBlurView>
-            </Animated.View>
+            <Pressable onPress={onChapterPress ? () => onChapterPress(chapter) : undefined}>
+                <Animated.View
+                    entering={FadeIn.delay(index * 50).duration(300)}
+                    className="overflow-hidden"
+                    style={{ borderColor: cardBorder, borderCurve: 'continuous', borderRadius: 20, borderWidth: 0.5 }}
+                >
+                    <ThemedBlurView intensity={0} className="p-5 flex-row items-center gap-4">
+                        <View
+                            className="w-10 h-10 rounded-full items-center justify-center"
+                            style={{ backgroundColor: `${accentColor}15` }}
+                        >
+                            <Text className="text-lg" style={{ color: accentColor }}>
+                                {chapter.chapterNumber}
+                            </Text>
+                        </View>
+                        <View className="flex-1">
+                            <Text className="text-lg font-tajawal-bold" style={{ color: textColor }}>
+                                {chapter.chapterEnglish}
+                            </Text>
+                        </View>
+                    </ThemedBlurView>
+                </Animated.View>
+            </Pressable>
         );
     }
 
@@ -61,17 +64,17 @@ const HadithSearchListItem = ({ item, index }: HadithSearchListItemProps) => {
                 <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-row items-center gap-2">
                         <View
-                            className="px-3 pt-2 pb-1 rounded-full"
+                            className="px-3 py-1 rounded-full"
                             style={{ backgroundColor: `${accentColor}20` }}
                         >
                             <Text
-                                className="text-xs font-tajawal-bold"
+                                className="text-base"
                                 style={{ color: accentColor }}
                             >
                                 #{hadith.hadithNumber}
                             </Text>
                         </View>
-                        {hadith.status && (
+                        {/* {hadith.status && (
                             <View
                                 className="px-3 pt-2 pb-1 rounded-full"
                                 style={{
@@ -95,12 +98,12 @@ const HadithSearchListItem = ({ item, index }: HadithSearchListItemProps) => {
                                     {hadith.status}
                                 </Text>
                             </View>
-                        )}
+                        )} */}
                     </View>
                     <View className="flex-row items-center justify-end gap-2">
                         {hadith.chapter?.chapterEnglish && (
                             <Text
-                                className="text-md font-tajawal flex-shrink"
+                                className="text-md flex-shrink"
                                 style={{ color: textMuted }}
                                 numberOfLines={1}
                             >
@@ -121,23 +124,25 @@ const HadithSearchListItem = ({ item, index }: HadithSearchListItemProps) => {
                     </Text>
                 )}
 
-                {/* English text */}
-                <Text
-                    className="text-lg font-tajawal leading-relaxed mb-3"
-                    style={{ color: textColor }}
-                >
-                    {cleanHadithText(hadith.hadithEnglish)}
-                </Text>
-
                 {/* Arabic text */}
                 {hadith.hadithArabic && (
                     <Text
-                        className="text-xl font-amiri leading-loose text-right"
+                        className="text-xl font-amiri leading-loose text-right mb-3"
                         style={{ color: textSecondary }}
                     >
                         {hadith.hadithArabic}
                     </Text>
                 )}
+
+                {/* English text */}
+                <Text
+                    className="text-lg font-tajawal leading-relaxed"
+                    style={{ color: textColor }}
+                >
+                    {cleanHadithText(hadith.hadithEnglish)}
+                </Text>
+
+                
             </ThemedBlurView>
         </Animated.View>
     );

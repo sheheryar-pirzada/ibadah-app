@@ -1,9 +1,11 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import type { ChinAudioMetadata } from '@/components/chin';
 import { ChinAudioPlayer, useChin } from '@/components/chin';
 import DuaCard from '@/components/DuaCard';
 import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLocation } from '@/hooks/useLocation';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -11,16 +13,14 @@ import { duaManager } from '@/utils/duas';
 import { Dua, DuaCategory } from '@/utils/duas-data';
 import { getPrayerTimesAdhan } from '@/utils/prayer-times';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import Animated, {
   FadeInDown,
@@ -32,6 +32,7 @@ type CategoryFilter = DuaCategory | 'all' | 'favorites';
 export default function DuasScreen() {
   const { category } = useLocalSearchParams<{ category?: string }>();
   const { resolvedTheme } = useTheme();
+  const { backgroundKey } = useBackground();
   const { loc: location } = useLocation();
   const chin = useChin();
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
@@ -75,10 +76,14 @@ export default function DuasScreen() {
   const borderColor = useThemeColor({}, 'border');
   const cardBorder = useThemeColor({}, 'cardBorder');
 
-  // Gradient overlay - adjust opacity based on theme
-  const gradientColors = resolvedTheme === 'dark'
-    ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
-    : (['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.15)'] as const);
+  const getChipBackground = (isActive: boolean) => {
+    if (backgroundKey === 'solid') {
+      return isActive
+        ? (resolvedTheme === 'dark' ? 'rgba(212,175,55,0.5)' : 'rgba(212,175,55,0.4)')
+        : (resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)');
+    }
+    return isActive ? `${accentColor}60` : `${accentColor}1A`;
+  };
 
   useEffect(() => {
     initializeDuas();
@@ -224,12 +229,13 @@ export default function DuasScreen() {
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor }}>
+    <BackgroundImage>
+    <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <ThemedStatusBar />
-      <LinearGradient
+      {/* <LinearGradient
         colors={gradientColors}
         style={StyleSheet.absoluteFillObject}
-      />
+      /> */}
 
       <ScrollView contentContainerStyle={{ paddingTop: 60, paddingBottom: 120, paddingHorizontal: 16 }}>
         {/* Header */}
@@ -296,9 +302,7 @@ export default function DuasScreen() {
                   className="px-3 py-3 rounded-[20px] border justify-center items-center"
                   style={{
                     borderColor: isActive ? accentColor : borderColor,
-                    backgroundColor: isActive
-                      ? (resolvedTheme === 'dark' ? 'rgba(212,175,55,0.5)' : 'rgba(212,175,55,0.4)')
-                      : (resolvedTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(4,99,7,0.1)'),
+                    backgroundColor: getChipBackground(isActive),
                     borderCurve: 'continuous',
                   }}
                   onPress={() => handleCategorySelect(cat.value)}
@@ -352,5 +356,6 @@ export default function DuasScreen() {
         </View>
       </ScrollView>
     </View>
+    </BackgroundImage>
   );
 }

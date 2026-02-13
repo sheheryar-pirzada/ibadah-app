@@ -85,10 +85,10 @@ const HadithSearchHeader = ({
                     className="flex-1 rounded-[20px] overflow-hidden border"
                     style={{ borderColor, borderCurve: 'continuous' }}
                 >
-                    <ThemedBlurView intensity={25} className="flex-row items-center px-4 py-3 gap-3">
+                    <ThemedBlurView intensity={25} className="flex-row items-center px-4 gap-3">
                         <IconSymbol name="magnifyingglass" size={20} color={textMuted} />
                         <TextInput
-                            className="flex-1 text-base font-tajawal"
+                            className="flex-1 text-base h-12 pb-2"
                             style={{ color: textColor }}
                             placeholder={searchPlaceholder}
                             placeholderTextColor={textMuted}

@@ -56,7 +56,7 @@ export default function HadithBookScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center items-center" style={{ backgroundColor }}>
+      <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'transparent' }}>
         <ActivityIndicator size="large" color={accentColor} />
         <Text
           className="mt-4 text-base"
@@ -70,7 +70,7 @@ export default function HadithBookScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center items-center" style={{ backgroundColor }}>
+      <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'transparent' }}>
         <Text
           className="text-base text-center mb-4"
           style={{ color: textColor, fontFamily: 'Tajawal-Medium' }}
@@ -92,9 +92,9 @@ export default function HadithBookScreen() {
   return (
     <ScrollView
       className="flex-1"
-      style={{ backgroundColor }}
+      style={{ backgroundColor: 'transparent' }}
       contentInsetAdjustmentBehavior='automatic'
-      contentContainerStyle={{ paddingHorizontal: 8, paddingTop: 40, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 40, paddingBottom: 40 }}
     >
       <Text
         className="text-xl text-center mb-4"

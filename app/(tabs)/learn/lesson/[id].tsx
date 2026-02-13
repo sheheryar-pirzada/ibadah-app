@@ -1,3 +1,4 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -5,9 +6,8 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { useArabicAudio } from '@/utils/arabic-audio';
 import { getLessonById } from '@/utils/arabic-lessons-data';
 import { arabicProgress } from '@/utils/arabic-progress';
-import { useInterstitialAd } from '@/utils/interstitial-ad';
+// import { useInterstitialAd } from '@/utils/interstitial-ad';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -27,12 +27,13 @@ export default function LessonDetailScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showWordBreakdown, setShowWordBreakdown] = useState(false);
   const { playArabic, isPlaying, isBuffering } = useArabicAudio();
-  const { showAdIfReady } = useInterstitialAd();
+  // const { showAdIfReady } = useInterstitialAd();
 
   const lesson = getLessonById(id);
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
+  const textInverse = useThemeColor({}, 'textInverse');
   const textMuted = useThemeColor({}, 'textMuted');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const accentColor = useThemeColor({}, 'accent');
@@ -58,11 +59,13 @@ export default function LessonDetailScreen() {
 
   if (!lesson) {
     return (
-      <View className="flex-1" style={{ backgroundColor }}>
+      <BackgroundImage>
+      <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
         <Text className="text-lg font-tajawal-medium text-center mt-10" style={{ color: textColor }}>
           Lesson not found
         </Text>
       </View>
+      </BackgroundImage>
     );
   }
 
@@ -75,7 +78,7 @@ export default function LessonDetailScreen() {
     if (isLastItem) {
       handleComplete();
     } else {
-      await showAdIfReady();
+      // await showAdIfReady();
       setCurrentIndex((prev) => prev + 1);
       setShowWordBreakdown(false);
     }
@@ -112,13 +115,9 @@ export default function LessonDetailScreen() {
           title: lesson.title,
         }}
       />
-
-      <View className="flex-1" style={{ backgroundColor }}>
-        <LinearGradient
-          colors={gradientColors}
-          className="absolute inset-0"
-        />
-
+  <BackgroundImage>
+      <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
+        
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           contentContainerClassName="pt-4 px-4 pb-[180px]"
@@ -293,7 +292,7 @@ export default function LessonDetailScreen() {
                 size={16}
                 color={isFirstItem ? textMuted : textColor}
               />
-              <Text className="text-sm font-tajawal-medium" style={{ color: isFirstItem ? textMuted : textColor }}>
+              <Text className="text-sm" style={{ color: isFirstItem ? textMuted : textColor }}>
                 Previous
               </Text>
             </ThemedBlurView>
@@ -301,18 +300,19 @@ export default function LessonDetailScreen() {
 
           <Pressable onPress={handleNext}>
             <View className="flex-row items-center gap-2 px-5 py-3 rounded-2xl" style={{ backgroundColor: accentColor }}>
-              <Text className="text-sm font-tajawal-bold text-white">
+              <Text style={{ color: textInverse }} className="text-sm">
                 {isLastItem ? 'Complete' : 'Next'}
               </Text>
               <IconSymbol
                 name={isLastItem ? 'checkmark' : 'chevron.right'}
                 size={16}
-                color="#fff"
+                color={textInverse}
               />
             </View>
           </Pressable>
         </View>
       </View>
+      </BackgroundImage>
     </>
   );
 }

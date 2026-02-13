@@ -1,3 +1,4 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -5,7 +6,6 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { arabicAlphabet } from '@/utils/arabic-alphabet-data';
 import { arabicProgress } from '@/utils/arabic-progress';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -20,10 +20,6 @@ export default function AlphabetScreen() {
   const textMuted = useThemeColor({}, 'textMuted');
   const accentColor = useThemeColor({}, 'accent');
   const cardBorder = useThemeColor({}, 'cardBorder');
-
-  const gradientColors = resolvedTheme === 'dark'
-    ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
-    : (['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.15)'] as const);
 
   const loadProgress = useCallback(async () => {
     await arabicProgress.initialize();
@@ -41,8 +37,8 @@ export default function AlphabetScreen() {
   );
 
   return (
-    <View className="flex-1" style={{ backgroundColor }}>
-      <LinearGradient colors={gradientColors} style={StyleSheet.absoluteFill} />
+    <BackgroundImage>
+    <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
 
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -117,5 +113,6 @@ export default function AlphabetScreen() {
         <View className="h-[100px]" />
       </ScrollView>
     </View>
+    </BackgroundImage>
   );
 }
