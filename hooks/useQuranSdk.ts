@@ -189,10 +189,10 @@ export function useSdkJuzs() {
 }
 
 // ---------------------------------------------------------------------------
-// Audio
+// Audio (reciterId is optional — falls back to user's saved preference)
 // ---------------------------------------------------------------------------
 
-export function useSdkChapterRecitations(reciterId: string) {
+export function useSdkChapterRecitations(reciterId?: string) {
   return useAsyncData<ChapterRecitation[]>(
     () => getChapterRecitations(reciterId),
     [reciterId]
@@ -200,18 +200,18 @@ export function useSdkChapterRecitations(reciterId: string) {
 }
 
 export function useSdkChapterRecitation(
-  reciterId: string,
-  chapterId: ChapterId
+  chapterId: ChapterId,
+  reciterId?: string
 ) {
   return useAsyncData<ChapterRecitation>(
-    () => getChapterRecitationById(reciterId, chapterId),
-    [reciterId, chapterId]
+    () => getChapterRecitationById(chapterId, reciterId),
+    [chapterId, reciterId]
   );
 }
 
 export function useSdkVerseRecitationsByChapter(
   chapterId: ChapterId,
-  recitationId: string
+  recitationId?: string
 ) {
   return useAsyncData<{ audioFiles: VerseRecitation[]; pagination: Pagination }>(
     () => getVerseRecitationsByChapter(chapterId, recitationId),
@@ -221,7 +221,7 @@ export function useSdkVerseRecitationsByChapter(
 
 export function useSdkVerseRecitationsByKey(
   key: VerseKey,
-  recitationId: string
+  recitationId?: string
 ) {
   return useAsyncData<{ audioFiles: VerseRecitation[]; pagination: Pagination }>(
     () => getVerseRecitationsByKey(key, recitationId),

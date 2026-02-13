@@ -75,6 +75,45 @@ export type {
 export { Language, SearchMode };
 
 // ---------------------------------------------------------------------------
+// User preferences
+// ---------------------------------------------------------------------------
+
+import { getReciterSettings } from '@/utils/reciter-settings';
+import { getTranslationSettings } from '@/utils/translation-settings';
+
+export interface UserQuranDefaults {
+  reciterId: number;
+  translationId: number;
+}
+
+/** Read the user's saved reciter + translation preferences from AsyncStorage. */
+export async function getUserDefaults(): Promise<UserQuranDefaults> {
+  const [reciter, translation] = await Promise.all([
+    getReciterSettings(),
+    getTranslationSettings(),
+  ]);
+  return {
+    reciterId: reciter.reciterId,
+    translationId: translation.translationId,
+  };
+}
+
+/**
+ * Build GetVerseOptions that include the user's preferred reciter &
+ * translation, merged with any explicit overrides the caller provides.
+ */
+export async function buildVerseOptions(
+  overrides?: GetVerseOptions
+): Promise<GetVerseOptions> {
+  const defaults = await getUserDefaults();
+  return {
+    translations: [defaults.translationId],
+    reciter: defaults.reciterId,
+    ...overrides,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Client singleton
 // ---------------------------------------------------------------------------
 
@@ -138,48 +177,55 @@ export async function getVerseByKey(
   key: VerseKey,
   options?: GetVerseOptions
 ): Promise<Verse> {
-  return getClient().verses.findByKey(key, options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findByKey(key, opts);
 }
 
 export async function getVersesByChapter(
   chapterId: ChapterId,
   options?: GetVerseOptions
 ): Promise<Verse[]> {
-  return getClient().verses.findByChapter(chapterId, options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findByChapter(chapterId, opts);
 }
 
 export async function getVersesByPage(
   page: PageNumber,
   options?: GetVerseOptions
 ): Promise<Verse[]> {
-  return getClient().verses.findByPage(page, options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findByPage(page, opts);
 }
 
 export async function getVersesByJuz(
   juz: JuzNumber,
   options?: GetVerseOptions
 ): Promise<Verse[]> {
-  return getClient().verses.findByJuz(juz, options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findByJuz(juz, opts);
 }
 
 export async function getVersesByHizb(
   hizb: HizbNumber,
   options?: GetVerseOptions
 ): Promise<Verse[]> {
-  return getClient().verses.findByHizb(hizb, options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findByHizb(hizb, opts);
 }
 
 export async function getVersesByRub(
   rub: RubNumber,
   options?: GetVerseOptions
 ): Promise<Verse[]> {
-  return getClient().verses.findByRub(rub, options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findByRub(rub, opts);
 }
 
 export async function getRandomVerse(
   options?: GetVerseOptions
 ): Promise<Verse> {
-  return getClient().verses.findRandom(options);
+  const opts = await buildVerseOptions(options);
+  return getClient().verses.findRandom(opts);
 }
 
 // ---------------------------------------------------------------------------
@@ -194,34 +240,38 @@ export async function getAllJuzs(): Promise<Juz[]> {
 // Audio
 // ---------------------------------------------------------------------------
 
+/**
+ * If no reciterId is provided, falls back to the user's saved preference.
+ */
 export async function getChapterRecitations(
-  reciterId: string
+  reciterId?: string
 ): Promise<ChapterRecitation[]> {
-  return getClient().audio.findAllChapterRecitations(reciterId);
+  const id = reciterId ?? String((await getUserDefaults()).reciterId);
+  return getClient().audio.findAllChapterRecitations(id);
 }
 
 export async function getChapterRecitationById(
-  reciterId: string,
-  chapterId: ChapterId
+  chapterId: ChapterId,
+  reciterId?: string
 ): Promise<ChapterRecitation> {
-  return getClient().audio.findChapterRecitationById(reciterId, chapterId);
+  const id = reciterId ?? String((await getUserDefaults()).reciterId);
+  return getClient().audio.findChapterRecitationById(id, chapterId);
 }
 
 export async function getVerseRecitationsByChapter(
   chapterId: ChapterId,
-  recitationId: string
+  recitationId?: string
 ): Promise<{ audioFiles: VerseRecitation[]; pagination: Pagination }> {
-  return getClient().audio.findVerseRecitationsByChapter(
-    chapterId,
-    recitationId
-  );
+  const id = recitationId ?? String((await getUserDefaults()).reciterId);
+  return getClient().audio.findVerseRecitationsByChapter(chapterId, id);
 }
 
 export async function getVerseRecitationsByKey(
   key: VerseKey,
-  recitationId: string
+  recitationId?: string
 ): Promise<{ audioFiles: VerseRecitation[]; pagination: Pagination }> {
-  return getClient().audio.findVerseRecitationsByKey(key, recitationId);
+  const id = recitationId ?? String((await getUserDefaults()).reciterId);
+  return getClient().audio.findVerseRecitationsByKey(key, id);
 }
 
 // ---------------------------------------------------------------------------
