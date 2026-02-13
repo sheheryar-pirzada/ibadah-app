@@ -10,10 +10,13 @@ import {
   View,
 } from 'react-native';
 
+import { BackgroundImage } from '@/components/BackgroundImage';
+import { SettingsCard } from '@/components/SettingsCard';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { useLocation } from '@/hooks/useLocation';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { getBackgroundSettings, type BackgroundKey } from '@/utils/background-settings';
 import { useHadithSettings } from '@/utils/hadith-settings';
 import { notificationService } from '@/utils/notification-service';
 import {
@@ -34,6 +37,69 @@ import {
   getReciterSettings,
 } from '@/utils/reciter-settings';
 
+type SettingsItemProps = {
+  title: string;
+  subtitle?: string;
+  subtitleMuted?: boolean;
+} & (
+  | { href: string; switchValue?: never; onSwitchChange?: never }
+  | { href?: never; switchValue: boolean; onSwitchChange: (value: boolean) => void }
+);
+
+function SettingsItem({ title, subtitle, subtitleMuted, ...rest }: SettingsItemProps) {
+  const textColor = useThemeColor({}, 'text');
+  const textMuted = useThemeColor({}, 'textMuted');
+  const accentColor = useThemeColor({}, 'accent');
+  const { resolvedTheme } = useTheme();
+
+  const subtitleColor = subtitleMuted ? textMuted : accentColor;
+
+  const content = (
+    <View className="flex-row justify-between items-center px-5 py-4">
+      <View className="flex-1 justify-center">
+        <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
+          {title}
+        </Text>
+        {subtitle != null && (
+          <Text className="mt-1" style={{ color: subtitleColor, fontFamily: 'Tajawal-Regular', fontSize: 14 }}>
+            {subtitle}
+          </Text>
+        )}
+      </View>
+      {'switchValue' in rest && rest.switchValue !== undefined && (
+        <Switch
+          value={rest.switchValue}
+          onValueChange={rest.onSwitchChange}
+          trackColor={{
+            false: resolvedTheme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(4,99,7,0.2)',
+            true: accentColor,
+          }}
+          thumbColor={rest.switchValue ? '#ffffff' : resolvedTheme === 'dark' ? 'rgba(255,255,255,0.9)' : '#f4f3f4'}
+        />
+      )}
+    </View>
+  );
+
+  if ('href' in rest && rest.href) {
+    return (
+      <Link href={rest.href as any} asChild>
+        <Pressable onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+          {content}
+        </Pressable>
+      </Link>
+    );
+  }
+
+  return content;
+}
+
+const BACKGROUND_LABELS: Record<BackgroundKey, string> = {
+  solid: 'Solid',
+  grain1: 'Dusk Rose',
+  grain2: 'Warm Sand',
+  grain3: 'Carbon Rose',
+};
+
 export default function SettingsScreen() {
   const { themeMode, setThemeMode, resolvedTheme } = useTheme();
   const { loc } = useLocation();
@@ -47,16 +113,10 @@ export default function SettingsScreen() {
   const [reciterStyle, setReciterStyle] = useState<string | null>(null);
   const { translationName } = useTranslation();
   const { selectedBook: selectedHadithBook } = useHadithSettings();
+  const [backgroundKey, setBackgroundKey] = useState<BackgroundKey>('solid');
 
-  const backgroundColor = useThemeColor({}, 'background');
-  const cardBackground = useThemeColor({}, 'cardBackground');
   const cardBorder = useThemeColor({}, 'cardBorder');
-  const textColor = useThemeColor({}, 'text');
-  const textMuted = useThemeColor({}, 'textMuted');
-  const accentColor = useThemeColor({}, 'accent');
-  // Better track colors for visibility - use darker colors for false state in dark mode
-  const trackColorFalse = resolvedTheme === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(4,99,7,0.2)';
-  const trackColorTrue = resolvedTheme === 'dark' ? accentColor : accentColor;
+  const divider = useThemeColor({}, 'divider');
 
   const isDarkMode = resolvedTheme === 'dark';
   const isSystemMode = themeMode === 'system';
@@ -89,6 +149,9 @@ export default function SettingsScreen() {
       const reciterSettings = await getReciterSettings();
       setReciterName(reciterSettings.reciterName);
       setReciterStyle(reciterSettings.reciterStyle);
+
+      const backgroundSettings = await getBackgroundSettings();
+      setBackgroundKey(backgroundSettings.key);
     } catch (error) {
       console.error('Error loading settings:', error);
     }
@@ -178,256 +241,117 @@ export default function SettingsScreen() {
   };
 
   return (
-    <>
+    <BackgroundImage>
       <ScrollView
         contentInsetAdjustmentBehavior='automatic'
         className="flex-1"
-        style={{ backgroundColor }}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30, paddingTop: 24 }}
       >
-        <View
-          className="rounded-3xl mb-4 overflow-hidden"
-          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
-        >
-          <View className="flex-row justify-between items-center px-5 py-4">
-            <View className="flex-1 justify-center">
-              <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                Dark Mode
-              </Text>
-              {isSystemMode && (
-                <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  Using system
-                </Text>
-              )}
-            </View>
-            <Switch
-              value={isDarkMode}
-              onValueChange={handleThemeModeChange}
-              trackColor={{ false: trackColorFalse, true: trackColorTrue }}
-              thumbColor={isDarkMode ? '#ffffff' : resolvedTheme === 'light' ? '#f4f3f4' : 'rgba(255,255,255,0.9)'}
+        {backgroundKey === 'solid' && (
+          <SettingsCard>
+            <SettingsItem
+              title="Dark Mode"
+              subtitle={isSystemMode ? 'Using system' : undefined}
+              subtitleMuted
+              switchValue={isDarkMode}
+              onSwitchChange={handleThemeModeChange}
             />
-          </View>
-        </View>
+          </SettingsCard>
+        )}
 
-        <View
-          className="rounded-3xl mb-4 overflow-hidden"
-          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
-        >
-          <View className="flex-row justify-between items-center px-5 py-4">
-            <View className="flex-1 justify-center">
-              <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                Prayer Notifications
-              </Text>
-              {!hasPermission && notificationsEnabled && (
-                <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  Permission required
-                </Text>
-              )}
-            </View>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={handleNotificationToggle}
-              trackColor={{ false: trackColorFalse, true: trackColorTrue }}
-              thumbColor={notificationsEnabled ? '#ffffff' : resolvedTheme === 'dark' ? 'rgba(255,255,255,0.9)' : '#f4f3f4'}
-            />
-          </View>
+        <SettingsCard>
+          <SettingsItem
+            title="Prayer Notifications"
+            subtitle={!hasPermission && notificationsEnabled ? 'Permission required' : undefined}
+            subtitleMuted
+            switchValue={notificationsEnabled}
+            onSwitchChange={handleNotificationToggle}
+          />
 
           {notificationsEnabled && (
             <>
               <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
-              <Link href="/settings/prayer-notifications" asChild>
-                <Pressable
-                  className="flex-row justify-between items-center px-5 py-4"
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                >
-                  <View className="flex-1 justify-center">
-                    <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                      Select Prayers
-                    </Text>
-                    <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                      Choose which prayers to notify
-                    </Text>
-                  </View>
-                </Pressable>
-              </Link>
+              <SettingsItem
+                title="Select Prayers"
+                subtitle="Choose which prayers to notify"
+                href="/settings/prayer-notifications"
+              />
               <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
-              <View className="flex-row justify-between items-center px-5 py-4">
-                <View className="flex-1 justify-center">
-                  <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                    Prayer Time Reminders
-                  </Text>
-                  <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                    Alert 15 min before prayer time ends
-                  </Text>
-                </View>
-                <Switch
-                  value={remindersEnabled}
-                  onValueChange={handleRemindersToggle}
-                  trackColor={{ false: trackColorFalse, true: trackColorTrue }}
-                  thumbColor={remindersEnabled ? '#ffffff' : resolvedTheme === 'dark' ? 'rgba(255,255,255,0.9)' : '#f4f3f4'}
-                />
-              </View>
+              <SettingsItem
+                title="Prayer Time Reminders"
+                subtitle="Alert 15 min before prayer time ends"
+                subtitleMuted
+                switchValue={remindersEnabled}
+                onSwitchChange={handleRemindersToggle}
+              />
             </>
           )}
-        </View>
+        </SettingsCard>
 
         {notificationsEnabled && (
-          <View
-            className="rounded-3xl mb-4 overflow-hidden"
-            style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
-          >
-            <View className="flex-row justify-between items-center px-5 py-4">
-              <View className="flex-1 justify-center">
-                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                  Dua Notifications
-                </Text>
-                <Text className="mt-0.5" style={{ color: textMuted, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  Morning and evening reminders
-                </Text>
-              </View>
-              <Switch
-                value={duasEnabled}
-                onValueChange={handleDuaToggle}
-                trackColor={{ false: trackColorFalse, true: trackColorTrue }}
-                thumbColor={duasEnabled ? '#ffffff' : resolvedTheme === 'dark' ? 'rgba(255,255,255,0.9)' : '#f4f3f4'}
-              />
-            </View>
-          </View>
+          <SettingsCard>
+            <SettingsItem
+              title="Dua Notifications"
+              subtitle="Morning and evening reminders"
+              subtitleMuted
+              switchValue={duasEnabled}
+              onSwitchChange={handleDuaToggle}
+            />
+          </SettingsCard>
         )}
 
-        <View
-          className="rounded-3xl mb-4 overflow-hidden"
-          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
-        >
-          <Link href="/settings/calculation-method" asChild>
-            <Pressable
-              className="flex-row justify-between items-center px-5 py-4"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View className="flex-1 justify-center">
-                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                  Calculation Method
-                </Text>
-                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  {getCalculationMethodOptions().find(opt => opt.key === calculationMethod)?.name || calculationMethod}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-
+        <SettingsCard>
+          <SettingsItem
+            title="Calculation Method"
+            subtitle={getCalculationMethodOptions().find(opt => opt.key === calculationMethod)?.name || calculationMethod}
+            href="/settings/calculation-method"
+          />
           <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
+          <SettingsItem
+            title="Madhab"
+            subtitle={getMadhabOptions().find(opt => opt.key === madhab)?.name || madhab}
+            href="/settings/madhab"
+          />
+        </SettingsCard>
 
-          <Link href="/settings/madhab" asChild>
-            <Pressable
-              className="flex-row justify-between items-center px-5 py-4"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View className="flex-1 justify-center">
-                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                  Madhab
-                </Text>
-                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  {getMadhabOptions().find(opt => opt.key === madhab)?.name || madhab}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-        </View>
-
-        <View
-          className="rounded-3xl mb-4 overflow-hidden"
-          style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
-        >
-          <Link href="/settings/reciter" asChild>
-            <Pressable
-              className="flex-row justify-between items-center px-5 py-4"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View className="flex-1 justify-center">
-                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                  Quran Reciter
-                </Text>
-                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  {getReciterDisplayName(reciterName, reciterStyle)}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-
+        <SettingsCard>
+          <SettingsItem
+            title="Quran Reciter"
+            subtitle={getReciterDisplayName(reciterName, reciterStyle)}
+            href="/settings/reciter"
+          />
           <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
-
-          <Link href="/settings/translation" asChild>
-            <Pressable
-              className="flex-row justify-between items-center px-5 py-4"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View className="flex-1 justify-center">
-                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                  Quran Translation
-                </Text>
-                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  {translationName}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-
+          <SettingsItem
+            title="Quran Translation"
+            subtitle={translationName}
+            href="/settings/translation"
+          />
           <View className="h-px mx-5 opacity-30" style={{ backgroundColor: cardBorder }} />
+          <SettingsItem
+            title="Default Hadith Book"
+            subtitle={selectedHadithBook?.bookName ?? 'Not selected'}
+            href="/settings/hadith-book"
+          />
+        </SettingsCard>
 
-          <Link href="/settings/hadith-book" asChild>
-            <Pressable
-              className="flex-row justify-between items-center px-5 py-4"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-            >
-              <View className="flex-1 justify-center">
-                <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                  Default Hadith Book
-                </Text>
-                <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                  {selectedHadithBook?.bookName ?? 'Not selected'}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-        </View>
+        <SettingsCard>
+          <SettingsItem
+            title="Background"
+            subtitle={BACKGROUND_LABELS[backgroundKey]}
+            href="/settings/background"
+          />
+        </SettingsCard>
 
         {Platform.OS === 'ios' && __DEV__ && (
-          <View
-            className="rounded-3xl mb-4 overflow-hidden"
-            style={{ backgroundColor: cardBackground, borderColor: cardBorder, borderCurve: 'continuous', borderWidth: 0.5 }}
-          >
-            <Link href={"/settings/widgets" as any} asChild>
-              <Pressable
-                className="flex-row justify-between items-center px-5 py-4"
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                }}
-              >
-                <View className="flex-1 justify-center">
-                  <Text style={{ color: textColor, fontFamily: 'Tajawal-Medium', fontSize: 18 }}>
-                    Home Screen Widgets
-                  </Text>
-                  <Text className="mt-0.5" style={{ color: accentColor, fontFamily: 'Tajawal-Regular', fontSize: 12 }}>
-                    Preview and learn how to add widgets
-                  </Text>
-                </View>
-              </Pressable>
-            </Link>
-          </View>
+          <SettingsCard>
+            <SettingsItem
+              title="Home Screen Widgets"
+              subtitle="Preview and learn how to add widgets"
+              href="/settings/widgets"
+            />
+          </SettingsCard>
         )}
       </ScrollView>
-    </>
+    </BackgroundImage>
   );
 }

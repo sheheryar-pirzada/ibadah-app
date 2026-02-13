@@ -1,4 +1,4 @@
-import { ThemedStatusBar } from '@/components/ThemedStatusBar';
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -8,16 +8,15 @@ import { useQuranAudio, type PlaybackRate } from '@/utils/audio-service';
 import { quranAPI, Verse } from '@/utils/quran-api';
 import { getReciterSettings } from '@/utils/reciter-settings';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import Animated, { Easing, FadeIn, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -67,6 +66,7 @@ export default function SurahPageScreen() {
   const textMuted = useThemeColor({}, 'textMuted');
   const accentColor = useThemeColor({}, 'accent');
   const borderColor = useThemeColor({}, 'border');
+  const textInverse = useThemeColor({}, 'textInverse');
 
   const gradientColors = resolvedTheme === 'dark'
     ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
@@ -241,13 +241,9 @@ export default function SurahPageScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor }}>
-      <ThemedStatusBar />
-      <LinearGradient
-        colors={gradientColors}
-        style={StyleSheet.absoluteFillObject}
-      />
-
+    <BackgroundImage>
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+      
       <Pressable
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -261,7 +257,7 @@ export default function SurahPageScreen() {
         }}
         hitSlop={12}
       >
-        <IconSymbol name="chevron.left" size={28} color={textColor} />
+        <IconSymbol weight="light" name="chevron.left" size={28} color={textColor} />
       </Pressable>
 
       {isReading && (
@@ -357,7 +353,7 @@ export default function SurahPageScreen() {
               className="mt-8 px-10 py-3 rounded-full flex justify-center items-center"
               style={{ backgroundColor: accentColor, borderCurve: 'continuous' }}
             >
-              <Text className="text-white bold text-2xl">Start</Text>
+              <Text className="text-2xl" style={{ color: textInverse }}>Start</Text>
             </Pressable>
           </Animated.View>
         )}
@@ -463,5 +459,6 @@ export default function SurahPageScreen() {
         )}
       </View>
     </View>
+    </BackgroundImage>
   );
 }

@@ -2,9 +2,9 @@ import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { arabicProgress } from '@/utils/arabic-progress';
 import { getLetterById } from '@/utils/arabic-alphabet-data';
 import { useArabicAudio } from '@/utils/arabic-audio';
+import { arabicProgress } from '@/utils/arabic-progress';
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -31,12 +31,12 @@ export default function LetterDetailScreen() {
   const insets = useSafeAreaInsets();
 
   const textColor = useThemeColor({}, 'text');
+  const textInverse = useThemeColor({}, 'textInverse');
   const textMuted = useThemeColor({}, 'textMuted');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const accentColor = useThemeColor({}, 'accent');
   const cardBorder = useThemeColor({}, 'cardBorder');
   const dividerColor = useThemeColor({}, 'divider');
-  const backgroundColor = useThemeColor({}, 'background');
 
   useEffect(() => {
     const loadProgress = async () => {
@@ -73,19 +73,31 @@ export default function LetterDetailScreen() {
     router.back();
   };
 
-  if (!letter) {
+  if (letter) {
     return (
-      <View className="flex-1 justify-center items-center" style={{ backgroundColor }}>
+      <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'transparent' }}>
         <ThemedBlurView intensity={80} style={StyleSheet.absoluteFill} />
-        <Text className="text-base font-tajawal-medium" style={{ color: textColor }}>
+        <Text className="text-2xl font-tajawal-medium" style={{ color: textColor }}>
           Letter not found
         </Text>
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.back();
+          }}
+          className="mt-4 px-8 py-3 rounded-full"
+          style={{ backgroundColor: accentColor, borderCurve: 'continuous' }}
+        >
+          <Text className="text-md" style={{ color: textInverse }}>
+            Go Back
+          </Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 justify-center items-center" style={{ backgroundColor }}>
+    <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'transparent' }}>
       <ThemedBlurView intensity={80} style={StyleSheet.absoluteFill} />
 
       {/* Close button */}
@@ -265,8 +277,8 @@ export default function LetterDetailScreen() {
                 }}
               >
                 <Text
-                  className="text-base font-tajawal-bold"
-                  style={{ color: isLearned ? textColor : '#fff' }}
+                  className="text-base"
+                  style={{ color: isLearned ? textColor : textInverse }}
                 >
                   {isLearned ? 'Mark as Not Learned' : 'Mark as Learned'}
                 </Text>

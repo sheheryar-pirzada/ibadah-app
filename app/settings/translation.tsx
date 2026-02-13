@@ -7,11 +7,11 @@ import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from 'react-native';
 
 export default function TranslationScreen() {
@@ -70,7 +70,7 @@ export default function TranslationScreen() {
   if (isLoading) {
     return (
       <ScrollView
-        style={{ flex: 1, backgroundColor }}
+        style={{ flex: 1, backgroundColor: 'transparent' }}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 60 }}
       >
         <ActivityIndicator size="large" color={accentColor} />
@@ -84,7 +84,7 @@ export default function TranslationScreen() {
   if (error) {
     return (
       <ScrollView
-        style={{ flex: 1, backgroundColor }}
+        style={{ flex: 1, backgroundColor: 'transparent' }}
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}
       >
         <Text className="text-base font-sans text-center mb-4" style={{ color: textColor }}>
@@ -99,7 +99,7 @@ export default function TranslationScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor }}
+      style={{ flex: 1, backgroundColor: 'transparent' }}
       contentContainerStyle={{ paddingBottom: 40, paddingTop: 24, paddingHorizontal: 24 }}
       showsVerticalScrollIndicator={false}
     >

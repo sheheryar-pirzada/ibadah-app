@@ -55,9 +55,9 @@
           "appID": "3345730002248977",
           "displayName": "Ibadah App",
           "scheme": "fb3345730002248977",
-          "advertiserIDCollectionEnabled": true,
-          "autoLogAppEventsEnabled": true,
-          "isAutoInitEnabled": true
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": false
         }
       ],
       [
@@ -92,6 +92,7 @@
         {
           "androidAppId": "ca-app-pub-6647730613417269~5665002947",
           "iosAppId": "ca-app-pub-6647730613417269~5665002947",
+          "delayAppMeasurementInit": true,
           "skAdNetworkItems": [
             "cstr6suwn9.skadnetwork",
             "4fzdc2evr5.skadnetwork",

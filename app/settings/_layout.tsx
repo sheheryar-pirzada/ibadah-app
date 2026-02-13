@@ -1,5 +1,6 @@
 import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 import { Colors } from '@/constants/Colors';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { BlurView } from 'expo-blur';
 import { router, Stack } from 'expo-router';
@@ -10,7 +11,9 @@ export { ErrorBoundary } from 'expo-router';
 export default function SettingsLayout() {
   const { resolvedTheme } = useTheme();
   const colorScheme = resolvedTheme || 'light';
+  const { backgroundKey } = useBackground();
 
+  const k = backgroundKey === 'solid' ? resolvedTheme : backgroundKey;
   return (
     <Stack 
       screenOptions={{
@@ -22,7 +25,8 @@ export default function SettingsLayout() {
         headerBackground: Platform.select({
           ios: () => (
             <BlurView
-              style={{ flex: 1 }}
+              className="flex-1"
+              intensity={backgroundKey === 'solid' ? 30 : 0}
               tint={Colors[colorScheme].blurTint}
             />
           ),
@@ -32,7 +36,7 @@ export default function SettingsLayout() {
         // header back button
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back()}>
-            <IconSymbol name="chevron.left" size={24} color={Colors[colorScheme].text} />
+            <IconSymbol name="chevron.left" size={24} color={Colors[k].text} />
           </TouchableOpacity>
         ),
       }}
@@ -114,6 +118,22 @@ export default function SettingsLayout() {
           headerShown: false,
           animation: 'slide_from_bottom',
           presentation: 'formSheet',
+          sheetAllowedDetents: [0.85],
+          sheetGrabberVisible: true,
+          contentStyle: {
+            backgroundColor: 'transparent',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="background"
+        options={{
+          headerShown: true,
+          headerTitle: 'Background',
+          presentation: 'transparentModal',
+          animation: 'fade',
+          headerTransparent: true,
+          headerShadowVisible: false,
         }}
       />
     </Stack>

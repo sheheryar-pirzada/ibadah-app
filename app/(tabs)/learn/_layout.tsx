@@ -1,5 +1,6 @@
 import { SettingsHeaderButton } from '@/components/SettingsHeaderButton';
 import { Colors } from '@/constants/Colors';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { BlurView } from 'expo-blur';
 import { Stack } from 'expo-router';
@@ -9,6 +10,9 @@ export default function LearnLayout() {
   const { resolvedTheme } = useTheme();
   const colorScheme = resolvedTheme || 'light';
 
+  const { backgroundKey } = useBackground();
+
+  const k = backgroundKey === 'solid' ? resolvedTheme : backgroundKey;
   return (
     <Stack
       screenOptions={{
@@ -20,7 +24,8 @@ export default function LearnLayout() {
         headerBackground: Platform.select({
           ios: () => (
             <BlurView
-              style={{ flex: 1 }}
+              className="flex-1"
+              intensity={backgroundKey === 'solid' ? 30 : 0}
               tint={Colors[colorScheme].blurTint}
             />
           ),

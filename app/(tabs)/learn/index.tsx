@@ -1,3 +1,4 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -5,15 +6,13 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { getTotalLetters } from '@/utils/arabic-alphabet-data';
 import { allLessons, getCategories, LessonCategory } from '@/utils/arabic-lessons-data';
 import { ArabicLearningStats, arabicProgress } from '@/utils/arabic-progress';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
@@ -28,10 +27,7 @@ export default function LearnDashboard() {
   const textSecondary = useThemeColor({}, 'textSecondary');
   const accentColor = useThemeColor({}, 'accent');
   const cardBorder = useThemeColor({}, 'cardBorder');
-
-  const gradientColors = resolvedTheme === 'dark'
-    ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
-    : (['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.15)'] as const);
+  const textInverse = useThemeColor({}, 'textInverse');
 
   const loadProgress = useCallback(async () => {
     await arabicProgress.initialize();
@@ -58,18 +54,15 @@ export default function LearnDashboard() {
   };
 
   return (
+      <BackgroundImage>
+
     <ScrollView
       className="flex-1"
-      style={{ backgroundColor }}
+      style={{ backgroundColor: 'transparent' }}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ paddingTop: 16 }}
       showsVerticalScrollIndicator={false}
     >
-      <LinearGradient
-        colors={gradientColors}
-        style={StyleSheet.absoluteFillObject}
-      />
-
       {/* Progress Overview Card */}
       <Animated.View entering={FadeInDown.duration(600)} className="px-4 mb-6">
         <ThemedBlurView
@@ -260,7 +253,7 @@ export default function LearnDashboard() {
           >
             <Text
               className="text-sm font-tajawal-medium"
-              style={{ color: selectedCategory === 'all' ? '#fff' : textSecondary }}
+              style={{ color: selectedCategory === 'all' ? textInverse : textSecondary }}
             >
               All ({allLessons.length})
             </Text>
@@ -278,7 +271,7 @@ export default function LearnDashboard() {
             >
               <Text
                 className="text-sm font-tajawal-medium"
-                style={{ color: selectedCategory === cat.id ? '#fff' : textSecondary }}
+                style={{ color: selectedCategory === cat.id ? textInverse : textSecondary }}
               >
                 {cat.label} ({cat.count})
               </Text>
@@ -345,7 +338,7 @@ export default function LearnDashboard() {
                       }}
                     >
                       <Text
-                        className="text-sm font-tajawal-medium capitalize"
+                        className="text-sm capitalize"
                         style={{
                           color:
                             lesson.level === 'beginner'
@@ -393,5 +386,6 @@ export default function LearnDashboard() {
 
       <View className="h-[100px]" />
     </ScrollView>
+      </BackgroundImage>
   );
 }

@@ -18,9 +18,9 @@ export const HadithBooksGrid: React.FC<HadithBooksGridProps> = ({ books }) => {
     const cardBorder = useThemeColor({}, 'cardBorder');
 
     return (
-        <Animated.View entering={FadeInUp.delay(600).duration(600)} className="mb-6">
+        <Animated.View entering={FadeInUp.delay(600).duration(600)} className="mb-6 mt-2">
             <Text
-                className="text-xl font-tajawal-bold mb-4"
+                className="text-[22px] font-tajawal-bold mb-5 tracking-[-0.3px]"
                 style={{ color: textColor }}
             >
                 Hadith Collections

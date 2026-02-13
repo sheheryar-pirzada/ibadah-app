@@ -1,3 +1,4 @@
+import { BackgroundImage } from '@/components/BackgroundImage';
 import { ThemedBlurView } from '@/components/ThemedBlurView';
 import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -10,7 +11,6 @@ import {
   type RamadanCalendarData,
   type RamadanDay,
 } from '@/utils/ramadan-api';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -51,7 +51,7 @@ function DayRow({
         borderColor: isToday ? accentColor : cardBorder,
       }}
     >
-      <ThemedBlurView intensity={isToday ? 30 : 20} className="px-4 py-3.5">
+      <ThemedBlurView intensity={isToday ? 30 : 20} className="px-4 py-6">
         <View style={isToday ? { backgroundColor: todayBg, margin: -16, padding: 16, borderRadius: 24 } : undefined}>
           <View className="flex-row items-center">
             {/* Day number badge */}
@@ -134,10 +134,6 @@ export default function RamadanCalendarScreen() {
   const accentColor = useThemeColor({}, 'accent');
   const cardBorder = useThemeColor({}, 'cardBorder');
   const dividerColor = useThemeColor({}, 'divider');
-
-  const gradientColors = resolvedTheme === 'dark'
-    ? (['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.4)'] as const)
-    : (['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.15)'] as const);
 
   useEffect(() => {
     if (!loc) return;
@@ -262,59 +258,69 @@ export default function RamadanCalendarScreen() {
 
   if (loading || !loc) {
     return (
-      <View className="flex-1" style={{ backgroundColor }}>
+      <BackgroundImage>
+      <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
         <ThemedStatusBar />
-        <LinearGradient colors={gradientColors} className="absolute inset-0" />
         <View className="flex-1 justify-center items-center px-5">
           <ThemedBlurView
-            intensity={25}
+            intensity={0}
             className="p-10 rounded-[40px] items-center overflow-hidden min-w-[200px]"
             style={{ borderCurve: 'continuous', borderWidth: 0.5, borderColor: cardBorder }}
           >
             <ActivityIndicator size="large" color={accentColor} style={{ marginBottom: 16 }} />
-            <Text className="text-base text-center font-tajawal-medium" style={{ color: textColor }}>
+            <Text className="text-xl text-center font-tajawal-medium" style={{ color: textColor }}>
               Loading Ramadan calendar...
             </Text>
           </ThemedBlurView>
         </View>
       </View>
+      </BackgroundImage>
     );
   }
 
   if (error) {
     return (
-      <View className="flex-1" style={{ backgroundColor }}>
+      <BackgroundImage>
+      <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
         <ThemedStatusBar />
-        <LinearGradient colors={gradientColors} className="absolute inset-0" />
         <View className="flex-1 justify-center items-center px-5">
           <ThemedBlurView
-            intensity={25}
-            className="p-8 rounded-[40px] items-center overflow-hidden"
+            intensity={0}
+            className="p-10 rounded-[40px] items-center overflow-hidden min-w-[280px]"
             style={{ borderCurve: 'continuous', borderWidth: 0.5, borderColor: cardBorder }}
           >
-            <IconSymbol name="xmark.circle.fill" size={40} color={textMuted} />
-            <Text className="text-base text-center font-tajawal-medium mt-3" style={{ color: textColor }}>
+            <View
+              className="w-16 h-16 rounded-full items-center justify-center mb-4"
+              style={{ backgroundColor: `${accentColor}15` }}
+            >
+              <IconSymbol name="exclamationmark.triangle.fill" size={32} color={accentColor} />
+            </View>
+            <Text className="text-lg text-center font-tajawal-bold mb-1" style={{ color: textColor }}>
+              Something went wrong
+            </Text>
+            <Text className="text-sm text-center font-tajawal-regular" style={{ color: textMuted }}>
               {error}
             </Text>
             <Pressable
               onPress={() => router.back()}
-              className="mt-4 px-6 py-2 rounded-full"
-              style={{ backgroundColor: accentColor }}
+              className="px-8 py-3 rounded-full"
+              style={{ backgroundColor: accentColor, borderCurve: 'continuous' }}
             >
-              <Text className="text-sm font-tajawal-bold" style={{ color: '#fff' }}>
+              <Text className="text-sm" style={{ color: '#fff' }}>
                 Go Back
               </Text>
             </Pressable>
           </ThemedBlurView>
         </View>
       </View>
+      </BackgroundImage>
     );
   }
 
   return (
-    <View className="flex-1" style={{ backgroundColor }}>
+    <BackgroundImage>
+    <View className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <ThemedStatusBar />
-      <LinearGradient colors={gradientColors} className="absolute inset-0" />
       <FlatList
         ref={flatListRef}
         data={calendarData?.days ?? []}
@@ -336,5 +342,6 @@ export default function RamadanCalendarScreen() {
         )}
       />
     </View>
+    </BackgroundImage>
   );
 }

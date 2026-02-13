@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ThemedStatusBar } from '@/components/ThemedStatusBar';
 import { IconSymbol } from '@/components/ui/IconSymbol.ios';
 import { updatePrayerWidgetsWithLocation } from '@/components/widgets';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -76,7 +75,7 @@ export default function CalculationMethodScreen() {
 
   return (
         <ScrollView
-          style={{ flex: 1, backgroundColor }}
+          style={{ flex: 1, backgroundColor: 'transparent' }}
           contentContainerStyle={[
             { paddingTop: top / 2 + 24 }
           ]}

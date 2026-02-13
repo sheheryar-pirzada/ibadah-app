@@ -22,10 +22,10 @@ export const BookmarkedHadiths: React.FC<BookmarkedHadithsProps> = ({ bookmarked
     if (bookmarkedHadiths.length === 0) return null;
 
     return (
-        <Animated.View entering={FadeInUp.delay(700).duration(600)} className="mb-6">
-            <View className="flex-row items-center justify-between mb-4">
+        <Animated.View entering={FadeInUp.delay(700).duration(600)} className="mb-6 mt-2">
+            <View className="flex-row items-center justify-between mb-5">
                 <Text
-                    className="text-xl font-tajawal-bold"
+                    className="text-[22px] font-tajawal-bold tracking-[-0.3px]"
                     style={{ color: textColor }}
                 >
                     Bookmarked Hadiths
@@ -39,7 +39,7 @@ export const BookmarkedHadiths: React.FC<BookmarkedHadithsProps> = ({ bookmarked
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
                     <Text
-                        className="text-sm font-tajawal-medium"
+                        className="text-base"
                         style={{ color: accentColor }}
                     >
                         View all

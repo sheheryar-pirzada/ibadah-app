@@ -38,21 +38,21 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>10</string>
+	<string>11</string>
 	<key>FacebookAdvertiserIDCollectionEnabled</key>
-	<true/>
+	<false/>
 	<key>FacebookAppID</key>
 	<string>3345730002248977</string>
 	<key>FacebookAutoInitEnabled</key>
-	<true/>
+	<false/>
 	<key>FacebookAutoLogAppEventsEnabled</key>
-	<true/>
+	<false/>
 	<key>FacebookDisplayName</key>
 	<string>Ibadah App</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-6647730613417269~5665002947</string>
 	<key>GADDelayAppMeasurementInit</key>
-	<false/>
+	<true/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
